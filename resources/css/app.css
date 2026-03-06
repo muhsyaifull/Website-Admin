@@ -1,0 +1,16 @@
+@import 'bootstrap';
+
+/* SB Admin 2 Custom Styles */
+.sidebar {
+    width: 224px;
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        width: 104px;
+    }
+}
+
+html, body {
+    height: 100%;
+}

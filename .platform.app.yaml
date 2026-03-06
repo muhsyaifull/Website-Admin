@@ -1,0 +1,22 @@
+web: true
+open: true
+disable_default_server: true
+
+default_server:
+  engine: php
+  version: 8.1
+
+framework:
+  name: laravel
+  version: 10.x
+  document_root: public
+  passthru: /index.php
+
+variables:
+  env:
+    APP_ENV: local
+    APP_DEBUG: true
+    DB_CONNECTION: mysql
+    DB_HOST: 127.0.0.1
+    DB_PORT: 3306
+    DB_DATABASE: website_admin
