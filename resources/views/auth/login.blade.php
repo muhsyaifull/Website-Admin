@@ -8,7 +8,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Login - SB Admin 2</title>
+    <title>Atsiri Tour</title>
 
     <!-- Custom fonts for this template-->
     <link
@@ -53,9 +53,9 @@
                                     <form class="user" method="POST" action="{{ route('login') }}">
                                         @csrf
                                         <div class="form-group">
-                                            <input type="email" class="form-control form-control-user" id="email"
-                                                name="email" aria-describedby="emailHelp"
-                                                placeholder="Enter Email Address..." value="{{ old('email') }}"
+                                            <input type="text" class="form-control form-control-user" id="login"
+                                                name="login" aria-describedby="loginHelp"
+                                                placeholder="Enter Username or Email Address..." value="{{ old('login') }}"
                                                 required>
                                         </div>
                                         <div class="form-group">

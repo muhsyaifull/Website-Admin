@@ -19,10 +19,13 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
+        'username',
         'email',
+        'phone',
         'password',
         'role',
-        'status',
+        'is_active',
+        'last_login',
     ];
 
     /**
@@ -43,14 +46,34 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
+        'last_login' => 'datetime',
+        'is_active' => 'boolean',
     ];
 
     /**
-     * Check if user is admin
+     * Relationships
+     */
+    public function bookings()
+    {
+        return $this->hasMany(Booking::class);
+    }
+
+    /**
+     * Role checking methods
      */
     public function isAdmin()
     {
         return $this->role === 'admin';
+    }
+
+    public function isEducator()
+    {
+        return $this->role === 'educator';
+    }
+
+    public function isCashier()
+    {
+        return $this->role === 'cashier';
     }
 
     /**
@@ -58,6 +81,49 @@ class User extends Authenticatable
      */
     public function isActive()
     {
-        return $this->status === 'active';
+        return $this->is_active;
+    }
+
+    // Accessors for admin views
+    public function getRoleColorAttribute()
+    {
+        switch ($this->role) {
+            case 'admin':
+                return 'bg-danger';
+            case 'educator':
+                return 'bg-warning';
+            case 'cashier':
+                return 'bg-info';
+            default:
+                return 'bg-secondary';
+        }
+    }
+
+    public function getRoleBadgeAttribute()
+    {
+        switch ($this->role) {
+            case 'admin':
+                return 'badge-danger';
+            case 'educator':
+                return 'badge-warning';
+            case 'cashier':
+                return 'badge-info';
+            default:
+                return 'badge-secondary';
+        }
+    }
+
+    public function getRoleIconAttribute()
+    {
+        switch ($this->role) {
+            case 'admin':
+                return 'fas fa-user-shield';
+            case 'educator':
+                return 'fas fa-chalkboard-teacher';
+            case 'cashier':
+                return 'fas fa-cash-register';
+            default:
+                return 'fas fa-user';
+        }
     }
 }
