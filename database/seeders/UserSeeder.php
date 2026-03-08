@@ -13,47 +13,53 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        // Create Admin User
+        // Create Admin IT User
         User::create([
-            'name' => 'Admin User',
-            'email' => 'admin@admin.com',
+            'name' => 'Admin IT',
+            'username' => 'admin',
+            'email' => 'admin@rumahatsiri.com',
             'password' => Hash::make('password'),
             'role' => 'admin',
-            'status' => 'active',
+            'is_active' => true,
         ]);
 
-        // Create Regular User
+        // Create Educator User
         User::create([
-            'name' => 'John Doe',
-            'email' => 'user@user.com',
+            'name' => 'Educator Staff',
+            'username' => 'educator',
+            'email' => 'educator@rumahatsiri.com',
             'password' => Hash::make('password'),
-            'role' => 'user',
-            'status' => 'active',
+            'role' => 'educator',
+            'is_active' => true,
         ]);
 
-        // Create additional sample users
+        // Create Cashier User
         User::create([
-            'name' => 'Jane Smith',
-            'email' => 'jane@example.com',
+            'name' => 'Dewi - Cashier',
+            'username' => 'kasir1',
+            'email' => 'kasir@rumahatsiri.com',
             'password' => Hash::make('password'),
-            'role' => 'user',
-            'status' => 'active',
+            'role' => 'cashier',
+            'is_active' => true,
+        ]);
+
+        // Create additional sample users for testing
+        User::create([
+            'name' => 'Cashier 2',
+            'username' => 'kasir2',
+            'email' => 'kasir2@rumahatsiri.com',
+            'password' => Hash::make('password'),
+            'role' => 'cashier',
+            'is_active' => true,
         ]);
 
         User::create([
-            'name' => 'Mike Johnson',
-            'email' => 'mike@example.com',
+            'name' => 'Educator 2',
+            'username' => 'educator2',
+            'email' => 'educator2@rumahatsiri.com',
             'password' => Hash::make('password'),
-            'role' => 'admin',
-            'status' => 'inactive',
-        ]);
-
-        User::create([
-            'name' => 'Sarah Wilson',
-            'email' => 'sarah@example.com',
-            'password' => Hash::make('password'),
-            'role' => 'user',
-            'status' => 'active',
+            'role' => 'educator',
+            'is_active' => false,
         ]);
     }
 }
