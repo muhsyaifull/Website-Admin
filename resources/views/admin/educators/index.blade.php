@@ -7,7 +7,7 @@
         <h1 class="h3 mb-0 text-gray-800">
             <i class="fas fa-chalkboard-teacher text-primary"></i> Manage Educators
         </h1>
-        <a href="{{ route('admin.educators.create') }}" class="btn btn-primary">
+        <a href="{{ route('panel.educators.create') }}" class="btn btn-primary">
             <i class="fas fa-plus"></i> Add Educator
         </a>
     </div>
@@ -128,13 +128,12 @@
                                     </div>
                                 </td>
                                 <td>
-                                    @if($educator->specialization == 'taman')
-                                        <span class="badge badge-success"><i class="fas fa-seedling"></i> Taman Atsiri</span>
-                                    @elseif($educator->specialization == 'museum')
-                                        <span class="badge" style="background: #7B3F2A; color: white;"><i
-                                                class="fas fa-building"></i> Museum Atsiri</span>
+                                    @if($educator->tours->count() > 0)
+                                        @foreach($educator->tours as $tour)
+                                            <span class="badge badge-primary">{{ $tour->name }}</span>
+                                        @endforeach
                                     @else
-                                        <span class="badge badge-info"><i class="fas fa-sync-alt"></i> Both</span>
+                                        <span class="badge badge-secondary">No specialization</span>
                                     @endif
                                 </td>
                                 <td>{{ $educator->phone ?? '-' }}</td>
@@ -153,16 +152,16 @@
                                 </td>
                                 <td>
                                     <div class="btn-group" role="group">
-                                        <a href="{{ route('admin.educators.show', $educator->id) }}"
+                                        <a href="{{ route('panel.educators.show', $educator->id) }}"
                                             class="btn btn-sm btn-outline-info" title="Detail">
                                             <i class="fas fa-eye"></i>
                                         </a>
-                                        <a href="{{ route('admin.educators.edit', $educator->id) }}"
+                                        <a href="{{ route('panel.educators.edit', $educator->id) }}"
                                             class="btn btn-sm btn-outline-warning" title="Edit">
                                             <i class="fas fa-edit"></i>
                                         </a>
                                         @if($educator->sessions_count == 0)
-                                            <form action="{{ route('admin.educators.destroy', $educator->id) }}" method="POST"
+                                            <form action="{{ route('panel.educators.destroy', $educator->id) }}" method="POST"
                                                 class="d-inline"
                                                 onsubmit="return confirm('Are you sure you want to delete this educator?')">
                                                 @csrf
@@ -207,10 +206,11 @@
                                     <td class="font-weight-bold">{{ $assignment->educator->name ?? '-' }}</td>
                                     <td><span class="badge badge-dark">{{ $assignment->label }}</span></td>
                                     <td>
-                                        <span class="badge"
-                                            style="background: {{ $assignment->type == 'taman' ? '#28a745' : '#7B3F2A' }}; color: white;">
-                                            {{ $assignment->type == 'taman' ? 'Taman' : 'Museum' }}
-                                        </span>
+                                        @if($assignment->tour)
+                                            <span class="badge badge-primary">{{ $assignment->tour->name }}</span>
+                                        @else
+                                            <span class="badge badge-secondary">-</span>
+                                        @endif
                                     </td>
                                     <td>{{ $assignment->booked }}/{{ $assignment->capacity }}</td>
                                 </tr>

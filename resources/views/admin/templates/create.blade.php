@@ -7,12 +7,12 @@
         <h1 class="h3 mb-0 text-gray-800">
             <i class="fas fa-plus text-primary"></i> Create Session Template
         </h1>
-        <a href="{{ route('admin.templates.index') }}" class="btn btn-outline-primary">
+        <a href="{{ route('panel.templates.index') }}" class="btn btn-outline-primary">
             <i class="fas fa-arrow-left"></i> Back to Session Templates
         </a>
     </div>
 
-    <form action="{{ route('admin.templates.store') }}" method="POST" id="templateForm">
+    <form action="{{ route('panel.templates.store') }}" method="POST" id="templateForm">
         @csrf
 
         <!-- Template Info -->
@@ -34,13 +34,16 @@
                     </div>
                     <div class="col-md-4">
                         <div class="form-group">
-                            <label for="type">Tour Type <span class="text-danger">*</span></label>
-                            <select class="form-control @error('type') is-invalid @enderror" id="type" name="type" required>
-                                <option value="" disabled {{ old('type') ? '' : 'selected' }}>Select type</option>
-                                <option value="taman" {{ old('type') == 'taman' ? 'selected' : '' }}>Taman Atsiri</option>
-                                <option value="museum" {{ old('type') == 'museum' ? 'selected' : '' }}>Museum Atsiri</option>
+                            <label for="tour_id">Tour Type <span class="text-danger">*</span></label>
+                            <select class="form-control @error('tour_id') is-invalid @enderror" id="tour_id" name="tour_id" required>
+                                <option value="" disabled {{ old('tour_id') ? '' : 'selected' }}>Select tour</option>
+                                @foreach($tours as $tour)
+                                    <option value="{{ $tour->id }}" {{ old('tour_id') == $tour->id ? 'selected' : '' }}>
+                                        {{ $tour->name }}
+                                    </option>
+                                @endforeach
                             </select>
-                            @error('type')
+                            @error('tour_id')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
@@ -107,7 +110,7 @@
         </div>
 
         <div class="d-flex justify-content-end mb-4">
-            <a href="{{ route('admin.templates.index') }}" class="btn btn-secondary mr-2">Cancel</a>
+            <a href="{{ route('panel.templates.index') }}" class="btn btn-secondary mr-2">Cancel</a>
             <button type="submit" class="btn btn-primary">
                 <i class="fas fa-save"></i> Save Template
             </button>

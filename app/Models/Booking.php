@@ -71,6 +71,18 @@ class Booking extends Model
         return $this->belongsTo(TourSession::class, 'museum_session_id');
     }
 
+    public function bookingSessions()
+    {
+        return $this->belongsToMany(TourSession::class, 'booking_sessions')
+            ->withPivot('tour_id')
+            ->withTimestamps();
+    }
+
+    public function getSessionForTour($tourId)
+    {
+        return $this->bookingSessions()->wherePivot('tour_id', $tourId)->first();
+    }
+
     /**
      * Scopes
      */

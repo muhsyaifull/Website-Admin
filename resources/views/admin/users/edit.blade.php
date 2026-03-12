@@ -7,7 +7,7 @@
         <h1 class="h3 mb-0 text-gray-800">
             <i class="fas fa-user-edit text-primary"></i> Edit User
         </h1>
-        <a href="{{ route('admin.users.index') }}" class="btn btn-outline-primary">
+        <a href="{{ route('panel.users.index') }}" class="btn btn-outline-primary">
             <i class="fas fa-arrow-left"></i> Back to Users
         </a>
     </div>
@@ -30,7 +30,7 @@
                         </div>
                     @endif
 
-                    <form action="{{ route('admin.users.update', $user) }}" method="POST">
+                    <form action="{{ route('panel.users.update', $user) }}" method="POST">
                         @csrf
                         @method('PUT')
 
@@ -170,7 +170,7 @@
                         <!-- Form Actions -->
                         <div class="form-group mt-4 pt-3 border-top">
                             <div class="d-flex justify-content-between">
-                                <a href="{{ route('admin.users.index') }}" class="btn btn-outline-secondary">
+                                <a href="{{ route('panel.users.index') }}" class="btn btn-outline-secondary">
                                     <i class="fas fa-times-circle"></i> Cancel
                                 </a>
                                 <button type="submit" class="btn btn-primary">

@@ -7,7 +7,7 @@
         <h1 class="h3 mb-0 text-gray-800">
             <i class="fas fa-box text-primary"></i> Package Management
         </h1>
-        <a href="{{ route('admin.packages.create') }}" class="btn btn-primary">
+        <a href="{{ route('panel.packages.create') }}" class="btn btn-primary">
             <i class="fas fa-plus"></i> Create Package
         </a>
     </div>
@@ -36,7 +36,8 @@
                             <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
                                 Active Packages</div>
                             <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                {{ $packages->where('is_active', true)->count() }}</div>
+                                {{ $packages->where('is_active', true)->count() }}
+                            </div>
                         </div>
                         <div class="col-auto">
                             <i class="fas fa-check-circle fa-2x text-gray-300"></i>
@@ -54,7 +55,8 @@
                             <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
                                 Inactive Packages</div>
                             <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                {{ $packages->where('is_active', false)->count() }}</div>
+                                {{ $packages->where('is_active', false)->count() }}
+                            </div>
                         </div>
                         <div class="col-auto">
                             <i class="fas fa-pause-circle fa-2x text-gray-300"></i>
@@ -123,32 +125,27 @@
                             <tr>
                                 <td>
                                     <div class="d-flex align-items-center">
-                                        <span class="badge"
-                                            style="background: {{ $package->color }}; color: white; margin-right: 8px;">
-                                            {{ $package->label }}
-                                        </span>
                                         <div>
                                             <div class="font-weight-bold">{{ $package->name }}</div>
                                             <small class="text-muted">{{ Str::limit($package->description, 50) }}</small>
+                                            @if($package->tours && $package->tours->count() > 0)
+                                                <div class="mt-1">
+                                                    @foreach($package->tours as $tour)
+                                                        <span class="badge"
+                                                            style="background: #4e73df20; color: #4e73df; font-size: 10px;">
+                                                            {{ $tour->name }}
+                                                        </span>
+                                                    @endforeach
+                                                </div>
+                                            @endif
                                         </div>
                                     </div>
                                 </td>
                                 <td>
-                                    @if($package->has_saldo && $package->has_resto)
-                                        <span class="badge badge-primary">Full Package</span>
-                                    @elseif($package->has_saldo)
-                                        <span class="badge badge-info">With Voucher</span>
-                                    @elseif($package->has_resto)
-                                        <span class="badge badge-success">With Refreshment</span>
-                                    @else
-                                        <span class="badge badge-secondary">Basic</span>
-                                    @endif
+                                    <span class="badge badge-primary">{{ $package->label }}</span>
                                 </td>
                                 <td>
                                     <div class="font-weight-bold">{{ $package->formatted_price }}</div>
-                                    @if($package->has_saldo)
-                                        <small class="text-primary">+ {{ $package->formatted_saldo_amount }} voucher</small>
-                                    @endif
                                 </td>
                                 <td>
                                     @if($package->is_active)
@@ -172,15 +169,15 @@
                                 </td>
                                 <td>
                                     <div class="btn-group" role="group">
-                                        <a href="{{ route('admin.packages.show', $package->id) }}"
+                                        <a href="{{ route('panel.packages.show', $package->id) }}"
                                             class="btn btn-sm btn-outline-info" title="View Details">
                                             <i class="fas fa-eye"></i>
                                         </a>
-                                        <a href="{{ route('admin.packages.edit', $package->id) }}"
+                                        <a href="{{ route('panel.packages.edit', $package->id) }}"
                                             class="btn btn-sm btn-outline-warning" title="Edit">
                                             <i class="fas fa-edit"></i>
                                         </a>
-                                        <form action="{{ route('admin.packages.destroy', $package->id) }}" method="POST"
+                                        <form action="{{ route('panel.packages.destroy', $package->id) }}" method="POST"
                                             class="d-inline"
                                             onsubmit="return confirm('Are you sure you want to delete this package?')">
                                             @csrf
@@ -206,10 +203,10 @@
     <script>
         $(document).ready(function () {
             $('#packagesTable').DataTable({
-                "order": [[5, "desc"]], 
+                "order": [[5, "desc"]],
                 "columnDefs": [
-                    { "orderable": false, "targets": [6] }, 
-                    { "searchable": false, "targets": [6] }  
+                    { "orderable": false, "targets": [6] },
+                    { "searchable": false, "targets": [6] }
                 ],
                 "pageLength": 25,
                 "responsive": true,

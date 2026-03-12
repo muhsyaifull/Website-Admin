@@ -8,10 +8,10 @@
             <i class="fas fa-box text-primary"></i> Package Details
         </h1>
         <div>
-            <a href="{{ route('admin.packages.index') }}" class="btn btn-outline-primary mr-2">
+            <a href="{{ route('panel.packages.index') }}" class="btn btn-outline-primary mr-2">
                 <i class="fas fa-arrow-left"></i> Back to List
             </a>
-            <a href="{{ route('admin.packages.edit', $package->id) }}" class="btn btn-warning">
+            <a href="{{ route('panel.packages.edit', $package->id) }}" class="btn btn-warning">
                 <i class="fas fa-edit"></i> Edit Package
             </a>
         </div>
@@ -22,10 +22,10 @@
         <div class="col-lg-8">
             <!-- Main Package Info -->
             <div class="card shadow mb-4">
-                <div class="card-header py-3" style="background: {{ $package->bg_color }};">
+                <div class="card-header py-3">
                     <div class="d-flex justify-content-between align-items-center">
-                        <h6 class="m-0 font-weight-bold" style="color: {{ $package->color }};">
-                            <span class="badge" style="background: {{ $package->color }}; color: white;">
+                        <h6 class="m-0 font-weight-bold text-primary">
+                            <span class="badge badge-primary" style="color: white;">
                                 {{ $package->label }}
                             </span>
                             {{ $package->name }}
@@ -45,6 +45,20 @@
                                 <tr>
                                     <td class="font-weight-bold" width="40%">Price:</td>
                                     <td class="h5 text-success">{{ $package->formatted_price }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="font-weight-bold">Tours:</td>
+                                    <td>
+                                        @if($package->tours && $package->tours->count() > 0)
+                                            @foreach($package->tours as $tour)
+                                                <span class="badge badge-primary" style="color: white;">
+                                                    {{ $tour->name }}
+                                                </span>
+                                            @endforeach
+                                        @else
+                                            <span class="text-muted">No tours assigned</span>
+                                        @endif
+                                    </td>
                                 </tr>
                                 <tr>
                                     <td class="font-weight-bold">Status:</td>
@@ -70,38 +84,10 @@
                         </div>
                         <div class="col-md-6">
                             <h6 class="text-info">Package Features</h6>
-                            @if($package->has_saldo && $package->has_resto)
-                                <div class="alert alert-primary">
-                                    <i class="fas fa-star"></i> <strong>Full Package</strong>
-                                    <br><small>Includes voucher and refreshment</small>
-                                </div>
-                            @elseif($package->has_saldo)
-                                <div class="alert alert-info">
-                                    <i class="fas fa-credit-card"></i> <strong>With Voucher</strong>
-                                    <br><small>{{ $package->formatted_saldo_amount }} voucher included</small>
-                                </div>
-                            @elseif($package->has_resto)
-                                <div class="alert alert-success">
-                                    <i class="fas fa-coffee"></i> <strong>With Refreshment</strong>
-                                    <br><small>Refreshment package included</small>
-                                </div>
-                            @else
-                                <div class="alert alert-secondary">
-                                    <i class="fas fa-ticket-alt"></i> <strong>Basic Package</strong>
-                                    <br><small>Tour only</small>
-                                </div>
-                            @endif
-
-                            @if($package->has_saldo)
-                                <div class="card border-primary mt-3">
-                                    <div class="card-body py-2">
-                                        <h6 class="text-primary mb-1">Voucher Information</h6>
-                                        <div class="text-muted">
-                                            Amount: <strong>{{ $package->formatted_saldo_amount }}</strong>
-                                        </div>
-                                    </div>
-                                </div>
-                            @endif
+                            <div class="alert alert-secondary">
+                                <i class="fas fa-ticket-alt"></i> <strong>Tour Package</strong>
+                                <br><small>Tour package based on selected tours</small>
+                            </div>
                         </div>
                     </div>
 
@@ -171,7 +157,7 @@
                                                 </span>
                                             </td>
                                             <td>
-                                                <a href="{{ route('admin.bookings.show', $booking->id) }}"
+                                                <a href="{{ route('panel.bookings.show', $booking->id) }}"
                                                     class="btn btn-sm btn-outline-info">
                                                     <i class="fas fa-eye"></i>
                                                 </a>
@@ -184,7 +170,7 @@
 
                         @if($package->bookings->count() > 10)
                             <div class="text-center mt-3">
-                                <a href="{{ route('admin.bookings.index') }}?package={{ $package->id }}"
+                                <a href="{{ route('panel.bookings.index') }}?package={{ $package->id }}"
                                     class="btn btn-outline-primary">
                                     View All {{ $package->bookings->count() }} Bookings
                                 </a>

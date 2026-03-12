@@ -7,12 +7,12 @@
         <h1 class="h3 mb-0 text-gray-800">
             <i class="fas fa-edit text-primary"></i> Edit Template: {{ $template->name }}
         </h1>
-        <a href="{{ route('admin.templates.index') }}" class="btn btn-outline-primary">
+        <a href="{{ route('panel.templates.index') }}" class="btn btn-outline-primary">
             <i class="fas fa-arrow-left"></i> Back
         </a>
     </div>
 
-    <form action="{{ route('admin.templates.update', $template) }}" method="POST" id="templateForm">
+    <form action="{{ route('panel.templates.update', $template) }}" method="POST" id="templateForm">
         @csrf
         @method('PUT')
 
@@ -102,7 +102,7 @@
         </div>
 
         <div class="d-flex justify-content-end mb-4">
-            <a href="{{ route('admin.templates.index') }}" class="btn btn-secondary mr-2">Cancel</a>
+            <a href="{{ route('panel.templates.index') }}" class="btn btn-secondary mr-2">Cancel</a>
             <button type="submit" class="btn btn-primary">
                 <i class="fas fa-save"></i> Save Changes
             </button>

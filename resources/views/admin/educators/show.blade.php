@@ -8,10 +8,10 @@
             <i class="fas fa-chalkboard-teacher text-primary"></i> {{ $educator->name }}
         </h1>
         <div>
-            <a href="{{ route('admin.educators.edit', $educator) }}" class="btn btn-warning">
+            <a href="{{ route('panel.educators.edit', $educator) }}" class="btn btn-warning">
                 <i class="fas fa-edit"></i> Edit
             </a>
-            <a href="{{ route('admin.educators.index') }}" class="btn btn-outline-secondary">
+            <a href="{{ route('panel.educators.index') }}" class="btn btn-outline-secondary">
                 <i class="fas fa-arrow-left"></i> Back
             </a>
         </div>
@@ -37,12 +37,12 @@
                         <tr>
                             <th class="text-muted">Specialization</th>
                             <td>
-                                @if($educator->specialization == 'taman')
-                                    <span class="badge badge-success">Taman Atsiri</span>
-                                @elseif($educator->specialization == 'museum')
-                                    <span class="badge" style="background: #7B3F2A; color: white;">Museum Atsiri</span>
+                                @if($educator->tours && $educator->tours->count() > 0)
+                                    @foreach($educator->tours as $tour)
+                                        <span class="badge badge-primary">{{ $tour->name }}</span>
+                                    @endforeach
                                 @else
-                                    <span class="badge badge-info">Both</span>
+                                    <span class="badge badge-secondary">No specialization</span>
                                 @endif
                             </td>
                         </tr>
@@ -89,10 +89,13 @@
                                         <tr>
                                             <td><span class="badge badge-dark">{{ $session->label }}</span></td>
                                             <td>
-                                                <span class="badge"
-                                                    style="background: {{ $session->type == 'taman' ? '#28a745' : '#7B3F2A' }}; color: white;">
-                                                    {{ $session->type == 'taman' ? 'Taman' : 'Museum' }}
-                                                </span>
+                                                @if($session->tour)
+                                                    <span class="badge badge-primary" style="color: white;">
+                                                        {{ $session->tour->name }}
+                                                    </span>
+                                                @else
+                                                    <span class="badge badge-secondary">{{ $session->type }}</span>
+                                                @endif
                                             </td>
                                             <td>{{ $session->booked }}/{{ $session->capacity }}</td>
                                             <td>
@@ -142,10 +145,13 @@
                                             class="text-muted">({{ $session->date->translatedFormat('l') }})</small></td>
                                     <td><span class="badge badge-dark">{{ $session->label }}</span></td>
                                     <td>
-                                        <span class="badge"
-                                            style="background: {{ $session->type == 'taman' ? '#28a745' : '#7B3F2A' }}; color: white;">
-                                            {{ $session->type == 'taman' ? 'Taman' : 'Museum' }}
-                                        </span>
+                                        @if($session->tour)
+                                            <span class="badge badge-primary" style="color: white;">
+                                                {{ $session->tour->name }}
+                                            </span>
+                                        @else
+                                            <span class="badge badge-secondary">{{ $session->type }}</span>
+                                        @endif
                                     </td>
                                     <td>{{ $session->booked }}/{{ $session->capacity }}</td>
                                 </tr>

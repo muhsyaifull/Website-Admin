@@ -68,17 +68,17 @@
                                     <div class="d-flex justify-content-between align-items-start">
                                         <div>
                                             <span class="badge text-white font-weight-bold mr-2"
-                                                style="background: {{ $package->color }}; padding: 2px 10px; font-size: 12px;">{{ $package->label }}</span>
+                                                style="background: #4e73df; padding: 2px 10px; font-size: 12px;">{{ $package->label }}</span>
                                             <span class="font-weight-bold"
                                                 style="color: #4A2218; font-size: 15px;">{{ $package->name }}</span>
                                         </div>
                                         <span class="font-weight-bold"
-                                            style="color: {{ $package->color }}; font-size: 16px;">{{ $package->formatted_price }}</span>
+                                            style="color: #4e73df; font-size: 16px;">{{ $package->formatted_price }}</span>
                                     </div>
                                     <div class="d-flex flex-wrap mt-2">
                                         @foreach($package->includes as $item)
                                             <span class="badge mr-1 mb-1"
-                                                style="background: {{ $package->bg_color }}; color: {{ $package->color }}; border: 1px solid {{ $package->color }}50; padding: 2px 10px; font-size: 12px;">
+                                                style="background: #4e73df15; color: #4e73df; border: 1px solid #4e73df50; padding: 2px 10px; font-size: 12px;">
                                                 ✓ {{ $item }}
                                             </span>
                                         @endforeach
@@ -172,74 +172,45 @@
                     <div id="participantInfo" class="mb-3"></div>
 
                     <div class="row">
-                        <div class="col-md-6">
-                            <h6 class="font-weight-bold text-success mb-3">
-                                <i class="fas fa-seedling"></i> Tour Taman Atsiri
-                                <span id="selectedTamanInfo" class="badge badge-success ml-2" style="display: none;"></span>
-                            </h6>
-                            <div id="tamanSessions">
-                                @foreach($tamanSessions as $session)
-                                    <div class="session-option mb-2 border rounded p-2" data-session="{{ $session->id }}"
-                                        data-type="taman" data-capacity="{{ $session->capacity }}"
-                                        data-booked="{{ $session->booked }}"
-                                        style="cursor: pointer; border-color: #D0B8AD!important; background: #FFFCFA;">
-                                        <div class="d-flex justify-content-between align-items-center mb-1">
-                                            <strong style="color: #4A2218;">{{ $session->label }}</strong>
-                                            <small class="text-muted">Guide: {{ $session->educator->name }}</small>
-                                        </div>
-                                        <div class="progress mb-1" style="height: 6px;">
-                                            <div class="progress-bar"
-                                                style="width: {{ $session->booking_percentage }}%; background: {{ $session->bar_color }};">
+                        @foreach($tours as $tour)
+                            @php $sessions = $tourSessions[$tour->id] ?? collect(); @endphp
+                            <div class="col-md-6 tour-session-group" data-tour-id="{{ $tour->id }}">
+                                <h6 class="font-weight-bold mb-3 text-primary">
+                                    {{ $tour->name }}
+                                    <span class="selected-tour-info badge ml-2" data-tour="{{ $tour->id }}"
+                                        style="background: #4e73df; display: none;"></span>
+                                </h6>
+                                <div class="tour-sessions-container" data-tour-id="{{ $tour->id }}">
+                                    @foreach($sessions as $session)
+                                        <div class="session-option mb-2 border rounded p-2" data-session="{{ $session->id }}"
+                                            data-tour-id="{{ $tour->id }}" data-capacity="{{ $session->capacity }}"
+                                            data-booked="{{ $session->booked }}"
+                                            style="cursor: pointer; border-color: #D0B8AD!important; background: #FFFCFA;">
+                                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                                <strong style="color: #4A2218;">{{ $session->label }}</strong>
+                                                <small class="text-muted">Guide:
+                                                    {{ $session->educator ? $session->educator->name : '-' }}</small>
+                                            </div>
+                                            <div class="progress mb-1" style="height: 6px;">
+                                                <div class="progress-bar"
+                                                    style="width: {{ $session->booking_percentage }}%; background: {{ $session->bar_color }};">
+                                                </div>
+                                            </div>
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <small class="text-muted">{{ $session->booked }}/{{ $session->capacity }}
+                                                    participants</small>
+                                                <span class="badge"
+                                                    style="background: {{ $session->status_background }}; color: {{ $session->status_color }}; font-size: 11px;">
+                                                    {{ $session->status }}
+                                                </span>
                                             </div>
                                         </div>
-                                        <div class="d-flex justify-content-between align-items-center">
-                                            <small class="text-muted">{{ $session->booked }}/{{ $session->capacity }}
-                                                participants</small>
-                                            <span class="badge"
-                                                style="background: {{ $session->status_background }}; color: {{ $session->status_color }}; font-size: 11px;">
-                                                {{ $session->status }}
-                                            </span>
-                                        </div>
-                                    </div>
-                                @endforeach
+                                    @endforeach
+                                </div>
+                                <input type="hidden" name="tour_session_{{ $tour->id }}" class="tour-session-input"
+                                    data-tour-id="{{ $tour->id }}">
                             </div>
-                            <input type="hidden" name="taman_session_id" id="tamanSessionId">
-                        </div>
-
-                        <div class="col-md-6">
-                            <h6 class="font-weight-bold mb-3" style="color: #7B3F2A;">
-                                <i class="fas fa-building"></i> Tour Museum Atsiri
-                                <span id="selectedMuseumInfo" class="badge ml-2"
-                                    style="background: #7B3F2A; display: none;"></span>
-                            </h6>
-                            <div id="museumSessions">
-                                @foreach($museumSessions as $session)
-                                    <div class="session-option mb-2 border rounded p-2" data-session="{{ $session->id }}"
-                                        data-type="museum" data-capacity="{{ $session->capacity }}"
-                                        data-booked="{{ $session->booked }}"
-                                        style="cursor: pointer; border-color: #D0B8AD!important; background: #FFFCFA;">
-                                        <div class="d-flex justify-content-between align-items-center mb-1">
-                                            <strong style="color: #4A2218;">{{ $session->label }}</strong>
-                                            <small class="text-muted">Guide: {{ $session->educator->name }}</small>
-                                        </div>
-                                        <div class="progress mb-1" style="height: 6px;">
-                                            <div class="progress-bar"
-                                                style="width: {{ $session->booking_percentage }}%; background: {{ $session->bar_color }};">
-                                            </div>
-                                        </div>
-                                        <div class="d-flex justify-content-between align-items-center">
-                                            <small class="text-muted">{{ $session->booked }}/{{ $session->capacity }}
-                                                participants</small>
-                                            <span class="badge"
-                                                style="background: {{ $session->status_background }}; color: {{ $session->status_color }}; font-size: 11px;">
-                                                {{ $session->status }}
-                                            </span>
-                                        </div>
-                                    </div>
-                                @endforeach
-                            </div>
-                            <input type="hidden" name="museum_session_id" id="museumSessionId">
-                        </div>
+                        @endforeach
                     </div>
                 </div>
 
@@ -269,6 +240,44 @@
         let selectedPackage = null;
         let adultCount = 1;
         let childCount = 0;
+        const packages = @json($packages);
+        const tours = @json($tours);
+
+        // Track which tours the selected package requires
+        function getPackageTourIds() {
+            if (!selectedPackage) return [];
+            const pkg = packages.find(p => p.id == selectedPackage);
+            return pkg && pkg.tours ? pkg.tours.map(t => t.id) : tours.map(t => t.id);
+        }
+
+        // Check if all required tour sessions are selected
+        function allTourSessionsSelected() {
+            const requiredTourIds = getPackageTourIds();
+            for (const tourId of requiredTourIds) {
+                const input = $(`.tour-session-input[data-tour-id="${tourId}"]`);
+                if (!input.val()) return false;
+            }
+            return true;
+        }
+
+        // Show/hide tour groups based on selected package
+        function updateVisibleTourGroups() {
+            const requiredTourIds = getPackageTourIds();
+            $('.tour-session-group').each(function () {
+                const tourId = $(this).data('tour-id');
+                if (requiredTourIds.includes(tourId)) {
+                    $(this).show();
+                } else {
+                    $(this).hide();
+                    $(this).find('.tour-session-input').val('');
+                    $(this).find('.session-option').removeClass('selected').css({
+                        'border-color': '#D0B8AD',
+                        'background': '#FFFCFA'
+                    });
+                    $(this).find('.selected-tour-info').hide();
+                }
+            });
+        }
 
         // Package selection
         $(document).on('click', '.package-option', function () {
@@ -288,9 +297,9 @@
             $('#nextBtn').prop('disabled', false);
         });
 
-        // Session selection
+        // Session selection - dynamic by tour
         $(document).on('click', '.session-option', function () {
-            const type = $(this).data('type');
+            const tourId = $(this).data('tour-id');
             const sessionId = $(this).data('session');
             const capacity = $(this).data('capacity');
             const booked = $(this).data('booked');
@@ -302,30 +311,23 @@
                 return;
             }
 
-            // Remove selection from same type
-            $(`[data-type="${type}"]`).removeClass('selected').css({
+            // Remove selection from same tour group
+            $(`.session-option[data-tour-id="${tourId}"]`).removeClass('selected').css({
                 'border-color': '#D0B8AD',
                 'background': '#FFFCFA'
             });
 
-            // Select this session
             $(this).addClass('selected').css({
                 'border-color': '#7B3F2A',
                 'border-width': '2.5px',
                 'background': '#F5EDE8'
             });
 
-            if (type === 'taman') {
-                $('#tamanSessionId').val(sessionId);
-                $('#selectedTamanInfo').text($(this).find('strong').text()).show();
-            } else {
-                $('#museumSessionId').val(sessionId);
-                $('#selectedMuseumInfo').text($(this).find('strong').text()).show();
-            }
+            $(`.tour-session-input[data-tour-id="${tourId}"]`).val(sessionId);
+            $(`.selected-tour-info[data-tour="${tourId}"]`).text($(this).find('strong').text()).show();
 
-            // Check if both sessions are selected
-            if ($('#tamanSessionId').val() && $('#museumSessionId').val()) {
-                $('#nextBtn').prop('disabled', false);
+            if (allTourSessionsSelected()) {
+                $('#submitBtn').prop('disabled', false);
             }
         });
 
@@ -365,8 +367,6 @@
             $('#childCount').val(childCount);
 
             if (selectedPackage) {
-                // Update price calculation
-                const packages = @json($packages);
                 const pkg = packages.find(p => p.id == selectedPackage);
                 const total = pkg.price * adultCount;
                 $('#priceCalculation').html(`Total: ${adultCount} × Rp ${pkg.price.toLocaleString('id-ID')} = <span style="font-size: 16px;">Rp ${total.toLocaleString('id-ID')}</span>`);
@@ -375,13 +375,11 @@
 
         function changeStep(direction) {
             if (direction === 1) {
-                // Validation before proceeding
                 if (currentStep === 1 && !selectedPackage) {
                     alert('Please select a bundling package first');
                     return;
                 }
                 if (currentStep === 3) {
-                    // Validate form fields
                     const name = $('[name="representative_name"]').val();
                     const address = $('[name="representative_address"]').val();
                     const phone = $('[name="representative_phone"]').val();
@@ -395,51 +393,40 @@
             }
 
             currentStep += direction;
-
-            // Hide all steps
             $('.booking-step').hide();
-
-            // Show current step
             $(`#step${currentStep}`).show();
-
-            // Update step progress bar
             updateStepProgress();
 
-            // Handle specific step logic
             if (currentStep === 2 && direction === 1) {
-                // Show selected package info
-                const packages = @json($packages);
                 const pkg = packages.find(p => p.id == selectedPackage);
                 $('#selectedPackageInfo').html(`
-                        <div class="text-muted">Selected package: <strong style="color: #7B3F2A;">${pkg.label} — ${pkg.name}</strong></div>
-                    `);
+                            <div class="text-muted">Selected package: <strong style="color: #7B3F2A;">${pkg.label} — ${pkg.name}</strong></div>
+                        `);
                 updateQuantityDisplay();
                 $('#nextBtn').prop('disabled', false);
             }
 
             if (currentStep === 4 && direction === 1) {
-                // Show participant info
+                const pkg = packages.find(p => p.id == selectedPackage);
                 $('#participantInfo').html(`
-                        <div class="text-muted">${adultCount + childCount} participants • ${selectedPackage ? packages.find(p => p.id == selectedPackage).name : ''}</div>
-                    `);
+                            <div class="text-muted">${adultCount + childCount} participants • ${pkg ? pkg.name : ''}</div>
+                        `);
+                updateVisibleTourGroups();
                 $('#nextBtn').prop('disabled', true);
             }
 
-            // Update buttons
             $('#prevBtn').prop('disabled', currentStep === 1);
 
             if (currentStep === 4) {
                 $('#nextBtn').hide();
-                $('#submitBtn').show().prop('disabled', !$('#tamanSessionId').val() || !$('#museumSessionId').val());
+                $('#submitBtn').show().prop('disabled', !allTourSessionsSelected());
             } else {
                 $('#nextBtn').show();
                 $('#submitBtn').hide();
 
                 if (currentStep === 1) {
                     $('#nextBtn').prop('disabled', !selectedPackage);
-                } else if (currentStep === 2) {
-                    $('#nextBtn').prop('disabled', false);
-                } else if (currentStep === 3) {
+                } else if (currentStep === 2 || currentStep === 3) {
                     $('#nextBtn').prop('disabled', false);
                 }
             }
@@ -464,11 +451,10 @@
             });
         }
 
-        // Form validation
         $('#bookingForm').submit(function (e) {
-            if (!$('#tamanSessionId').val() || !$('#museumSessionId').val()) {
+            if (!allTourSessionsSelected()) {
                 e.preventDefault();
-                alert('Please select schedules for both tours (Taman and Museum)');
+                alert('Please select schedules for all required tours');
             }
         });
     </script>

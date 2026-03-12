@@ -12,6 +12,7 @@ class SessionTemplate extends Model
     protected $fillable = [
         'name',
         'type',
+        'tour_id',
         'description',
         'is_default',
         'apply_days',
@@ -29,6 +30,11 @@ class SessionTemplate extends Model
         return $this->hasMany(SessionTemplateSlot::class)->orderBy('sort_order');
     }
 
+    public function tour()
+    {
+        return $this->belongsTo(Tour::class);
+    }
+
     public function tourSessions()
     {
         return $this->hasMany(TourSession::class);
@@ -40,20 +46,15 @@ class SessionTemplate extends Model
         return $query->where('is_active', true);
     }
 
-    public function scopeTaman($query)
+    public function scopeForTour($query, $tourId)
     {
-        return $query->where('type', 'taman');
-    }
-
-    public function scopeMuseum($query)
-    {
-        return $query->where('type', 'museum');
+        return $query->where('tour_id', $tourId);
     }
 
     // Accessors
     public function getTourTypeLabelAttribute()
     {
-        return $this->type === 'taman' ? 'Taman Atsiri' : 'Museum Atsiri';
+        return $this->tour ? $this->tour->name : ($this->type === 'taman' ? 'Taman Atsiri' : 'Museum Atsiri');
     }
 
     public function getApplyDaysLabelAttribute()
@@ -72,16 +73,14 @@ class SessionTemplate extends Model
     }
 
     /**
-     * Find the best matching template for a given date and type.
-     * Priority: specific day match > default (if day matches or no days set) > null
+     * Find the best matching template for a given date and tour.
      */
-    public static function findForDate($date, $type)
+    public static function findForDate($date, $tourId)
     {
-        $dayOfWeek = \Carbon\Carbon::parse($date)->dayOfWeek; // 0=Sun, 6=Sat
+        $dayOfWeek = \Carbon\Carbon::parse($date)->dayOfWeek;
 
-        // First: look for active non-default template with matching day
         $template = static::active()
-            ->where('type', $type)
+            ->where('tour_id', $tourId)
             ->where('is_default', false)
             ->whereJsonContains('apply_days', $dayOfWeek)
             ->first();
@@ -90,57 +89,55 @@ class SessionTemplate extends Model
             return $template;
         }
 
-        // Fallback: default template, but only if its apply_days includes this day or is empty
         return static::active()
-            ->where('type', $type)
+            ->where('tour_id', $tourId)
             ->where('is_default', true)
             ->where(function ($q) use ($dayOfWeek) {
                 $q->whereJsonContains('apply_days', $dayOfWeek)
-                    ->orWhereNull('apply_days')
-                    ->orWhereRaw('JSON_LENGTH(apply_days) = 0');
+                    ->orWhereNull('apply_days');
             })
             ->first();
     }
 
     /**
      * Ensure tour sessions exist for a given date.
-     * Auto-generates from all matching active templates.
-     * apply_days is always respected — even for default templates.
+     * Auto-generates from all matching active templates for all active tours.
      */
     public static function ensureSessionsForDate($date)
     {
         $date = \Carbon\Carbon::parse($date);
         $dayOfWeek = $date->dayOfWeek;
 
-        foreach (['taman', 'museum'] as $type) {
-            // Get all active templates whose apply_days match this day (or is empty/null for defaults)
+        $tours = Tour::active()->get();
+
+        foreach ($tours as $tour) {
             $templates = static::active()
-                ->where('type', $type)
+                ->where('tour_id', $tour->id)
                 ->where(function ($q) use ($dayOfWeek) {
                     $q->whereJsonContains('apply_days', $dayOfWeek)
-                        ->orWhereNull('apply_days')
-                        ->orWhereRaw('JSON_LENGTH(apply_days) = 0');
+                        ->orWhere(function ($q2) {
+                            $q2->whereNull('apply_days')
+                                ->where('is_default', true);
+                        });
                 })
                 ->get();
 
-            // If a specific (non-default) template matches, exclude defaults
             $hasSpecific = $templates->where('is_default', false)->isNotEmpty();
             if ($hasSpecific) {
                 $templates = $templates->where('is_default', false);
             }
 
-            // Clean up sessions from non-matching templates (only those with 0 bookings)
             $matchingIds = $templates->pluck('id')->toArray();
-            TourSession::where('type', $type)
+            TourSession::where('tour_id', $tour->id)
                 ->whereDate('date', $date)
+                ->where('date', '>', \Carbon\Carbon::today())
                 ->whereNotNull('session_template_id')
                 ->whereNotIn('session_template_id', $matchingIds)
                 ->where('booked', 0)
                 ->delete();
 
             foreach ($templates as $template) {
-                // Skip if sessions from THIS template already exist for this date
-                $existing = TourSession::where('type', $type)
+                $existing = TourSession::where('tour_id', $tour->id)
                     ->whereDate('date', $date)
                     ->where('session_template_id', $template->id)
                     ->exists();
@@ -151,14 +148,18 @@ class SessionTemplate extends Model
 
                 foreach ($template->slots()->where('is_active', true)->get() as $slot) {
                     $educatorId = $slot->educator_id
-                        ?? Educator::active()->where('specialization', $type)->inRandomOrder()->first()?->id;
+                        ?? Educator::active()
+                            ->whereHas('tours', fn($q) => $q->where('tours.id', $tour->id))
+                            ->inRandomOrder()
+                            ->first()?->id;
 
                     if (!$educatorId) {
                         continue;
                     }
 
                     TourSession::create([
-                        'type' => $type,
+                        'type' => $tour->slug,
+                        'tour_id' => $tour->id,
                         'date' => $date->toDateString(),
                         'start_time' => \Carbon\Carbon::parse($slot->start_time)->format('H:i'),
                         'end_time' => \Carbon\Carbon::parse($slot->end_time)->format('H:i'),

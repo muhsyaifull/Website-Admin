@@ -57,7 +57,8 @@
                         <div class="col mr-2">
                             <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Revenue</div>
                             <div class="h5 mb-0 font-weight-bold text-gray-800">Rp
-                                {{ number_format($totalRevenue, 0, ',', '.') }}</div>
+                                {{ number_format($totalRevenue, 0, ',', '.') }}
+                            </div>
                         </div>
                         <div class="col-auto">
                             <i class="fas fa-money-bill-wave fa-2x text-info"></i>
@@ -89,105 +90,60 @@
 
     <!-- Tour Sessions Overview -->
     <div class="row">
-        <!-- Taman Sessions -->
-        <div class="col-lg-6 mb-4">
-            <div class="card shadow">
-                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between"
-                    style="background: #EBF2EB;">
-                    <h6 class="m-0 font-weight-bold" style="color: #5A7A5A;">
-                        <i class="fas fa-seedling"></i> Tour Taman Atsiri
-                    </h6>
-                    <small class="text-muted">{{ $tamanSessions->sum('booked') }}/{{ $tamanSessions->sum('capacity') }}
-                        participants</small>
-                </div>
-                <div class="card-body">
-                    @foreach($tamanSessions as $session)
-                        <div class="mb-3 p-3 border rounded"
-                            style="background: {{ $session->is_full ? '#F9F3F2' : '#FFFCFA' }}; border-color: {{ $session->is_full ? '#DDCCC8' : '#D0B8AD' }}!important;">
-                            <div class="d-flex justify-content-between align-items-center mb-2">
-                                <div class="d-flex align-items-center">
-                                    @if($session->isCurrentlyActive())
-                                        <span class="badge badge-success mr-2">IN PROGRESS</span>
-                                    @endif
-                                    <strong style="color: #4A2218;">{{ $session->label }}</strong>
+        @foreach($tours as $tour)
+            @php $sessions = $tourSessions[$tour->id] ?? collect(); @endphp
+            <div class="col-lg-6 mb-4">
+                <div class="card shadow">
+                    <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between"
+                        style="background: #4e73df20;">
+                        <h6 class="m-0 font-weight-bold text-primary">
+                            {{ $tour->name }}
+                        </h6>
+                        <small class="text-muted">{{ $sessions->sum('booked') }}/{{ $sessions->sum('capacity') }}
+                            participants</small>
+                    </div>
+                    <div class="card-body">
+                        @forelse($sessions as $session)
+                            <div class="mb-3 p-3 border rounded"
+                                style="background: {{ $session->is_full ? '#F9F3F2' : '#FFFCFA' }}; border-color: {{ $session->is_full ? '#DDCCC8' : '#D0B8AD' }}!important;">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <div class="d-flex align-items-center">
+                                        @if($session->isCurrentlyActive())
+                                            <span class="badge badge-success mr-2">IN PROGRESS</span>
+                                        @endif
+                                        <strong style="color: #4A2218;">{{ $session->label }}</strong>
+                                    </div>
+                                    <small class="text-muted">Guide:
+                                        <strong>{{ $session->educator ? $session->educator->name : '-' }}</strong></small>
                                 </div>
-                                <small class="text-muted">Guide: <strong>{{ $session->educator->name }}</strong></small>
-                            </div>
-                            <div class="progress mb-2" style="height: 8px;">
-                                <div class="progress-bar" role="progressbar"
-                                    style="width: {{ $session->booking_percentage }}%; background-color: {{ $session->bar_color }};"
-                                    aria-valuenow="{{ $session->booking_percentage }}" aria-valuemin="0" aria-valuemax="100">
+                                <div class="progress mb-2" style="height: 8px;">
+                                    <div class="progress-bar" role="progressbar"
+                                        style="width: {{ $session->booking_percentage }}%; background-color: {{ $session->bar_color }};"
+                                        aria-valuenow="{{ $session->booking_percentage }}" aria-valuemin="0" aria-valuemax="100">
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="d-flex justify-content-between align-items-center">
-                                <small class="text-muted">{{ $session->booked }}/{{ $session->capacity }} participants</small>
-                                <span class="badge"
-                                    style="background: {{ $session->status_background }}; color: {{ $session->status_color }};">
-                                    {{ $session->status }}
-                                </span>
-                            </div>
-                            @if($session->is_full)
-                                <small class="text-danger mt-1"><i class="fas fa-exclamation-triangle"></i> Slot full — not
-                                    accepting new participants</small>
-                            @elseif($session->is_low)
-                                <small class="text-warning mt-1"><i class="fas fa-bolt"></i> Almost full — 
-                                    {{ $session->available }} spots remaining</small>
-                            @endif
-                        </div>
-                    @endforeach
-                </div>
-            </div>
-        </div>
-
-        <!-- Museum Sessions -->
-        <div class="col-lg-6 mb-4">
-            <div class="card shadow">
-                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between"
-                    style="background: #F5EDE8;">
-                    <h6 class="m-0 font-weight-bold" style="color: #7B3F2A;">
-                        <i class="fas fa-building"></i> Tour Museum Atsiri
-                    </h6>
-                    <small class="text-muted">{{ $museumSessions->sum('booked') }}/{{ $museumSessions->sum('capacity') }}
-                        participants</small>
-                </div>
-                <div class="card-body">
-                    @foreach($museumSessions as $session)
-                        <div class="mb-3 p-3 border rounded"
-                            style="background: {{ $session->is_full ? '#F9F3F2' : '#FFFCFA' }}; border-color: {{ $session->is_full ? '#DDCCC8' : '#D0B8AD' }}!important;">
-                            <div class="d-flex justify-content-between align-items-center mb-2">
-                                <div class="d-flex align-items-center">
-                                    @if($session->isCurrentlyActive())
-                                        <span class="badge badge-success mr-2">IN PROGRESS</span>
-                                    @endif
-                                    <strong style="color: #4A2218;">{{ $session->label }}</strong>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <small class="text-muted">{{ $session->booked }}/{{ $session->capacity }} participants</small>
+                                    <span class="badge"
+                                        style="background: {{ $session->status_background }}; color: {{ $session->status_color }};">
+                                        {{ $session->status }}
+                                    </span>
                                 </div>
-                                <small class="text-muted">Guide: <strong>{{ $session->educator->name }}</strong></small>
+                                @if($session->is_full)
+                                    <small class="text-danger mt-1"><i class="fas fa-exclamation-triangle"></i> Slot full — not
+                                        accepting new participants</small>
+                                @elseif($session->is_low)
+                                    <small class="text-warning mt-1"><i class="fas fa-bolt"></i> Almost full —
+                                        {{ $session->available }} spots remaining</small>
+                                @endif
                             </div>
-                            <div class="progress mb-2" style="height: 8px;">
-                                <div class="progress-bar" role="progressbar"
-                                    style="width: {{ $session->booking_percentage }}%; background-color: {{ $session->bar_color }};"
-                                    aria-valuenow="{{ $session->booking_percentage }}" aria-valuemin="0" aria-valuemax="100">
-                                </div>
-                            </div>
-                            <div class="d-flex justify-content-between align-items-center">
-                                <small class="text-muted">{{ $session->booked }}/{{ $session->capacity }} participants</small>
-                                <span class="badge"
-                                    style="background: {{ $session->status_background }}; color: {{ $session->status_color }};">
-                                    {{ $session->status }}
-                                </span>
-                            </div>
-                            @if($session->is_full)
-                                <small class="text-danger mt-1"><i class="fas fa-exclamation-triangle"></i> Slot full — not
-                                    accepting new participants</small>
-                            @elseif($session->is_low)
-                                <small class="text-warning mt-1"><i class="fas fa-bolt"></i> Almost full —
-                                    {{ $session->available }} spots remaining</small>
-                            @endif
-                        </div>
-                    @endforeach
+                        @empty
+                            <p class="text-muted text-center mb-0">No sessions available today</p>
+                        @endforelse
+                    </div>
                 </div>
             </div>
-        </div>
+        @endforeach
     </div>
 
     <!-- Recent Bookings -->
@@ -205,8 +161,7 @@
                                 <th>Representative</th>
                                 <th>Package</th>
                                 <th>Participants</th>
-                                <th>Tour Taman</th>
-                                <th>Tour Museum</th>
+                                <th>Sessions</th>
                                 <th>Total</th>
                                 <th>Time</th>
                             </tr>
@@ -221,8 +176,16 @@
                                     <td>{{ $booking->total_participants }} people <small
                                             class="text-muted">({{ $booking->adult_count }} adults, {{ $booking->child_count }}
                                             children)</small></td>
-                                    <td>{{ optional($booking->tamanSession)->label ?? '-' }}</td>
-                                    <td>{{ optional($booking->museumSession)->label ?? '-' }}</td>
+                                    <td>
+                                        @foreach($booking->bookingSessions as $session)
+                                            <span class="badge badge-info">{{ $session->tour->name ?? 'Tour' }}:
+                                                {{ $session->label }}</span>
+                                        @endforeach
+                                        @if($booking->bookingSessions->isEmpty())
+                                            {{ optional($booking->tamanSession)->label ?? '' }}
+                                            {{ optional($booking->museumSession)->label ?? '' }}
+                                        @endif
+                                    </td>
                                     <td class="font-weight-bold text-success">{{ $booking->formatted_total_price }}</td>
                                     <td>{{ $booking->created_at->format('H:i') }}</td>
                                 </tr>

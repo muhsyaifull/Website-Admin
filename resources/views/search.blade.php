@@ -56,7 +56,7 @@
                                                     class="badge badge-{{ $user->role === 'admin' ? 'danger' : ($user->role === 'educator' ? 'success' : 'info') }}">{{ ucfirst($user->role) }}</span>
                                             </td>
                                             <td>
-                                                <a href="{{ route('admin.users.edit', $user->id) }}" class="btn btn-sm btn-outline-warning">
+                                                <a href="{{ route('panel.users.edit', $user->id) }}" class="btn btn-sm btn-outline-warning">
                                                     <i class="fas fa-edit"></i>
                                                 </a>
                                             </td>
@@ -94,8 +94,7 @@
                                     @foreach($results['packages'] as $package)
                                         <tr>
                                             <td>{{ $package->name }}</td>
-                                            <td><span class="badge"
-                                                    style="background-color: {{ $package->bg_color }}; color: {{ $package->color }}">{{ $package->label }}</span>
+                                            <td><span class="badge badge-primary" style="color: white;">{{ $package->label }}</span>
                                             </td>
                                             <td>Rp {{ number_format($package->price, 0, ',', '.') }}</td>
                                             <td>
@@ -106,17 +105,10 @@
                                                 @endif
                                             </td>
                                             <td>
-                                                @if(auth()->user()->role === 'admin')
-                                                    <a href="{{ route('admin.packages.edit', $package->id) }}"
-                                                        class="btn btn-sm btn-outline-warning">
-                                                        <i class="fas fa-edit"></i>
-                                                    </a>
-                                                @elseif(auth()->user()->role === 'educator')
-                                                    <a href="{{ route('educator.packages.edit', $package->id) }}"
-                                                        class="btn btn-sm btn-outline-warning">
-                                                        <i class="fas fa-edit"></i>
-                                                    </a>
-                                                @endif
+                                                <a href="{{ route('panel.packages.edit', $package->id) }}"
+                                                    class="btn btn-sm btn-outline-warning">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
                                             </td>
                                         </tr>
                                     @endforeach
@@ -158,13 +150,13 @@
                                             <td>{{ $booking->total_participants }}</td>
                                             <td>Rp {{ number_format($booking->total_price, 0, ',', '.') }}</td>
                                             <td>
-                                                @if(auth()->user()->role === 'admin')
-                                                    <a href="{{ route('admin.bookings.show', $booking->id) }}"
+                                                @if(auth()->user()->role === 'cashier')
+                                                    <a href="{{ route('kasir.booking.show', $booking->id) }}"
                                                         class="btn btn-sm btn-outline-info">
                                                         <i class="fas fa-eye"></i>
                                                     </a>
-                                                @elseif(auth()->user()->role === 'cashier')
-                                                    <a href="{{ route('kasir.booking.show', $booking->id) }}"
+                                                @else
+                                                    <a href="{{ route('panel.bookings.show', $booking->id) }}"
                                                         class="btn btn-sm btn-outline-info">
                                                         <i class="fas fa-eye"></i>
                                                     </a>
@@ -205,7 +197,15 @@
                                         <tr>
                                             <td>{{ $educator->name }}</td>
                                             <td>{{ $educator->phone ?? '-' }}</td>
-                                            <td>{{ ucfirst($educator->specialization ?? '-') }}</td>
+                                            <td>
+                                                @if($educator->tours && $educator->tours->count() > 0)
+                                                    @foreach($educator->tours as $tour)
+                                                        <span class="badge badge-primary">{{ $tour->name }}</span>
+                                                    @endforeach
+                                                @else
+                                                    -
+                                                @endif
+                                            </td>
                                             <td>
                                                 @if($educator->is_active)
                                                     <span class="badge badge-success">Active</span>
@@ -215,7 +215,7 @@
                                             </td>
                                             <td>
                                                 @if(auth()->user()->role === 'admin')
-                                                    <a href="{{ route('admin.educators.show', $educator->id) }}"
+                                                    <a href="{{ route('panel.educators.show', $educator->id) }}"
                                                         class="btn btn-sm btn-outline-info">
                                                         <i class="fas fa-eye"></i>
                                                     </a>

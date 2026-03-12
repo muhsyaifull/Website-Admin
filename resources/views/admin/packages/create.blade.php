@@ -7,7 +7,7 @@
         <h1 class="h3 mb-0 text-gray-800">
             <i class="fas fa-plus text-primary"></i> Create New Package
         </h1>
-        <a href="{{ route('admin.packages.index') }}" class="btn btn-outline-primary">
+        <a href="{{ route('panel.packages.index') }}" class="btn btn-outline-primary">
             <i class="fas fa-arrow-left"></i> Back to Packages
         </a>
     </div>
@@ -30,7 +30,7 @@
                         </div>
                     @endif
 
-                    <form action="{{ route('admin.packages.store') }}" method="POST">
+                    <form action="{{ route('panel.packages.store') }}" method="POST">
                         @csrf
 
                         <div class="row">
@@ -102,97 +102,70 @@
                             </div>
                         </div>
 
-                        <!-- Colors -->
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="color" class="form-label">Badge Color <span
-                                            class="text-danger">*</span></label>
-                                    <input type="color" class="form-control @error('color') is-invalid @enderror" id="color"
-                                        name="color" value="{{ old('color', '#007bff') }}" required>
-                                    @error('color')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                    <small class="form-text text-muted">Color for package badge</small>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="bg_color" class="form-label">Background Color <span
-                                            class="text-danger">*</span></label>
-                                    <input type="color" class="form-control @error('bg_color') is-invalid @enderror"
-                                        id="bg_color" name="bg_color" value="{{ old('bg_color', '#f8f9fc') }}" required>
-                                    @error('bg_color')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                    <small class="form-text text-muted">Background color for package cards</small>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Additional Features -->
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="card border-info">
-                                    <div class="card-header bg-info text-white">
-                                        <h6 class="mb-0">Voucher Saldo</h6>
-                                    </div>
-                                    <div class="card-body">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" name="has_saldo" id="has_saldo"
-                                                value="1" {{ old('has_saldo') ? 'checked' : '' }}>
-                                            <label class="form-check-label" for="has_saldo">
-                                                Include Voucher Saldo
-                                            </label>
-                                        </div>
-                                        <div class="form-group mt-3" id="saldo_amount_group" style="display: none;">
-                                            <label for="saldo_amount" class="form-label">Saldo Amount (Rp)</label>
-                                            <input type="number"
-                                                class="form-control @error('saldo_amount') is-invalid @enderror"
-                                                id="saldo_amount" name="saldo_amount" value="{{ old('saldo_amount') }}"
-                                                min="0" step="1000" placeholder="0">
-                                            @error('saldo_amount')
-                                                <div class="invalid-feedback">{{ $message }}</div>
-                                            @enderror
+                        <!-- Tour Selection -->
+                        <div class="form-group mt-3">
+                            <label class="form-label">Tours Included <span class="text-danger">*</span></label>
+                            <div class="row">
+                                @foreach($tours as $tour)
+                                    <div class="col-md-4 mb-2">
+                                        <div class="card border h-100">
+                                            <div class="card-body py-2 px-3">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" name="tour_ids[]"
+                                                        value="{{ $tour->id }}" id="tour_{{ $tour->id }}"
+                                                        {{ in_array($tour->id, old('tour_ids', [])) ? 'checked' : '' }}>
+                                                    <label class="form-check-label" for="tour_{{ $tour->id }}">
+                                                        <strong>{{ $tour->name }}</strong>
+                                                    </label>
+                                                </div>
+                                                @if($tour->description)
+                                                    <small class="text-muted d-block ml-4">{{ Str::limit($tour->description, 50) }}</small>
+                                                @endif
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
+                                @endforeach
                             </div>
-                            <div class="col-md-6">
-                                <div class="card border-success">
-                                    <div class="card-header bg-success text-white">
-                                        <h6 class="mb-0">Refreshment Package</h6>
-                                    </div>
-                                    <div class="card-body">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" name="has_resto" id="has_resto"
-                                                value="1" {{ old('has_resto') ? 'checked' : '' }}>
-                                            <label class="form-check-label" for="has_resto">
-                                                Include Refreshment Package
-                                            </label>
-                                        </div>
-                                        <small class="text-muted">
-                                            Includes snacks and beverages for participants
-                                        </small>
-                                    </div>
-                                </div>
-                            </div>
+                            @error('tour_ids')
+                                <div class="text-danger small">{{ $message }}</div>
+                            @enderror
+                            <small class="form-text text-muted">Select which tours are included in this package</small>
                         </div>
 
                         <!-- Package Includes -->
                         <div class="form-group mt-4">
                             <label class="form-label">Package Includes</label>
                             <div id="includes_container">
-                                <div class="input-group mb-2">
-                                    <input type="text" class="form-control" name="includes[]"
-                                        placeholder="e.g., Guided tour" value="{{ old('includes.0') }}">
-                                    <div class="input-group-append">
-                                        <button type="button" class="btn btn-outline-success" onclick="addInclude()">
-                                            <i class="fas fa-plus"></i>
-                                        </button>
+                                @php
+                                    $includes = old('includes', []);
+                                @endphp
+                                @if(!empty($includes))
+                                    @foreach($includes as $index => $include)
+                                        <div class="input-group mb-2">
+                                            <input type="text" class="form-control" name="includes[]"
+                                                placeholder="e.g., Guided tour" value="{{ $include }}">
+                                            <div class="input-group-append">
+                                                <button type="button" class="btn btn-outline-danger" onclick="removeInclude(this)">
+                                                    <i class="fas fa-minus"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                @else
+                                    <div class="input-group mb-2">
+                                        <input type="text" class="form-control" name="includes[]"
+                                            placeholder="e.g., Guided tour">
+                                        <div class="input-group-append">
+                                            <button type="button" class="btn btn-outline-danger" onclick="removeInclude(this)">
+                                                <i class="fas fa-minus"></i>
+                                            </button>
+                                        </div>
                                     </div>
-                                </div>
+                                @endif
                             </div>
+                            <button type="button" class="btn btn-outline-success btn-sm mt-2" onclick="addInclude()">
+                                <i class="fas fa-plus"></i> Add Include
+                            </button>
                             <small class="form-text text-muted">Add items included in this package</small>
                         </div>
 
@@ -200,7 +173,7 @@
                         <div class="row mt-4">
                             <div class="col-12">
                                 <div class="d-flex justify-content-between">
-                                    <a href="{{ route('admin.packages.index') }}" class="btn btn-outline-secondary">
+                                    <a href="{{ route('panel.packages.index') }}" class="btn btn-outline-secondary">
                                         <i class="fas fa-times"></i> Cancel
                                     </a>
                                     <button type="submit" class="btn btn-primary">
@@ -220,26 +193,8 @@
 @push('scripts')
     <script>
         $(document).ready(function () {
-            // Toggle saldo amount field
-            $('#has_saldo').change(function () {
-                if ($(this).is(':checked')) {
-                    $('#saldo_amount_group').show();
-                    $('#saldo_amount').attr('required', true);
-                } else {
-                    $('#saldo_amount_group').hide();
-                    $('#saldo_amount').attr('required', false);
-                    $('#saldo_amount').val('');
-                }
-            });
-
-            // Check initial state
-            if ($('#has_saldo').is(':checked')) {
-                $('#saldo_amount_group').show();
-                $('#saldo_amount').attr('required', true);
-            }
-
             // Price formatting
-            $('#price, #saldo_amount').on('input', function () {
+            $('#price').on('input', function () {
                 let value = parseInt($(this).val()) || 0;
                 $(this).next('.price-display').remove();
                 $(this).after('<small class="price-display text-muted">Rp ' + value.toLocaleString('id-ID') + '</small>');
@@ -264,8 +219,8 @@
             container.appendChild(div);
         }
 
-        function removeInclude(button) {
-            button.closest('.input-group').remove();
+        function removeInclude(btn) {
+            btn.closest('.input-group').remove();
         }
     </script>
 @endpush

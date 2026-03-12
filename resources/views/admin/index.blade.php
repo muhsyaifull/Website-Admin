@@ -104,7 +104,7 @@
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-3 mb-3">
-                            <a href="{{ route('admin.users.create') }}" class="btn btn-primary btn-icon-split btn-block">
+                            <a href="{{ route('panel.users.create') }}" class="btn btn-primary btn-icon-split btn-block">
                                 <span class="icon text-white-50">
                                     <i class="fas fa-user-plus"></i>
                                 </span>
@@ -112,7 +112,7 @@
                             </a>
                         </div>
                         <div class="col-md-3 mb-3">
-                            <a href="{{ route('admin.packages.create') }}" class="btn btn-success btn-icon-split btn-block">
+                            <a href="{{ route('panel.packages.create') }}" class="btn btn-success btn-icon-split btn-block">
                                 <span class="icon text-white-50">
                                     <i class="fas fa-box"></i>
                                 </span>
@@ -120,7 +120,7 @@
                             </a>
                         </div>
                         <div class="col-md-3 mb-3">
-                            <a href="{{ route('admin.sessions.sessions') }}" class="btn btn-info btn-icon-split btn-block">
+                            <a href="{{ route('panel.sessions.index') }}" class="btn btn-info btn-icon-split btn-block">
                                 <span class="icon text-white-50">
                                     <i class="fas fa-clock"></i>
                                 </span>
@@ -128,7 +128,7 @@
                             </a>
                         </div>
                         <div class="col-md-3 mb-3">
-                            <a href="{{ route('admin.bookings.index') }}" class="btn btn-warning btn-icon-split btn-block">
+                            <a href="{{ route('panel.bookings.index') }}" class="btn btn-warning btn-icon-split btn-block">
                                 <span class="icon text-white-50">
                                     <i class="fas fa-list"></i>
                                 </span>
@@ -148,7 +148,7 @@
             <div class="card shadow">
                 <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
                     <h6 class="m-0 font-weight-bold text-primary">Recent Bookings</h6>
-                    <a href="{{ route('admin.bookings.index') }}" class="btn btn-sm btn-primary">View All</a>
+                    <a href="{{ route('panel.bookings.index') }}" class="btn btn-sm btn-primary">View All</a>
                 </div>
                 <div class="card-body">
                     @if($recentBookings->count() > 0)
@@ -187,7 +187,7 @@
             <div class="card shadow">
                 <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
                     <h6 class="m-0 font-weight-bold text-primary">Recent Users</h6>
-                    <a href="{{ route('admin.users.index') }}" class="btn btn-sm btn-primary">View All</a>
+                    <a href="{{ route('panel.users.index') }}" class="btn btn-sm btn-primary">View All</a>
                 </div>
                 <div class="card-body">
                     @if($recentUsers->count() > 0)

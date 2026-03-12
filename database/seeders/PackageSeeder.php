@@ -5,15 +5,15 @@ namespace Database\Seeders;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Models\Package;
+use App\Models\Tour;
 
 class PackageSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        Package::create([
+        $tours = Tour::active()->get();
+
+        $pkg1 = Package::create([
             'name' => 'Tour Package',
             'label' => 'Skema 1',
             'description' => 'Tour Taman Atsiri dan Tour Museum Atsiri',
@@ -25,8 +25,9 @@ class PackageSeeder extends Seeder
             'has_resto' => false,
             'is_active' => true,
         ]);
+        $pkg1->tours()->attach($tours->pluck('id'));
 
-        Package::create([
+        $pkg2 = Package::create([
             'name' => 'Tour + Saldo',
             'label' => 'Skema 2',
             'description' => 'Tour lengkap dengan saldo voucher',
@@ -39,8 +40,9 @@ class PackageSeeder extends Seeder
             'has_resto' => false,
             'is_active' => true,
         ]);
+        $pkg2->tours()->attach($tours->pluck('id'));
 
-        Package::create([
+        $pkg3 = Package::create([
             'name' => 'Tour + Refreshment',
             'label' => 'Skema 3',
             'description' => 'Tour lengkap dengan refreshment',
@@ -52,5 +54,6 @@ class PackageSeeder extends Seeder
             'has_resto' => true,
             'is_active' => true,
         ]);
+        $pkg3->tours()->attach($tours->pluck('id'));
     }
 }
