@@ -7,7 +7,7 @@
         <h1 class="h3 mb-0 text-gray-800">
             <i class="fas fa-users text-primary"></i> User Management
         </h1>
-        <a href="{{ route('admin.users.create') }}" class="btn btn-primary btn-icon-split">
+        <a href="{{ route('panel.users.create') }}" class="btn btn-primary btn-icon-split">
             <span class="icon text-white-50">
                 <i class="fas fa-plus"></i>
             </span>
@@ -82,16 +82,16 @@
                                 </td>
                                 <td>
                                     <div class="btn-group" role="group">
-                                        <a href="{{ route('admin.users.show', $user) }}" class="btn btn-sm btn-outline-info"
+                                        <a href="{{ route('panel.users.show', $user) }}" class="btn btn-sm btn-outline-info"
                                             title="View Details">
                                             <i class="fas fa-eye"></i>
                                         </a>
-                                        <a href="{{ route('admin.users.edit', $user) }}" class="btn btn-sm btn-outline-warning"
+                                        <a href="{{ route('panel.users.edit', $user) }}" class="btn btn-sm btn-outline-warning"
                                             title="Edit">
                                             <i class="fas fa-edit"></i>
                                         </a>
                                         @if($user->id !== auth()->id())
-                                            <form action="{{ route('admin.users.destroy', $user) }}" method="POST" class="d-inline"
+                                            <form action="{{ route('panel.users.destroy', $user) }}" method="POST" class="d-inline"
                                                 onsubmit="return confirm('Are you sure you want to delete this user?')">
                                                 @csrf
                                                 @method('DELETE')

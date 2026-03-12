@@ -7,7 +7,7 @@
         <h1 class="h3 mb-0 text-gray-800">
             <i class="fas fa-chalkboard-teacher text-primary"></i> Edit Educator: {{ $educator->name }}
         </h1>
-        <a href="{{ route('admin.educators.index') }}" class="btn btn-outline-secondary">
+        <a href="{{ route('panel.educators.index') }}" class="btn btn-outline-secondary">
             <i class="fas fa-arrow-left"></i> Back
         </a>
     </div>
@@ -29,7 +29,7 @@
                         </div>
                     @endif
 
-                    <form action="{{ route('admin.educators.update', $educator) }}" method="POST">
+                    <form action="{{ route('panel.educators.update', $educator) }}" method="POST">
                         @csrf
                         @method('PUT')
 
@@ -54,15 +54,25 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="specialization">Specialization <span class="text-danger">*</span></label>
-                            <select name="specialization" id="specialization"
-                                class="form-control @error('specialization') is-invalid @enderror" required>
-                                <option value="taman" {{ old('specialization', $educator->specialization) == 'taman' ? 'selected' : '' }}>Taman Atsiri</option>
-                                <option value="museum" {{ old('specialization', $educator->specialization) == 'museum' ? 'selected' : '' }}>Museum Atsiri</option>
-                                <option value="both" {{ old('specialization', $educator->specialization) == 'both' ? 'selected' : '' }}>Both</option>
-                            </select>
-                            @error('specialization')
-                                <div class="invalid-feedback">{{ $message }}</div>
+                            <label>Specialization <span class="text-danger">*</span></label>
+                            @php $selectedTourIds = old('tour_ids', $educator->tours->pluck('id')->toArray()); @endphp
+                            <div class="row">
+                                @foreach($tours as $tour)
+                                    <div class="col-md-4 mb-2">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="tour_ids[]"
+                                                value="{{ $tour->id }}" id="tour_{{ $tour->id }}"
+                                                {{ in_array($tour->id, $selectedTourIds) ? 'checked' : '' }}>
+                                            <label class="form-check-label" for="tour_{{ $tour->id }}">
+                                                {{ $tour->name }}
+                                            </label>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                            <small class="form-text text-muted">Select which tours this educator specializes in</small>
+                            @error('tour_ids')
+                                <div class="text-danger small">{{ $message }}</div>
                             @enderror
                         </div>
 
@@ -78,7 +88,7 @@
 
                         <hr>
                         <div class="d-flex justify-content-end">
-                            <a href="{{ route('admin.educators.index') }}" class="btn btn-secondary mr-2">Cancel</a>
+                            <a href="{{ route('panel.educators.index') }}" class="btn btn-secondary mr-2">Cancel</a>
                             <button type="submit" class="btn btn-primary">
                                 <i class="fas fa-save"></i> Save Changes
                             </button>

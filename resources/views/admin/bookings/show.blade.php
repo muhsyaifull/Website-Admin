@@ -7,7 +7,7 @@
         <h1 class="h3 mb-0 text-gray-800">
             <i class="fas fa-eye text-primary"></i> Booking Details
         </h1>
-        <a href="{{ route('admin.bookings.index') }}" class="btn btn-outline-primary">
+        <a href="{{ route('panel.bookings.index') }}" class="btn btn-outline-primary">
             <i class="fas fa-arrow-left"></i> Back to List
         </a>
     </div>
@@ -30,8 +30,7 @@
                                 <tr>
                                     <td class="font-weight-bold">Package:</td>
                                     <td>
-                                        <span class="badge"
-                                            style="background: {{ $booking->package->color }}; color: white;">
+                                        <span class="badge badge-primary" style="color: white;">
                                             {{ $booking->package->label }}
                                         </span>
                                         {{ $booking->package->name }}
@@ -96,38 +95,66 @@
                 </div>
                 <div class="card-body">
                     <div class="row">
-                        <div class="col-md-6">
-                            <h6 class="text-success">
-                                <i class="fas fa-seedling"></i> Tour Taman Atsiri
-                            </h6>
-                            <div class="card border-success">
-                                <div class="card-body">
-                                    <h6 class="font-weight-bold">{{ $booking->tamanSession->label }}</h6>
-                                    <p class="text-muted mb-1">Guide: {{ $booking->tamanSession->educator->name }}</p>
-                                    <small class="text-muted">
-                                        Capacity:
-                                        {{ $booking->tamanSession->booked }}/{{ $booking->tamanSession->capacity }}
-                                        participants
-                                    </small>
+                        @if($booking->bookingSessions && $booking->bookingSessions->count() > 0)
+                            @foreach($booking->bookingSessions as $session)
+                                <div class="col-md-6 mb-3">
+                                    <h6 class="text-primary">
+                                        {{ $session->tour->name ?? 'Tour' }}
+                                    </h6>
+                                    <div class="card border-primary">
+                                        <div class="card-body">
+                                            <h6 class="font-weight-bold">{{ $session->label }}</h6>
+                                            <p class="text-muted mb-1">Guide:
+                                                {{ $session->educator ? $session->educator->name : '-' }}
+                                            </p>
+                                            <small class="text-muted">
+                                                Capacity:
+                                                {{ $session->booked }}/{{ $session->capacity }}
+                                                participants
+                                            </small>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <h6 style="color: #7B3F2A;">
-                                <i class="fas fa-building"></i> Tour Museum Atsiri
-                            </h6>
-                            <div class="card" style="border-color: #7B3F2A;">
-                                <div class="card-body">
-                                    <h6 class="font-weight-bold">{{ $booking->museumSession->label }}</h6>
-                                    <p class="text-muted mb-1">Guide: {{ $booking->museumSession->educator->name }}</p>
-                                    <small class="text-muted">
-                                        Capacity:
-                                        {{ $booking->museumSession->booked }}/{{ $booking->museumSession->capacity }}
-                                        participants
-                                    </small>
+                            @endforeach
+                        @else
+                            {{-- Backward compat: show old taman/museum columns --}}
+                            @if($booking->tamanSession)
+                                <div class="col-md-6">
+                                    <h6 class="text-success">
+                                        <i class="fas fa-seedling"></i> Tour Taman Atsiri
+                                    </h6>
+                                    <div class="card border-success">
+                                        <div class="card-body">
+                                            <h6 class="font-weight-bold">{{ $booking->tamanSession->label }}</h6>
+                                            <p class="text-muted mb-1">Guide: {{ $booking->tamanSession->educator->name }}</p>
+                                            <small class="text-muted">
+                                                Capacity:
+                                                {{ $booking->tamanSession->booked }}/{{ $booking->tamanSession->capacity }}
+                                                participants
+                                            </small>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                        </div>
+                            @endif
+                            @if($booking->museumSession)
+                                <div class="col-md-6">
+                                    <h6 style="color: #7B3F2A;">
+                                        <i class="fas fa-building"></i> Tour Museum Atsiri
+                                    </h6>
+                                    <div class="card" style="border-color: #7B3F2A;">
+                                        <div class="card-body">
+                                            <h6 class="font-weight-bold">{{ $booking->museumSession->label }}</h6>
+                                            <p class="text-muted mb-1">Guide: {{ $booking->museumSession->educator->name }}</p>
+                                            <small class="text-muted">
+                                                Capacity:
+                                                {{ $booking->museumSession->booked }}/{{ $booking->museumSession->capacity }}
+                                                participants
+                                            </small>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endif
+                        @endif
                     </div>
                 </div>
             </div>
@@ -152,8 +179,8 @@
 
             <!-- Package Details -->
             <div class="card shadow">
-                <div class="card-header py-3" style="background: {{ $booking->package->bg_color }};">
-                    <h6 class="m-0 font-weight-bold" style="color: {{ $booking->package->color }};">Package Details</h6>
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Package Details</h6>
                 </div>
                 <div class="card-body">
                     <h6>{{ $booking->package->name }}</h6>
@@ -165,20 +192,6 @@
                             <li><i class="fas fa-check text-success"></i> {{ $include }}</li>
                         @endforeach
                     </ul>
-
-                    @if($booking->package->has_saldo)
-                        <div class="alert alert-warning mt-3">
-                            <i class="fas fa-credit-card"></i>
-                            Saldo Voucher {{ $booking->package->formatted_saldo_amount }}
-                        </div>
-                    @endif
-
-                    @if($booking->package->has_resto)
-                        <div class="alert alert-success mt-3">
-                            <i class="fas fa-coffee"></i>
-                            Refreshment Package Included
-                        </div>
-                    @endif
                 </div>
             </div>
         </div>

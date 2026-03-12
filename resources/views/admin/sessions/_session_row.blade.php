@@ -35,12 +35,12 @@
     </td>
     <td>
         <div class="btn-group" role="group">
-            <a href="{{ route('admin.sessions.edit', $session->id) }}" class="btn btn-sm btn-outline-warning"
+            <a href="{{ route('panel.sessions.edit', $session->id) }}" class="btn btn-sm btn-outline-warning"
                 title="Edit">
                 <i class="fas fa-edit"></i>
             </a>
             @if($session->booked == 0)
-                <form action="{{ route('admin.sessions.destroy', $session->id) }}" method="POST" class="d-inline"
+                <form action="{{ route('panel.sessions.destroy', $session->id) }}" method="POST" class="d-inline"
                     onsubmit="return confirm('Are you sure you want to delete this session?')">
                     @csrf
                     @method('DELETE')

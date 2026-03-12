@@ -7,7 +7,7 @@
         <h1 class="h3 mb-0 text-gray-800">
             <i class="fas fa-user-plus text-primary"></i> Add New User
         </h1>
-        <a href="{{ route('admin.users.index') }}" class="btn btn-outline-primary">
+        <a href="{{ route('panel.users.index') }}" class="btn btn-outline-primary">
             <i class="fas fa-arrow-left"></i> Back to Users
         </a>
     </div>
@@ -30,7 +30,7 @@
                         </div>
                     @endif
 
-                    <form action="{{ route('admin.users.store') }}" method="POST">
+                    <form action="{{ route('panel.users.store') }}" method="POST">
                         @csrf
 
                         <div class="row">
@@ -202,7 +202,7 @@
                         <div class="row mt-4">
                             <div class="col-12">
                                 <div class="d-flex justify-content-between">
-                                    <a href="{{ route('admin.users.index') }}" class="btn btn-outline-secondary">
+                                    <a href="{{ route('panel.users.index') }}" class="btn btn-outline-secondary">
                                         <i class="fas fa-times"></i> Cancel
                                     </a>
                                     <button type="submit" class="btn btn-primary">

@@ -34,6 +34,11 @@ class Educator extends Model
         return $this->hasMany(TourSession::class)->where('is_active', true);
     }
 
+    public function tours()
+    {
+        return $this->belongsToMany(Tour::class, 'educator_tours');
+    }
+
     /**
      * Scopes
      */
@@ -47,17 +52,29 @@ class Educator extends Model
         return $query->where('specialization', $specialization);
     }
 
+    public function scopeForTour($query, $tourId)
+    {
+        return $query->whereHas('tours', fn($q) => $q->where('tours.id', $tourId));
+    }
+
     /**
      * Methods
      */
+    public function canHandleTour($tourId)
+    {
+        return $this->tours()->where('tours.id', $tourId)->exists();
+    }
+
     public function canHandleTaman()
     {
-        return in_array($this->specialization, ['taman', 'both']);
+        return in_array($this->specialization, ['taman', 'both'])
+            || $this->tours()->where('slug', 'taman')->exists();
     }
 
     public function canHandleMuseum()
     {
-        return in_array($this->specialization, ['museum', 'both']);
+        return in_array($this->specialization, ['museum', 'both'])
+            || $this->tours()->where('slug', 'museum')->exists();
     }
 
     // Accessors for admin views

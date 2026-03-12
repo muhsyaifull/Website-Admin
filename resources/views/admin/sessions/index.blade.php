@@ -8,7 +8,10 @@
             <i class="fas fa-clock text-primary"></i> Tour Sessions Management
         </h1>
         <div>
-            <a href="{{ route('admin.templates.index') }}" class="btn btn-outline-info">
+            <a href="{{ route('panel.sessions.create') }}" class="btn btn-primary mr-2">
+                <i class="fas fa-plus"></i> Add Session
+            </a>
+            <a href="{{ route('panel.templates.index') }}" class="btn btn-outline-info">
                 <i class="fas fa-layer-group"></i> Manage Template
             </a>
         </div>
@@ -105,24 +108,17 @@
             <h6 class="m-0 font-weight-bold text-primary">Filter Sessions</h6>
         </div>
         <div class="card-body">
-            <form method="GET" action="{{ route('admin.sessions.index') }}">
+            <form method="GET" action="{{ route('panel.sessions.index') }}">
                 <div class="row">
-                    <div class="col-md-3">
-                        <label for="date_filter" class="form-label">Date Range</label>
-                        <select name="date_filter" id="date_filter" class="form-control">
-                            <option value="today" {{ request('date_filter', 'today') == 'today' ? 'selected' : '' }}>Today</option>
-                            <option value="tomorrow" {{ request('date_filter') == 'tomorrow' ? 'selected' : '' }}>Tomorrow</option>
-                            <option value="this_week" {{ request('date_filter') == 'this_week' ? 'selected' : '' }}>This Week</option>
-                            <option value="next_week" {{ request('date_filter') == 'next_week' ? 'selected' : '' }}>Next Week</option>
-                            <option value="this_month" {{ request('date_filter') == 'this_month' ? 'selected' : '' }}>This Month</option>
-                        </select>
-                    </div>
                     <div class="col-md-2">
                         <label for="type_filter" class="form-label">Tour Type</label>
                         <select name="type_filter" id="type_filter" class="form-control">
                             <option value="">All Types</option>
-                            <option value="taman" {{ request('type_filter') == 'taman' ? 'selected' : '' }}>Taman Atsiri</option>
-                            <option value="museum" {{ request('type_filter') == 'museum' ? 'selected' : '' }}>Museum Atsiri</option>
+                            @foreach($tours as $tour)
+                                <option value="{{ $tour->id }}" {{ request('type_filter') == $tour->id ? 'selected' : '' }}>
+                                    {{ $tour->name }}
+                                </option>
+                            @endforeach
                         </select>
                     </div>
                     <div class="col-md-3">
@@ -147,84 +143,50 @@
                     </div>
                     <div class="col-md-2 d-flex align-items-end">
                         <button type="submit" class="btn btn-primary">Filter</button>
-                        <a href="{{ route('admin.sessions.index') }}" class="btn btn-outline-secondary ml-2">Reset</a>
+                        <a href="{{ route('panel.sessions.index') }}" class="btn btn-outline-secondary ml-2">Reset</a>
                     </div>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- Sessions List: Taman Atsiri -->
-    @php $tamanSessions = $sessions->where('type', 'taman'); @endphp
-    <div class="card shadow mb-4">
-        <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold text-success">
-                <i class="fas fa-seedling"></i> Taman Atsiri Tour Sessions
-                <span class="badge badge-success ml-2">{{ $tamanSessions->count() }} sessions</span>
-            </h6>
+    <!-- Sessions List by Tour -->
+    @foreach($tours as $tour)
+        @php $tourSessions = $sessions->where('tour_id', $tour->id); @endphp
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">
+                    {{ $tour->name }} Tour Sessions
+                    <span class="badge ml-2" style="background: #4e73df; color: white;">{{ $tourSessions->count() }} sessions</span>
+                </h6>
+            </div>
+            <div class="card-body">
+                @if($tourSessions->isEmpty())
+                    <p class="text-muted text-center my-3">No {{ $tour->name }} sessions found for this filter.</p>
+                @else
+                    <div class="table-responsive">
+                        <table class="table table-striped table-bordered sessionsTable" width="100%">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Time</th>
+                                    <th>Educator</th>
+                                    <th>Capacity</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($tourSessions as $session)
+                                    @include('admin.sessions._session_row', ['session' => $session])
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                @endif
+            </div>
         </div>
-        <div class="card-body">
-            @if($tamanSessions->isEmpty())
-                <p class="text-muted text-center my-3">No Taman Atsiri sessions found for this filter.</p>
-            @else
-                <div class="table-responsive">
-                    <table class="table table-striped table-bordered sessionsTable" width="100%">
-                        <thead class="thead-light">
-                            <tr>
-                                <th>Date</th>
-                                <th>Time</th>
-                                <th>Educator</th>
-                                <th>Capacity</th>
-                                <th>Status</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach($tamanSessions as $session)
-                                @include('admin.sessions._session_row', ['session' => $session])
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
-            @endif
-        </div>
-    </div>
-
-    <!-- Sessions List: Museum Atsiri -->
-    @php $museumSessions = $sessions->where('type', 'museum'); @endphp
-    <div class="card shadow mb-4">
-        <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold" style="color: #7B3F2A;">
-                <i class="fas fa-building"></i> Museum Atsiri Tour Sessions
-                <span class="badge ml-2" style="background: #7B3F2A; color: white;">{{ $museumSessions->count() }} sessions</span>
-            </h6>
-        </div>
-        <div class="card-body">
-            @if($museumSessions->isEmpty())
-                <p class="text-muted text-center my-3">No Museum Atsiri sessions found for this filter.</p>
-            @else
-                <div class="table-responsive">
-                    <table class="table table-striped table-bordered sessionsTable" width="100%">
-                        <thead class="thead-light">
-                            <tr>
-                                <th>Date</th>
-                                <th>Time</th>
-                                <th>Educator</th>
-                                <th>Capacity</th>
-                                <th>Status</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach($museumSessions as $session)
-                                @include('admin.sessions._session_row', ['session' => $session])
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
-            @endif
-        </div>
-    </div>
+    @endforeach
 
 @endsection
 

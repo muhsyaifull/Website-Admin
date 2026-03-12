@@ -72,130 +72,87 @@
                     </a>
                 </li>
 
-            @elseif(auth()->user()->isEducator())
-                <!-- Educator Menu -->
+            @else
+                <!-- Admin & Educator Shared Menu -->
                 <div class="sidebar-heading">
-                    Educator Panel
+                    {{ auth()->user()->isAdmin() ? 'Admin IT Panel' : 'Educator Panel' }}
                 </div>
 
-                <li class="nav-item {{ request()->routeIs('educator.packages.*') ? 'active' : '' }}">
+                @if(auth()->user()->isAdmin())
+                    <li class="nav-item {{ request()->routeIs('panel.users.*') ? 'active' : '' }}">
+                        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUsers"
+                            aria-expanded="false" aria-controls="collapseUsers">
+                            <i class="fas fa-fw fa-users"></i>
+                            <span>User Management</span>
+                        </a>
+                        <div id="collapseUsers" class="collapse {{ request()->routeIs('panel.users.*') ? 'show' : '' }}"
+                            aria-labelledby="headingUsers" data-parent="#accordionSidebar">
+                            <div class="bg-white py-2 collapse-inner rounded">
+                                <h6 class="collapse-header">User Options:</h6>
+                                <a class="collapse-item {{ request()->routeIs('panel.users.index') ? 'active' : '' }}"
+                                    href="{{ route('panel.users.index') }}">Users List</a>
+                                <a class="collapse-item {{ request()->routeIs('panel.users.create') ? 'active' : '' }}"
+                                    href="{{ route('panel.users.create') }}">Create User</a>
+                            </div>
+                        </div>
+                    </li>
+                @endif
+
+                <li
+                    class="nav-item {{ request()->routeIs('panel.packages.*') || request()->routeIs('panel.tours.*') ? 'active' : '' }}">
                     <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePackages"
                         aria-expanded="false" aria-controls="collapsePackages">
                         <i class="fas fa-fw fa-box"></i>
-                        <span>Bundling Packages</span>
+                        <span>Package Bundling</span>
                     </a>
                     <div id="collapsePackages"
-                        class="collapse {{ request()->routeIs('educator.packages.*') ? 'show' : '' }}"
+                        class="collapse {{ request()->routeIs('panel.packages.*') || request()->routeIs('panel.tours.*') ? 'show' : '' }}"
                         aria-labelledby="headingPackages" data-parent="#accordionSidebar">
                         <div class="bg-white py-2 collapse-inner rounded">
                             <h6 class="collapse-header">Manage Package:</h6>
-                            <a class="collapse-item {{ request()->routeIs('educator.packages') ? 'active' : '' }}"
-                                href="{{ route('educator.packages.create') }}">List Package </a>
-                            <a class="collapse-item {{ request()->routeIs('educator.packages.create') ? 'active' : '' }}"
-                                href="{{ route('educator.packages.create') }}">Create Package</a>
-                        </div>
-                    </div>
-                </li>
-
-                <li class="nav-item {{ request()->routeIs('educator.sessions.*') ? 'active' : '' }}">
-                    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseSessions"
-                        aria-expanded="false" aria-controls="collapseSessions">
-                        <i class="fas fa-fw fa-clock"></i>
-                        <span>Schedule Sessions</span>
-                    </a>
-                    <div id="collapseSessions"
-                        class="collapse {{ request()->routeIs('educator.sessions.*') ? 'show' : '' }}"
-                        aria-labelledby="headingSessions" data-parent="#accordionSidebar">
-                        <div class="bg-white py-2 collapse-inner rounded">
-                            <h6 class="collapse-header">Manage Sessions:</h6>
-                            <a class="collapse-item {{ request()->routeIs('educator.sessions') ? 'active' : '' }}"
-                                href="{{ route('educator.sessions.sessions') }}">List Sessions</a>
-                            <a class="collapse-item {{ request()->routeIs('educator.sessions.create') ? 'active' : '' }}"
-                                href="{{ route('educator.sessions.create') }}">Create Session</a>
-                        </div>
-                    </div>
-                </li>
-
-                <li class="nav-item {{ request()->routeIs('educator.educators.*') ? 'active' : '' }}">
-                    <a class="nav-link" href="{{ route('educator.educators.educators') }}">
-                        <i class="fas fa-fw fa-chalkboard-teacher"></i>
-                        <span>Educator Data</span>
-                    </a>
-                </li>
-
-            @elseif(auth()->user()->isAdmin())
-                <!-- Admin Menu -->
-                <div class="sidebar-heading">
-                    Admin IT Panel
-                </div>
-
-                <li class="nav-item {{ request()->routeIs('admin.users.*') ? 'active' : '' }}">
-                    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUsers"
-                        aria-expanded="false" aria-controls="collapseUsers">
-                        <i class="fas fa-fw fa-users"></i>
-                        <span>User Management</span>
-                    </a>
-                    <div id="collapseUsers" class="collapse {{ request()->routeIs('admin.users.*') ? 'show' : '' }}"
-                        aria-labelledby="headingUsers" data-parent="#accordionSidebar">
-                        <div class="bg-white py-2 collapse-inner rounded">
-                            <h6 class="collapse-header">User Options:</h6>
-                            <a class="collapse-item {{ request()->routeIs('admin.users.index') ? 'active' : '' }}"
-                                href="{{ route('admin.users.index') }}">Users List</a>
-                            <a class="collapse-item {{ request()->routeIs('admin.users.create') ? 'active' : '' }}"
-                                href="{{ route('admin.users.create') }}">Create User</a>
-                        </div>
-                    </div>
-                </li>
-
-                <li class="nav-item {{ request()->routeIs('admin.packages.*') ? 'active' : '' }}">
-                    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseAdminPackages"
-                        aria-expanded="false" aria-controls="collapseAdminPackages">
-                        <i class="fas fa-fw fa-box"></i>
-                        <span>Package Bundling</span>
-                    </a>
-                    <div id="collapseAdminPackages"
-                        class="collapse {{ request()->routeIs('admin.packages.*') ? 'show' : '' }}"
-                        aria-labelledby="headingAdminPackages" data-parent="#accordionSidebar">
-                        <div class="bg-white py-2 collapse-inner rounded">
-                            <h6 class="collapse-header">Manage Package:</h6>
-                            <a class="collapse-item {{ request()->routeIs('admin.packages.index') ? 'active' : '' }}"
-                                href="{{ route('admin.packages.index') }}">Package List</a>
-                            <a class="collapse-item {{ request()->routeIs('admin.packages.create') ? 'active' : '' }}"
-                                href="{{ route('admin.packages.create') }}">Create Package</a>
+                            <a class="collapse-item {{ request()->routeIs('panel.packages.index') ? 'active' : '' }}"
+                                href="{{ route('panel.packages.index') }}">Package List</a>
+                            <a class="collapse-item {{ request()->routeIs('panel.packages.create') ? 'active' : '' }}"
+                                href="{{ route('panel.packages.create') }}">Create Package</a>
+                            <h6 class="collapse-header">Manage Tour:</h6>
+                            <a class="collapse-item {{ request()->routeIs('panel.tours.index') ? 'active' : '' }}"
+                                href="{{ route('panel.tours.index') }}">Tour List</a>
+                            <a class="collapse-item {{ request()->routeIs('panel.tours.create') ? 'active' : '' }}"
+                                href="{{ route('panel.tours.create') }}">Create Tour</a>
                         </div>
                     </div>
                 </li>
 
                 <li
-                    class="nav-item {{ request()->routeIs('admin.sessions.*') || request()->routeIs('admin.templates.*') ? 'active' : '' }}">
-                    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseAdminSessions"
-                        aria-expanded="false" aria-controls="collapseAdminSessions">
+                    class="nav-item {{ request()->routeIs('panel.sessions.*') || request()->routeIs('panel.templates.*') ? 'active' : '' }}">
+                    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseSessions"
+                        aria-expanded="false" aria-controls="collapseSessions">
                         <i class="fas fa-fw fa-clock"></i>
                         <span>Session Schedule</span>
                     </a>
-                    <div id="collapseAdminSessions"
-                        class="collapse {{ request()->routeIs('admin.sessions.*') || request()->routeIs('admin.templates.*') ? 'show' : '' }}"
-                        aria-labelledby="headingAdminSessions" data-parent="#accordionSidebar">
+                    <div id="collapseSessions"
+                        class="collapse {{ request()->routeIs('panel.sessions.*') || request()->routeIs('panel.templates.*') ? 'show' : '' }}"
+                        aria-labelledby="headingSessions" data-parent="#accordionSidebar">
                         <div class="bg-white py-2 collapse-inner rounded">
                             <h6 class="collapse-header">Manage Sessions:</h6>
-                            <a class="collapse-item {{ request()->routeIs('admin.sessions.index') ? 'active' : '' }}"
-                                href="{{ route('admin.sessions.index') }}">Session List</a>
+                            <a class="collapse-item {{ request()->routeIs('panel.sessions.index') ? 'active' : '' }}"
+                                href="{{ route('panel.sessions.index') }}">Session List</a>
                             <h6 class="collapse-header">Template:</h6>
-                            <a class="collapse-item {{ request()->routeIs('admin.templates.*') ? 'active' : '' }}"
-                                href="{{ route('admin.templates.index') }}">Manage Template</a>
+                            <a class="collapse-item {{ request()->routeIs('panel.templates.*') ? 'active' : '' }}"
+                                href="{{ route('panel.templates.index') }}">Manage Template</a>
                         </div>
                     </div>
                 </li>
 
-                <li class="nav-item {{ request()->routeIs('admin.educators.*') ? 'active' : '' }}">
-                    <a class="nav-link" href="{{ route('admin.educators.index') }}">
+                <li class="nav-item {{ request()->routeIs('panel.educators.*') ? 'active' : '' }}">
+                    <a class="nav-link" href="{{ route('panel.educators.index') }}">
                         <i class="fas fa-fw fa-chalkboard-teacher"></i>
                         <span>Educator Data</span>
                     </a>
                 </li>
 
-                <li class="nav-item {{ request()->routeIs('admin.bookings.*') ? 'active' : '' }}">
-                    <a class="nav-link" href="{{ route('admin.bookings.index') }}">
+                <li class="nav-item {{ request()->routeIs('panel.bookings.*') ? 'active' : '' }}">
+                    <a class="nav-link" href="{{ route('panel.bookings.index') }}">
                         <i class="fas fa-fw fa-list"></i>
                         <span>All Bookings</span>
                     </a>

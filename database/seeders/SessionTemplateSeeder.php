@@ -4,18 +4,23 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Models\SessionTemplate;
+use App\Models\Tour;
 
 class SessionTemplateSeeder extends Seeder
 {
     public function run(): void
     {
+        $taman = Tour::where('slug', 'taman')->first();
+        $museum = Tour::where('slug', 'museum')->first();
+
         // Default Taman Template (Weekday)
         $tamanDefault = SessionTemplate::create([
             'name' => 'Default Weekday',
             'type' => 'taman',
+            'tour_id' => $taman->id,
             'description' => 'Template default untuk hari kerja Taman Atsiri',
             'is_default' => true,
-            'apply_days' => [1, 2, 3, 4, 5], // Senin-Jumat
+            'apply_days' => [1, 2, 3, 4, 5],
             'is_active' => true,
         ]);
 
@@ -29,9 +34,10 @@ class SessionTemplateSeeder extends Seeder
         $tamanWeekend = SessionTemplate::create([
             'name' => 'Weekend',
             'type' => 'taman',
+            'tour_id' => $taman->id,
             'description' => 'Template untuk akhir pekan Taman Atsiri (lebih banyak slot)',
             'is_default' => false,
-            'apply_days' => [0, 6], // Minggu, Sabtu
+            'apply_days' => [0, 6],
             'is_active' => true,
         ]);
 
@@ -47,6 +53,7 @@ class SessionTemplateSeeder extends Seeder
         $museumDefault = SessionTemplate::create([
             'name' => 'Default Weekday',
             'type' => 'museum',
+            'tour_id' => $museum->id,
             'description' => 'Template default untuk hari kerja Museum Atsiri',
             'is_default' => true,
             'apply_days' => [1, 2, 3, 4, 5],
@@ -63,6 +70,7 @@ class SessionTemplateSeeder extends Seeder
         $museumWeekend = SessionTemplate::create([
             'name' => 'Weekend',
             'type' => 'museum',
+            'tour_id' => $museum->id,
             'description' => 'Template untuk akhir pekan Museum Atsiri',
             'is_default' => false,
             'apply_days' => [0, 6],

@@ -7,7 +7,7 @@
         <h1 class="h3 mb-0 text-gray-800">
             <i class="fas fa-layer-group text-primary"></i> Tour Session Templates
         </h1>
-        <a href="{{ route('admin.templates.create') }}" class="btn btn-primary">
+        <a href="{{ route('panel.templates.create') }}" class="btn btn-primary">
             <i class="fas fa-plus"></i> Create Template
         </a>
     </div>
@@ -19,23 +19,22 @@
         </div>
     @endif
 
-    <!-- Templates by Type -->
-    @foreach(['taman' => 'Taman Atsiri', 'museum' => 'Museum Atsiri'] as $type => $typeLabel)
+    <!-- Templates by Tour -->
+    @foreach($tours as $tour)
         <div class="card shadow mb-4">
             <div class="card-header py-3 d-flex justify-content-between align-items-center">
-                <h6 class="m-0 font-weight-bold {{ $type == 'taman' ? 'text-success' : 'text-dark' }}">
-                    <i class="fas {{ $type == 'taman' ? 'fa-seedling' : 'fa-building' }}"></i>
-                    Template {{ $typeLabel }}
+                <h6 class="m-0 font-weight-bold text-primary">
+                    Template {{ $tour->name }}
                 </h6>
             </div>
             <div class="card-body">
-                @php $typeTemplates = $templates->where('type', $type); @endphp
+                @php $tourTemplates = $templates->where('tour_id', $tour->id); @endphp
 
-                @if($typeTemplates->isEmpty())
-                    <p class="text-muted text-center my-3">No templates yet for {{ $typeLabel }}.</p>
+                @if($tourTemplates->isEmpty())
+                    <p class="text-muted text-center my-3">No templates yet for {{ $tour->name }}.</p>
                 @else
                     <div class="row">
-                        @foreach($typeTemplates as $template)
+                        @foreach($tourTemplates as $template)
                             <div class="col-lg-6 mb-4">
                                 <div
                                     class="card border-left-{{ $template->is_default ? 'primary' : ($template->is_active ? 'success' : 'secondary') }} shadow-sm h-100">
@@ -56,11 +55,11 @@
                                                 </small>
                                             </div>
                                             <div class="btn-group">
-                                                <a href="{{ route('admin.templates.edit', $template) }}"
+                                                <a href="{{ route('panel.templates.edit', $template) }}"
                                                     class="btn btn-sm btn-outline-warning" title="Edit">
                                                     <i class="fas fa-edit"></i>
                                                 </a>
-                                                <form action="{{ route('admin.templates.toggle', $template) }}" method="POST"
+                                                <form action="{{ route('panel.templates.toggle', $template) }}" method="POST"
                                                     class="d-inline">
                                                     @csrf
                                                     @method('PATCH')
@@ -71,7 +70,7 @@
                                                             class="fas {{ $template->is_active ? 'fa-toggle-on' : 'fa-toggle-off' }}"></i>
                                                     </button>
                                                 </form>
-                                                <form action="{{ route('admin.templates.destroy', $template) }}" method="POST"
+                                                <form action="{{ route('panel.templates.destroy', $template) }}" method="POST"
                                                     class="d-inline" onsubmit="return confirm('Delete this template?')">
                                                     @csrf
                                                     @method('DELETE')

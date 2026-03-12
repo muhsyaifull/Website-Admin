@@ -25,8 +25,22 @@
                         <small class="text-muted">({{ $booking->adult_count }} adults, {{ $booking->child_count }}
                             children)</small>
                     </div>
-                    <div class="mb-2"><strong>🌿 Tour Taman:</strong> {{ $booking->tamanSession->label }}</div>
-                    <div class="mb-2"><strong>🏛️ Tour Museum:</strong> {{ $booking->museumSession->label }}</div>
+                    @if(count($tourSessionMap) > 0)
+                        @foreach($tourSessionMap as $tourId => $session)
+                            <div class="mb-2">
+                                <strong>
+                                    {{ $session->tour->name }}:</strong>
+                                {{ $session->label }}
+                            </div>
+                        @endforeach
+                    @else
+                        @if($booking->tamanSession)
+                            <div class="mb-2"><strong>🌿 Tour Taman:</strong> {{ $booking->tamanSession->label }}</div>
+                        @endif
+                        @if($booking->museumSession)
+                            <div class="mb-2"><strong>🏛️ Tour Museum:</strong> {{ $booking->museumSession->label }}</div>
+                        @endif
+                    @endif
                     <div class="mb-2"><strong>Visit Date:</strong> {{ $booking->formatted_visit_date }}</div>
                     <div class="mb-3"><strong>Total Payment:</strong> <span
                             class="text-success font-weight-bold">{{ $booking->formatted_total_price }}</span></div>
@@ -52,24 +66,6 @@
                     </div>
                 </div>
             </div>
-
-            <!-- Package Details -->
-            @if($booking->package->has_saldo || $booking->package->has_resto)
-                <div class="mt-3">
-                    @if($booking->package->has_saldo)
-                        <div class="alert alert-warning">
-                            <i class="fas fa-credit-card"></i> Voucher Balance {{ $booking->package->formatted_saldo_amount }} will
-                            be
-                            activated
-                        </div>
-                    @endif
-                    @if($booking->package->has_resto)
-                        <div class="alert alert-success">
-                            <i class="fas fa-coffee"></i> Coupon 1x Drink + 1x Snack will be printed
-                        </div>
-                    @endif
-                </div>
-            @endif
 
             <!-- Action Buttons -->
             <div class="mt-4">

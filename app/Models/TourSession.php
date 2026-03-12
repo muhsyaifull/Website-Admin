@@ -12,6 +12,7 @@ class TourSession extends Model
 
     protected $fillable = [
         'type',
+        'tour_id',
         'date',
         'start_time',
         'end_time',
@@ -37,6 +38,11 @@ class TourSession extends Model
     public function educator()
     {
         return $this->belongsTo(Educator::class);
+    }
+
+    public function tour()
+    {
+        return $this->belongsTo(Tour::class);
     }
 
     public function sessionTemplate()
@@ -70,6 +76,11 @@ class TourSession extends Model
         return $query->where('is_active', true);
     }
 
+    public function scopeForTour($query, $tourId)
+    {
+        return $query->where('tour_id', $tourId);
+    }
+
     public function scopeTaman($query)
     {
         return $query->where('type', 'taman');
@@ -87,7 +98,11 @@ class TourSession extends Model
 
     public function scopeFromActiveTemplate($query)
     {
-        return $query->whereHas('sessionTemplate', fn($q) => $q->where('is_active', true));
+        return $query->where(function ($q) {
+            $q->whereNull('session_template_id')
+                ->orWhereHas('sessionTemplate', fn($sq) => $sq->where('is_active', true))
+                ->orWhereDate('date', \Carbon\Carbon::today());
+        });
     }
 
     public function scopeOrderedByTime($query)

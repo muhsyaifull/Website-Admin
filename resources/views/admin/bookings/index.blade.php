@@ -34,13 +34,13 @@
                         @forelse($bookings as $booking)
                             <tr>
                                 <td>
-                                    <a href="{{ route('admin.bookings.show', $booking) }}"
+                                    <a href="{{ route('panel.bookings.show', $booking) }}"
                                         class="font-weight-bold text-primary">
                                         {{ $booking->booking_code }}
                                     </a>
                                 </td>
                                 <td>
-                                    <span class="badge" style="background: {{ $booking->package->color }}; color: white;">
+                                    <span class="badge badge-primary" style="color: white;">
                                         {{ $booking->package->label }}
                                     </span>
                                     <br>
@@ -68,7 +68,7 @@
                                 </td>
                                 <td>{{ $booking->user->name }}</td>
                                 <td>
-                                    <a href="{{ route('admin.bookings.show', $booking) }}" class="btn btn-info btn-sm"
+                                    <a href="{{ route('panel.bookings.show', $booking) }}" class="btn btn-info btn-sm"
                                         title="View Details">
                                         <i class="fas fa-eye"></i>
                                     </a>

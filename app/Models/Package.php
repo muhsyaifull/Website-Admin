@@ -40,6 +40,11 @@ class Package extends Model
         return $this->hasMany(Booking::class);
     }
 
+    public function tours()
+    {
+        return $this->belongsToMany(Tour::class, 'package_tours');
+    }
+
     /**
      * Scopes
      */
