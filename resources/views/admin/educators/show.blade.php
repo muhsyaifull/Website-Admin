@@ -89,13 +89,9 @@
                                         <tr>
                                             <td><span class="badge badge-dark">{{ $session->label }}</span></td>
                                             <td>
-                                                @if($session->tour)
-                                                    <span class="badge badge-primary" style="color: white;">
-                                                        {{ $session->tour->name }}
-                                                    </span>
-                                                @else
-                                                    <span class="badge badge-secondary">{{ $session->type }}</span>
-                                                @endif
+                                                <span class="badge badge-primary" style="color: white;">
+                                                    {{ $session->tour_type_label }}
+                                                </span>
                                             </td>
                                             <td>{{ $session->booked }}/{{ $session->capacity }}</td>
                                             <td>
@@ -145,13 +141,9 @@
                                             class="text-muted">({{ $session->date->translatedFormat('l') }})</small></td>
                                     <td><span class="badge badge-dark">{{ $session->label }}</span></td>
                                     <td>
-                                        @if($session->tour)
-                                            <span class="badge badge-primary" style="color: white;">
-                                                {{ $session->tour->name }}
-                                            </span>
-                                        @else
-                                            <span class="badge badge-secondary">{{ $session->type }}</span>
-                                        @endif
+                                        <span class="badge badge-primary" style="color: white;">
+                                            {{ $session->tour_type_label }}
+                                        </span>
                                     </td>
                                     <td>{{ $session->booked }}/{{ $session->capacity }}</td>
                                 </tr>

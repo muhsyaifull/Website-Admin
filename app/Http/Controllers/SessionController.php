@@ -55,27 +55,27 @@ class SessionController extends Controller
         if (request('capacity_filter')) {
             switch (request('capacity_filter')) {
                 case 'available':
-                    $query->whereRaw('capacity > (SELECT COALESCE(SUM(total_participants), 0) FROM bookings WHERE (taman_session_id = tour_sessions.id OR museum_session_id = tour_sessions.id))');
+                    $query->whereRaw('capacity > booked');
                     break;
                 case 'full':
-                    $query->whereRaw('capacity <= (SELECT COALESCE(SUM(total_participants), 0) FROM bookings WHERE (taman_session_id = tour_sessions.id OR museum_session_id = tour_sessions.id))');
+                    $query->whereRaw('capacity <= booked');
                     break;
                 case 'near_full':
-                    $query->whereRaw('capacity * 0.8 <= (SELECT COALESCE(SUM(total_participants), 0) FROM bookings WHERE (taman_session_id = tour_sessions.id OR museum_session_id = tour_sessions.id))');
+                    $query->whereRaw('capacity * 0.8 <= booked');
                     break;
             }
         }
 
         $sessions = $query->orderBy('date', 'asc')->orderBy('start_time', 'asc')->get();
 
-        $todaySessions = TourSession::whereDate('date', Carbon::today())->fromActiveTemplate()->count();
-        $fullSessions = TourSession::fromActiveTemplate()->whereRaw('capacity <= (SELECT COALESCE(SUM(total_participants), 0) FROM bookings WHERE (taman_session_id = tour_sessions.id OR museum_session_id = tour_sessions.id))')->count();
-        $totalVisitors = Booking::whereDate('visit_date', Carbon::today())->where('status', 'confirmed')->sum('total_participants');
-        $bookableSessions = TourSession::whereDate('date', Carbon::today())
+        $todaySessions = TourSession::query()->whereDate('date', Carbon::today())->fromActiveTemplate()->count();
+        $fullSessions = TourSession::fromActiveTemplate()->whereRaw('capacity <= booked')->count();
+        $totalVisitors = Booking::query()->whereDate('visit_date', Carbon::today())->where('status', 'confirmed')->sum('total_participants');
+        $bookableSessions = TourSession::query()->whereDate('date', Carbon::today())
             ->fromActiveTemplate()
             ->active()
             ->where('start_time', '>', Carbon::now()->format('H:i:s'))
-            ->whereRaw('capacity > (SELECT COALESCE(SUM(total_participants), 0) FROM bookings WHERE (taman_session_id = tour_sessions.id OR museum_session_id = tour_sessions.id))')
+            ->whereRaw('capacity > booked')
             ->count();
 
         $educators = Educator::where('is_active', true)->get();
@@ -106,7 +106,6 @@ class SessionController extends Controller
         $label = $request->start_time . ' – ' . $request->end_time;
 
         TourSession::create([
-            'type' => $tour->slug,
             'tour_id' => $tour->id,
             'date' => $request->date,
             'start_time' => $request->start_time,
@@ -232,7 +231,6 @@ class SessionController extends Controller
 
         $template = SessionTemplate::create([
             'name' => $request->name,
-            'type' => $tour->slug,
             'tour_id' => $tour->id,
             'description' => $request->description,
             'is_default' => $isDefault,
@@ -351,7 +349,7 @@ class SessionController extends Controller
         $today = Carbon::today();
 
         TourSession::where('session_template_id', $template->id)
-            ->whereDate('date', '>=', $today)
+            ->where('date', '>=', $today)
             ->where('booked', 0)
             ->delete();
 

@@ -18,7 +18,7 @@ use App\Http\Controllers\CashierBookingController;
 |--------------------------------------------------------------------------
 */
 
-// Redirect root to login
+// Login Routes
 Route::get('/', function () {
     return redirect()->route('login');
 });
@@ -30,15 +30,12 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
 // Protected Routes
 Route::middleware(['auth'])->group(function () {
-    // Dashboard - renders view based on role
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-    // Profile - accessible by all authenticated users
     Route::get('/profile', function () {
         return view('profile');
     })->name('profile');
 
-    // Search - accessible by all authenticated users
     Route::get('/search', [DashboardController::class, 'search'])->name('search');
 
     // Cashier Routes 
@@ -55,7 +52,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/api/sessions/{tourId}', [CashierBookingController::class, 'getSessionData'])->name('api.sessions');
     });
 
-    // SAdmin & Educator Routes 
+    // Admin & Educator Routes 
     Route::middleware(['role:admin,educator'])->prefix('panel')->name('panel.')->group(function () {
 
         // Package management
@@ -123,7 +120,7 @@ Route::middleware(['auth'])->group(function () {
     // Admin Only Routes 
     Route::middleware(['role:admin'])->prefix('panel')->name('panel.')->group(function () {
 
-        // User management (admin only)
+        // User management 
         Route::prefix('users')->name('users.')->group(function () {
             Route::get('/', [UserController::class, 'index'])->name('index');
             Route::get('/create', [UserController::class, 'create'])->name('create');

@@ -11,7 +11,6 @@ class SessionTemplate extends Model
 
     protected $fillable = [
         'name',
-        'type',
         'tour_id',
         'description',
         'is_default',
@@ -54,7 +53,7 @@ class SessionTemplate extends Model
     // Accessors
     public function getTourTypeLabelAttribute()
     {
-        return $this->tour ? $this->tour->name : ($this->type === 'taman' ? 'Taman Atsiri' : 'Museum Atsiri');
+        return $this->tour ? $this->tour->name : 'Tour';
     }
 
     public function getApplyDaysLabelAttribute()
@@ -158,7 +157,6 @@ class SessionTemplate extends Model
                     }
 
                     TourSession::create([
-                        'type' => $tour->slug,
                         'tour_id' => $tour->id,
                         'date' => $date->toDateString(),
                         'start_time' => \Carbon\Carbon::parse($slot->start_time)->format('H:i'),

@@ -20,8 +20,6 @@ class Booking extends Model
         'adult_count',
         'child_count',
         'total_participants',
-        'taman_session_id',
-        'museum_session_id',
         'unit_price',
         'total_price',
         'visit_date',
@@ -59,16 +57,6 @@ class Booking extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
-    }
-
-    public function tamanSession()
-    {
-        return $this->belongsTo(TourSession::class, 'taman_session_id');
-    }
-
-    public function museumSession()
-    {
-        return $this->belongsTo(TourSession::class, 'museum_session_id');
     }
 
     public function bookingSessions()

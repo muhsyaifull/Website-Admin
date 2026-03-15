@@ -11,7 +11,6 @@ class TourSession extends Model
     use HasFactory;
 
     protected $fillable = [
-        'type',
         'tour_id',
         'date',
         'start_time',
@@ -50,22 +49,11 @@ class TourSession extends Model
         return $this->belongsTo(SessionTemplate::class);
     }
 
-    public function tamanBookings()
-    {
-        return $this->hasMany(Booking::class, 'taman_session_id');
-    }
-
-    public function museumBookings()
-    {
-        return $this->hasMany(Booking::class, 'museum_session_id');
-    }
-
     public function bookings()
     {
-        if ($this->type === 'taman') {
-            return $this->hasMany(Booking::class, 'taman_session_id');
-        }
-        return $this->hasMany(Booking::class, 'museum_session_id');
+        return $this->belongsToMany(Booking::class, 'booking_sessions')
+            ->withPivot('tour_id')
+            ->withTimestamps();
     }
 
     /**
@@ -79,16 +67,6 @@ class TourSession extends Model
     public function scopeForTour($query, $tourId)
     {
         return $query->where('tour_id', $tourId);
-    }
-
-    public function scopeTaman($query)
-    {
-        return $query->where('type', 'taman');
-    }
-
-    public function scopeMuseum($query)
-    {
-        return $query->where('type', 'museum');
     }
 
     public function scopeForToday($query)
@@ -264,6 +242,6 @@ class TourSession extends Model
 
     public function getTourTypeLabelAttribute()
     {
-        return $this->type == 'taman' ? 'Taman Atsiri' : 'Museum Atsiri';
+        return $this->tour ? $this->tour->name : 'Tour';
     }
 }
