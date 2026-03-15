@@ -117,43 +117,9 @@
                                 </div>
                             @endforeach
                         @else
-                            {{-- Backward compat: show old taman/museum columns --}}
-                            @if($booking->tamanSession)
-                                <div class="col-md-6">
-                                    <h6 class="text-success">
-                                        <i class="fas fa-seedling"></i> Tour Taman Atsiri
-                                    </h6>
-                                    <div class="card border-success">
-                                        <div class="card-body">
-                                            <h6 class="font-weight-bold">{{ $booking->tamanSession->label }}</h6>
-                                            <p class="text-muted mb-1">Guide: {{ $booking->tamanSession->educator->name }}</p>
-                                            <small class="text-muted">
-                                                Capacity:
-                                                {{ $booking->tamanSession->booked }}/{{ $booking->tamanSession->capacity }}
-                                                participants
-                                            </small>
-                                        </div>
-                                    </div>
-                                </div>
-                            @endif
-                            @if($booking->museumSession)
-                                <div class="col-md-6">
-                                    <h6 style="color: #7B3F2A;">
-                                        <i class="fas fa-building"></i> Tour Museum Atsiri
-                                    </h6>
-                                    <div class="card" style="border-color: #7B3F2A;">
-                                        <div class="card-body">
-                                            <h6 class="font-weight-bold">{{ $booking->museumSession->label }}</h6>
-                                            <p class="text-muted mb-1">Guide: {{ $booking->museumSession->educator->name }}</p>
-                                            <small class="text-muted">
-                                                Capacity:
-                                                {{ $booking->museumSession->booked }}/{{ $booking->museumSession->capacity }}
-                                                participants
-                                            </small>
-                                        </div>
-                                    </div>
-                                </div>
-                            @endif
+                            <div class="col-12">
+                                <p class="text-muted">No sessions assigned</p>
+                            </div>
                         @endif
                     </div>
                 </div>

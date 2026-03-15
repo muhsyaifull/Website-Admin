@@ -9,7 +9,7 @@ class BookingController extends Controller
 {
     public function index()
     {
-        $bookings = Booking::with(['package', 'user', 'tamanSession.educator', 'museumSession.educator', 'bookingSessions.tour'])
+        $bookings = Booking::with(['package', 'user', 'bookingSessions.tour', 'bookingSessions.educator'])
             ->orderBy('created_at', 'desc')
             ->paginate(20);
 
@@ -18,7 +18,7 @@ class BookingController extends Controller
 
     public function show(Booking $booking)
     {
-        $booking->load(['package.tours', 'user', 'tamanSession.educator', 'museumSession.educator', 'bookingSessions.tour']);
+        $booking->load(['package.tours', 'user', 'bookingSessions.tour', 'bookingSessions.educator']);
 
         return view('admin.bookings.show', compact('booking'));
     }

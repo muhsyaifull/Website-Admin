@@ -9,6 +9,8 @@ use App\Models\Booking;
 use App\Models\SessionTemplate;
 use App\Models\Tour;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 
 class CashierBookingController extends Controller
 {
@@ -30,7 +32,7 @@ class CashierBookingController extends Controller
                 ->get();
         }
 
-        $todaysBookings = Booking::with(['package', 'tamanSession.educator', 'museumSession.educator', 'bookingSessions.tour'])
+        $todaysBookings = Booking::with(['package', 'bookingSessions.tour', 'bookingSessions.educator'])
             ->today()
             ->confirmed()
             ->orderBy('created_at', 'desc')
@@ -94,13 +96,9 @@ class CashierBookingController extends Controller
         $childCount = $request->child_count ?? 0;
         $totalParticipants = $adultCount + $childCount;
 
-        $selectedSessions = [];
+        $selectedSessionIds = [];
         foreach ($package->tours as $tour) {
-            $session = TourSession::findOrFail($request->input('tour_session_' . $tour->id));
-            if (!$session->canAccommodate($totalParticipants)) {
-                return back()->withErrors(['tour_session_' . $tour->id => 'Sesi ' . $tour->name . ' kapasitas tidak mencukupi']);
-            }
-            $selectedSessions[$tour->id] = $session;
+            $selectedSessionIds[$tour->id] = (int) $request->input('tour_session_' . $tour->id);
         }
 
         $unitPrice = $package->price;
@@ -121,21 +119,32 @@ class CashierBookingController extends Controller
             'status' => 'confirmed',
         ];
 
-        foreach ($selectedSessions as $tourId => $session) {
-            $tour = $package->tours->find($tourId);
-            if ($tour && $tour->slug === 'taman') {
-                $bookingData['taman_session_id'] = $session->id;
-            } elseif ($tour && $tour->slug === 'museum') {
-                $bookingData['museum_session_id'] = $session->id;
+        $booking = null;
+        DB::transaction(function () use ($bookingData, $selectedSessionIds, $package, $request, $totalParticipants, &$booking) {
+            $booking = Booking::create($bookingData);
+
+            foreach ($package->tours as $tour) {
+                $sessionId = $selectedSessionIds[$tour->id];
+
+                $updatedRows = TourSession::query()
+                    ->where('id', $sessionId)
+                    ->where('tour_id', $tour->id)
+                    ->whereDate('date', $request->visit_date)
+                    ->where('is_active', true)
+                    ->whereRaw('booked + ? <= capacity', [$totalParticipants])
+                    ->update([
+                        'booked' => DB::raw('booked + ' . $totalParticipants),
+                    ]);
+
+                if ($updatedRows === 0) {
+                    throw ValidationException::withMessages([
+                        'tour_session_' . $tour->id => 'Sesi ' . $tour->name . ' tidak tersedia atau kapasitas tidak mencukupi.',
+                    ]);
+                }
+
+                $booking->bookingSessions()->attach($sessionId, ['tour_id' => $tour->id]);
             }
-        }
-
-        $booking = Booking::create($bookingData);
-
-        foreach ($selectedSessions as $tourId => $session) {
-            $booking->bookingSessions()->attach($session->id, ['tour_id' => $tourId]);
-            $session->increment('booked', $totalParticipants);
-        }
+        });
 
         return redirect()->route('kasir.booking.show', $booking)
             ->with('success', 'Booking created successfully!');
@@ -143,7 +152,7 @@ class CashierBookingController extends Controller
 
     public function show(Booking $booking)
     {
-        $booking->load(['package.tours', 'user', 'tamanSession.educator', 'museumSession.educator', 'bookingSessions.educator', 'bookingSessions.tour']);
+        $booking->load(['package.tours', 'user', 'bookingSessions.educator', 'bookingSessions.tour']);
 
         $tourSessionMap = [];
         foreach ($booking->bookingSessions as $session) {

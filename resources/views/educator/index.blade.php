@@ -164,9 +164,9 @@
                                     </div>
 
                                     @if($session->is_full)
-                                        <small class="text-danger">⚠️ Slot full — not accepting new participants</small>
+                                        <small class="text-danger">Slot full — not accepting new participants</small>
                                     @elseif($session->is_low)
-                                        <small class="text-warning">⚡ Almost full — {{ $session->available }} spots remaining</small>
+                                        <small class="text-warning">Almost full — {{ $session->available }} spots remaining</small>
                                     @endif
 
                                     @if(!$session->is_active)

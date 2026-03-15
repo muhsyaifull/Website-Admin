@@ -65,18 +65,6 @@ class Educator extends Model
         return $this->tours()->where('tours.id', $tourId)->exists();
     }
 
-    public function canHandleTaman()
-    {
-        return in_array($this->specialization, ['taman', 'both'])
-            || $this->tours()->where('slug', 'taman')->exists();
-    }
-
-    public function canHandleMuseum()
-    {
-        return in_array($this->specialization, ['museum', 'both'])
-            || $this->tours()->where('slug', 'museum')->exists();
-    }
-
     // Accessors for admin views
     public function getTodaySessionsAttribute()
     {

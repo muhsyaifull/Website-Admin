@@ -16,7 +16,6 @@ class SessionTemplateSeeder extends Seeder
         // Default Taman Template (Weekday)
         $tamanDefault = SessionTemplate::create([
             'name' => 'Default Weekday',
-            'type' => 'taman',
             'tour_id' => $taman->id,
             'description' => 'Template default untuk hari kerja Taman Atsiri',
             'is_default' => true,
@@ -33,7 +32,6 @@ class SessionTemplateSeeder extends Seeder
         // Weekend Taman Template
         $tamanWeekend = SessionTemplate::create([
             'name' => 'Weekend',
-            'type' => 'taman',
             'tour_id' => $taman->id,
             'description' => 'Template untuk akhir pekan Taman Atsiri (lebih banyak slot)',
             'is_default' => false,
@@ -52,7 +50,6 @@ class SessionTemplateSeeder extends Seeder
         // Default Museum Template (Weekday)
         $museumDefault = SessionTemplate::create([
             'name' => 'Default Weekday',
-            'type' => 'museum',
             'tour_id' => $museum->id,
             'description' => 'Template default untuk hari kerja Museum Atsiri',
             'is_default' => true,
@@ -69,7 +66,6 @@ class SessionTemplateSeeder extends Seeder
         // Weekend Museum Template
         $museumWeekend = SessionTemplate::create([
             'name' => 'Weekend',
-            'type' => 'museum',
             'tour_id' => $museum->id,
             'description' => 'Template untuk akhir pekan Museum Atsiri',
             'is_default' => false,

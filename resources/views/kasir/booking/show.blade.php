@@ -34,12 +34,7 @@
                             </div>
                         @endforeach
                     @else
-                        @if($booking->tamanSession)
-                            <div class="mb-2"><strong>🌿 Tour Taman:</strong> {{ $booking->tamanSession->label }}</div>
-                        @endif
-                        @if($booking->museumSession)
-                            <div class="mb-2"><strong>🏛️ Tour Museum:</strong> {{ $booking->museumSession->label }}</div>
-                        @endif
+                        <div class="mb-2 text-muted">No sessions assigned</div>
                     @endif
                     <div class="mb-2"><strong>Visit Date:</strong> {{ $booking->formatted_visit_date }}</div>
                     <div class="mb-3"><strong>Total Payment:</strong> <span

@@ -33,7 +33,7 @@ class PackageController extends Controller
         $package->load([
             'tours',
             'bookings' => function ($query) {
-                $query->with(['user', 'tamanSession.educator', 'museumSession.educator', 'bookingSessions.tour'])
+                $query->with(['user', 'bookingSessions.tour', 'bookingSessions.educator'])
                     ->orderBy('created_at', 'desc');
             }
         ]);

@@ -84,7 +84,7 @@
                                             class="text-danger">*</span></label>
                                     <input type="number" class="form-control @error('price') is-invalid @enderror"
                                         id="price" name="price" value="{{ old('price', $package->price) }}" required min="0"
-                                        step="1000" placeholder="0">
+                                        step="1" placeholder="0">
                                     @error('price')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror

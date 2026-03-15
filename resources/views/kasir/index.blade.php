@@ -182,8 +182,7 @@
                                                 {{ $session->label }}</span>
                                         @endforeach
                                         @if($booking->bookingSessions->isEmpty())
-                                            {{ optional($booking->tamanSession)->label ?? '' }}
-                                            {{ optional($booking->museumSession)->label ?? '' }}
+                                            <span class="text-muted">No sessions</span>
                                         @endif
                                     </td>
                                     <td class="font-weight-bold text-success">{{ $booking->formatted_total_price }}</td>

@@ -38,8 +38,7 @@
                                 <div class="form-group">
                                     <label for="type" class="form-label">Tour Type</label>
                                     <input type="text" class="form-control" id="type"
-                                        value="{{ $session->tour ? $session->tour->name : ($session->type == 'taman' ? 'Taman Atsiri' : 'Museum Atsiri') }}"
-                                        readonly disabled>
+                                        value="{{ $session->tour ? $session->tour->name : 'Tour' }}" readonly disabled>
                                     <small class="form-text text-muted">Tour type cannot be changed.</small>
                                 </div>
                             </div>
