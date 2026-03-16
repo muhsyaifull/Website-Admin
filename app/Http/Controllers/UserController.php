@@ -42,15 +42,18 @@ class UserController extends Controller
             'status' => 'required|boolean',
         ]);
 
-        User::create([
-            'name' => $request->name,
-            'username' => $request->username,
-            'email' => $request->email,
-            'phone' => $request->phone,
-            'password' => $request->password,
-            'role' => $request->role,
-            'is_active' => $request->status,
-        ]);
+        $user = new User();
+
+        $user->name = $request->name;
+        $user->username = $request->username;
+        $user->email = $request->email;
+        $user->phone = $request->phone;
+
+        $user->password = $request->password;
+        $user->role = $request->role;
+        $user->is_active = $request->status;
+
+        $user->save();
 
         return redirect()->route('panel.users.index')
             ->with('success', 'User created successfully!');
@@ -79,17 +82,19 @@ class UserController extends Controller
             'is_active' => 'boolean',
         ]);
 
-        $data = $request->only(['name', 'username', 'email', 'phone', 'role']);
-        $data['is_active'] = $request->has('is_active');
+        $user->name = $request->name;
+        $user->username = $request->username;
+        $user->email = $request->email;
+        $user->phone = $request->phone;
+
+        $user->role = $request->role;
+        $user->is_active = $request->has('is_active');
 
         if ($request->filled('password')) {
-            $request->validate([
-                'password' => 'string|min:8|confirmed',
-            ]);
-            $data['password'] = $request->password;
+            $user->password = $request->password;
         }
 
-        $user->update($data);
+        $user->save();
 
         return redirect()->route('panel.users.index')
             ->with('success', 'User updated successfully!');
