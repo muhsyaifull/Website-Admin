@@ -138,7 +138,7 @@ class Booking extends Model
     {
         $date = Carbon::now()->format('ymd');
         $sequence = static::whereDate('created_at', Carbon::today())->count() + 1;
-        return 'TRK' . $date . str_pad($sequence, 3, '0', STR_PAD_LEFT);
+        return 'RAI' . $date . str_pad($sequence, 3, '0', STR_PAD_LEFT);
     }
 
     /**
