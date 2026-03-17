@@ -63,11 +63,6 @@ class PackageController extends Controller
 
         $data = $request->except(['tour_ids']);
         $data['includes'] = array_values(array_filter($request->includes ?? []));
-        $data['color'] = '#4e73df';
-        $data['bg_color'] = '#f8f9fc';
-        $data['has_saldo'] = false;
-        $data['saldo_amount'] = 0;
-        $data['has_resto'] = false;
         $package = Package::create($data);
         $package->tours()->sync($request->tour_ids);
 

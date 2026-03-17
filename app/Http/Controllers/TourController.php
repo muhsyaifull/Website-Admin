@@ -47,8 +47,6 @@ class TourController extends Controller
             'name' => $request->name,
             'slug' => $slug,
             'description' => $request->description,
-            'icon' => 'fas fa-map-marker-alt',
-            'color' => '#4e73df',
             'sort_order' => $maxOrder + 1,
             'is_active' => true,
         ]);

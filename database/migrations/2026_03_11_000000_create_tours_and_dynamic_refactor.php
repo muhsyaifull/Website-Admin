@@ -14,8 +14,6 @@ return new class extends Migration {
             $table->string('name', 100);
             $table->string('slug', 100)->unique();
             $table->text('description')->nullable();
-            $table->string('icon', 50)->default('fas fa-map-marked-alt');
-            $table->string('color', 7)->default('#007bff');
             $table->boolean('is_active')->default(true);
             $table->integer('sort_order')->default(0);
             $table->timestamps();
@@ -63,8 +61,6 @@ return new class extends Migration {
             'name' => 'Taman Atsiri',
             'slug' => 'taman',
             'description' => 'Tour Taman Atsiri - Aromatic Garden Tour',
-            'icon' => 'fas fa-seedling',
-            'color' => '#27AE60',
             'is_active' => true,
             'sort_order' => 1,
             'created_at' => now(),
@@ -75,8 +71,6 @@ return new class extends Migration {
             'name' => 'Museum Atsiri',
             'slug' => 'museum',
             'description' => 'Tour Museum Atsiri - Essential Oil Museum Tour',
-            'icon' => 'fas fa-building',
-            'color' => '#7B3F2A',
             'is_active' => true,
             'sort_order' => 2,
             'created_at' => now(),

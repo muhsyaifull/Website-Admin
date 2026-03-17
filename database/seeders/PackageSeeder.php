@@ -14,44 +14,31 @@ class PackageSeeder extends Seeder
         $tours = Tour::active()->get();
 
         $pkg1 = Package::create([
-            'name' => 'Tour Package',
-            'label' => 'Skema 1',
-            'description' => 'Tour Taman Atsiri dan Tour Museum Atsiri',
+            'name' => 'Tour Museum',
+            'label' => 'Reguler',
+            'description' => 'Tour Museum Atsiri',
             'price' => 75000,
-            'includes' => ['Tour Taman Atsiri', 'Tour Museum Atsiri'],
-            'color' => '#7B3F2A',
-            'bg_color' => '#F5EDE8',
-            'has_saldo' => false,
-            'has_resto' => false,
+            'includes' => ['Tour Museum Atsiri'],
             'is_active' => true,
         ]);
         $pkg1->tours()->attach($tours->pluck('id'));
 
         $pkg2 = Package::create([
-            'name' => 'Tour + Saldo',
-            'label' => 'Skema 2',
-            'description' => 'Tour lengkap dengan saldo voucher',
+            'name' => 'Tour Museum & Tour Aromatic Garden',
+            'label' => 'Package 1',
+            'description' => 'Tour Museum & Tour Aromatic Garden',
             'price' => 125000,
-            'includes' => ['Tour Taman Atsiri', 'Tour Museum Atsiri', 'Saldo Voucher Rp 50.000'],
-            'color' => '#B8860B',
-            'bg_color' => '#FDF8E8',
-            'has_saldo' => true,
-            'saldo_amount' => 50000,
-            'has_resto' => false,
+            'includes' => ['Tour Aromatic Garden', 'Tour Museum'],
             'is_active' => true,
         ]);
         $pkg2->tours()->attach($tours->pluck('id'));
 
         $pkg3 = Package::create([
             'name' => 'Tour + Refreshment',
-            'label' => 'Skema 3',
+            'label' => 'Package 2',
             'description' => 'Tour lengkap dengan refreshment',
             'price' => 115000,
-            'includes' => ['Tour Taman Atsiri', 'Tour Museum Atsiri', '1x Minuman', '1x Snack'],
-            'color' => '#5A7A5A',
-            'bg_color' => '#EBF2EB',
-            'has_saldo' => false,
-            'has_resto' => true,
+            'includes' => ['Tour Aromatic Garden', 'Tour Museum', '1x Minuman', '1x Snack'],
             'is_active' => true,
         ]);
         $pkg3->tours()->attach($tours->pluck('id'));

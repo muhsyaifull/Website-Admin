@@ -4,16 +4,27 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Booking;
+use Carbon\Carbon;
 
 class BookingController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $bookings = Booking::with(['package', 'user', 'bookingSessions.tour', 'bookingSessions.educator'])
-            ->orderBy('created_at', 'desc')
-            ->paginate(20);
+        $request->validate([
+            'date' => 'nullable|date',
+        ]);
 
-        return view('admin.bookings.index', compact('bookings'));
+        $selectedDate = $request->filled('date')
+            ? Carbon::parse($request->date)->startOfDay()
+            : Carbon::today();
+
+        $bookings = Booking::with(['package', 'user', 'bookingSessions.tour', 'bookingSessions.educator'])
+            ->whereDate('visit_date', $selectedDate)
+            ->orderBy('created_at', 'desc')
+            ->paginate(20)
+            ->appends($request->query());
+
+        return view('admin.bookings.index', compact('bookings', 'selectedDate'));
     }
 
     public function show(Booking $booking)

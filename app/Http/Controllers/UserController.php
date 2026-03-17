@@ -37,7 +37,7 @@ class UserController extends Controller
             'username' => 'required|string|max:255|unique:users',
             'email' => 'nullable|string|email|max:255|unique:users',
             'phone' => 'nullable|string|max:20',
-            'password' => 'required|string|min:8|confirmed',
+            'password' => 'required|string|min:8|max:255|confirmed',
             'role' => 'required|in:cashier,educator,admin',
             'status' => 'required|boolean',
         ]);
@@ -49,7 +49,7 @@ class UserController extends Controller
         $user->email = $request->email;
         $user->phone = $request->phone;
 
-        $user->password = $request->password;
+        $user->password = Hash::make($request->password);
         $user->role = $request->role;
         $user->is_active = $request->status;
 
@@ -80,6 +80,7 @@ class UserController extends Controller
             'phone' => 'nullable|string|max:20',
             'role' => 'required|in:cashier,educator,admin',
             'is_active' => 'boolean',
+            'password' => 'nullable|string|min:8|max:255',
         ]);
 
         $user->name = $request->name;
@@ -91,7 +92,7 @@ class UserController extends Controller
         $user->is_active = $request->has('is_active');
 
         if ($request->filled('password')) {
-            $user->password = $request->password;
+            $user->password = Hash::make($request->password);
         }
 
         $user->save();

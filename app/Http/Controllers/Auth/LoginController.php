@@ -23,8 +23,8 @@ class LoginController extends Controller
     public function login(Request $request)
     {
         $request->validate([
-            'login' => 'required|string',
-            'password' => 'required',
+            'login' => 'required|string|max:255',
+            'password' => 'required|string|max:255',
         ]);
 
         $loginField = filter_var($request->login, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
@@ -37,11 +37,19 @@ class LoginController extends Controller
         $remember = $request->filled('remember');
 
         if (Auth::attempt($credentials, $remember)) {
-            Auth::user()->update([
-                'last_login' => now()
-            ]);
-
             $request->session()->regenerate();
+
+            if (!Auth::user()->is_active) {
+                Auth::logout();
+                $request->session()->invalidate();
+                $request->session()->regenerateToken();
+
+                throw ValidationException::withMessages([
+                    'login' => ['Account is inactive. Please contact the administrator.'],
+                ]);
+            }
+
+            Auth::user()->update(['last_login' => now()]);
 
             return redirect()->intended(route('dashboard'));
         }

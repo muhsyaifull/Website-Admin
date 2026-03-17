@@ -13,8 +13,6 @@ class Tour extends Model
         'name',
         'slug',
         'description',
-        'icon',
-        'color',
         'is_active',
         'sort_order',
     ];
