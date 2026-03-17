@@ -57,6 +57,12 @@ class CashierBookingController extends Controller
         SessionTemplate::ensureSessionsForDate(Carbon::today());
 
         $packages = Package::with('tours')->active()->get();
+        $packageTourIds = $packages
+            ->mapWithKeys(function ($package) {
+                return [$package->id => $package->tours->pluck('id')->values()];
+            })
+            ->toArray();
+
         $tours = Tour::active()->ordered()->get();
         $tourSessions = [];
         foreach ($tours as $tour) {
@@ -69,7 +75,7 @@ class CashierBookingController extends Controller
                 ->get();
         }
 
-        return view('kasir.booking.create', compact('packages', 'tours', 'tourSessions'));
+        return view('kasir.booking.create', compact('packages', 'packageTourIds', 'tours', 'tourSessions'));
     }
 
     public function store(Request $request)
@@ -99,6 +105,20 @@ class CashierBookingController extends Controller
         $selectedSessionIds = [];
         foreach ($package->tours as $tour) {
             $selectedSessionIds[$tour->id] = (int) $request->input('tour_session_' . $tour->id);
+        }
+
+        $allowedTourIds = $package->tours->pluck('id')->map(fn($id) => (int) $id)->all();
+        foreach ($request->all() as $key => $value) {
+            if (!str_starts_with($key, 'tour_session_') || blank($value)) {
+                continue;
+            }
+
+            $tourId = (int) str_replace('tour_session_', '', $key);
+            if (!in_array($tourId, $allowedTourIds, true)) {
+                throw ValidationException::withMessages([
+                    $key => 'Tour yang dipilih tidak termasuk dalam package.',
+                ]);
+            }
         }
 
         $unitPrice = $package->price;

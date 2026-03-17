@@ -15,20 +15,12 @@ class Package extends Model
         'description',
         'price',
         'includes',
-        'color',
-        'bg_color',
-        'has_saldo',
-        'saldo_amount',
-        'has_resto',
         'is_active',
     ];
 
     protected $casts = [
         'price' => 'decimal:0',
-        'saldo_amount' => 'decimal:0',
         'includes' => 'array',
-        'has_saldo' => 'boolean',
-        'has_resto' => 'boolean',
         'is_active' => 'boolean',
     ];
 
@@ -58,17 +50,12 @@ class Package extends Model
      */
     public function getFormattedPriceAttribute()
     {
-        return 'Rp ' . number_format($this->price, 0, ',', '.');
-    }
-
-    public function getFormattedSaldoAmountAttribute()
-    {
-        return $this->saldo_amount ? 'Rp ' . number_format($this->saldo_amount, 0, ',', '.') : null;
+        return 'Rp ' . number_format((float) ($this->price ?? 0), 0, ',', '.');
     }
 
     public function getFormattedRevenueAttribute()
     {
-        $revenue = $this->bookings->sum('total_price');
-        return 'Rp ' . number_format($revenue, 0, ',', '.');
+        $revenue = $this->bookings()->sum('total_price');
+        return 'Rp ' . number_format((float) $revenue, 0, ',', '.');
     }
 }

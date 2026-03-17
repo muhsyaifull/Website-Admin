@@ -758,12 +758,28 @@
         let adultCount = 1;
         let childCount = 0;
         const packages = @json($packages);
+        const packageTourIds = @json($packageTourIds);
         const tours = @json($tours);
+
+        function normalizeTourIds(ids) {
+            if (Array.isArray(ids)) {
+                return ids.map(id => Number(id)).filter(id => Number.isFinite(id));
+            }
+
+            if (ids && typeof ids === 'object') {
+                return Object.values(ids)
+                    .map(id => Number(id))
+                    .filter(id => Number.isFinite(id));
+            }
+
+            return [];
+        }
 
         function getPackageTourIds() {
             if (!selectedPackage) return [];
-            const pkg = packages.find(p => p.id == selectedPackage);
-            return pkg && pkg.tours ? pkg.tours.map(t => t.id) : tours.map(t => t.id);
+
+            const key = String(selectedPackage);
+            return normalizeTourIds(packageTourIds[key] ?? packageTourIds[selectedPackage] ?? []);
         }
 
         function allTourSessionsSelected() {
@@ -778,7 +794,7 @@
         function updateVisibleTourGroups() {
             const requiredTourIds = getPackageTourIds();
             $('.tour-session-group').each(function () {
-                const tourId = $(this).data('tour-id');
+                const tourId = Number($(this).data('tour-id'));
                 if (requiredTourIds.includes(tourId)) {
                     $(this).show();
                 } else {
@@ -795,6 +811,7 @@
             $(this).addClass('selected');
             selectedPackage = $(this).data('package');
             $('#selectedPackage').val(selectedPackage);
+            updateVisibleTourGroups();
             $('#nextBtn').prop('disabled', false);
         });
 

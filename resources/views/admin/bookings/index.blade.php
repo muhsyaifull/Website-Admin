@@ -11,8 +11,15 @@
 
     <!-- Bookings Table -->
     <div class="card shadow mb-4">
-        <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold text-primary">Booking List</h6>
+        <div class="card-header py-3 d-flex flex-column flex-md-row justify-content-between align-items-md-center">
+            <h6 class="m-0 font-weight-bold text-primary mb-3 mb-md-0">
+                Booking List - {{ $selectedDate->translatedFormat('d M Y') }}
+            </h6>
+            <form method="GET" action="{{ route('panel.bookings.index') }}" class="d-flex align-items-center">
+                <label for="date" class="mb-0 mr-2 text-muted">Date</label>
+                <input type="date" id="date" name="date" class="form-control form-control-sm"
+                    value="{{ $selectedDate->format('Y-m-d') }}" onchange="this.form.submit()">
+            </form>
         </div>
         <div class="card-body">
             <div class="table-responsive">
@@ -78,7 +85,7 @@
                             <tr>
                                 <td colspan="9" class="text-center text-muted">
                                     <i class="fas fa-inbox fa-2x mb-2"></i><br>
-                                    No bookings yet
+                                    No bookings on {{ $selectedDate->translatedFormat('d M Y') }}
                                 </td>
                             </tr>
                         @endforelse
