@@ -21,8 +21,7 @@
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
                             <div class="text-xs font-weight-bold text-primary text-uppercase mb-1"
-                                style="color: #7B3F2A!important;">
-                                Today's Bookings</div>
+                                style="color: #7B3F2A!important;">Today's Bookings</div>
                             <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $totalBookings }}</div>
                         </div>
                         <div class="col-auto">
@@ -38,9 +37,8 @@
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                                Total Visitors</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $totalParticipants }} people</div>
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Total Visitors</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $totalParticipants }} orang</div>
                         </div>
                         <div class="col-auto">
                             <i class="fas fa-users fa-2x text-success"></i>
@@ -73,8 +71,7 @@
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                                Quick Action</div>
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Quick Action</div>
                             <a href="{{ route('kasir.booking.create') }}" class="btn btn-warning btn-sm">
                                 <i class="fas fa-plus"></i> Create Booking
                             </a>
@@ -96,11 +93,10 @@
                 <div class="card shadow">
                     <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between"
                         style="background: #4e73df20;">
-                        <h6 class="m-0 font-weight-bold text-primary">
-                            {{ $tour->name }}
-                        </h6>
-                        <small class="text-muted">{{ $sessions->sum('booked') }}/{{ $sessions->sum('capacity') }}
-                            participants</small>
+                        <h6 class="m-0 font-weight-bold text-primary">{{ $tour->name }}</h6>
+                        <small class="text-muted">
+                            {{ $sessions->sum('booked') }}/{{ $sessions->sum('capacity') }} participants
+                        </small>
                     </div>
                     <div class="card-body">
                         @forelse($sessions as $session)
@@ -114,7 +110,8 @@
                                         <strong style="color: #4A2218;">{{ $session->label }}</strong>
                                     </div>
                                     <small class="text-muted">Guide:
-                                        <strong>{{ $session->educator ? $session->educator->name : '-' }}</strong></small>
+                                        <strong>{{ $session->educator ? $session->educator->name : '-' }}</strong>
+                                    </small>
                                 </div>
                                 <div class="progress mb-2" style="height: 8px;">
                                     <div class="progress-bar" role="progressbar"
@@ -130,15 +127,17 @@
                                     </span>
                                 </div>
                                 @if($session->is_full)
-                                    <small class="text-danger mt-1"><i class="fas fa-exclamation-triangle"></i> Slot full — not
-                                        accepting new participants</small>
+                                    <small class="text-danger mt-1">
+                                        <i class="fas fa-exclamation-triangle"></i> Full Slot — does not accept new participants
+                                    </small>
                                 @elseif($session->is_low)
-                                    <small class="text-warning mt-1"><i class="fas fa-bolt"></i> Almost full —
-                                        {{ $session->available }} spots remaining</small>
+                                    <small class="text-warning mt-1">
+                                        <i class="fas fa-bolt"></i> Almost full — {{ $session->available }} seats remaining
+                                    </small>
                                 @endif
                             </div>
                         @empty
-                            <p class="text-muted text-center mb-0">No sessions available today</p>
+                            <p class="text-muted text-center mb-0">No available sessions today</p>
                         @endforelse
                     </div>
                 </div>
@@ -149,7 +148,7 @@
     <!-- Recent Bookings -->
     <div class="card shadow mb-4">
         <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold text-primary">Today's Recent Bookings</h6>
+            <h6 class="m-0 font-weight-bold text-primary">Recent Bookings</h6>
         </div>
         <div class="card-body">
             @if($todaysBookings->count() > 0)
@@ -160,6 +159,7 @@
                                 <th>Booking Code</th>
                                 <th>Representative</th>
                                 <th>Package</th>
+                                <th>Type</th>
                                 <th>Participants</th>
                                 <th>Sessions</th>
                                 <th>Total</th>
@@ -169,20 +169,37 @@
                         <tbody>
                             @foreach($todaysBookings->take(10) as $booking)
                                 <tr>
-                                    <td><a href="{{ route('kasir.booking.show', $booking) }}"
-                                            class="text-decoration-none font-weight-bold">{{ $booking->booking_code }}</a></td>
+                                    <td>
+                                        <a href="{{ route('kasir.booking.show', $booking) }}"
+                                            class="text-decoration-none font-weight-bold">
+                                            {{ $booking->booking_code }}
+                                        </a>
+                                    </td>
                                     <td>{{ $booking->representative_name }}</td>
                                     <td>{{ $booking->package->name }}</td>
-                                    <td>{{ $booking->total_participants }} people <small
-                                            class="text-muted">({{ $booking->adult_count }} adults, {{ $booking->child_count }}
-                                            children)</small></td>
+                                    <td>
+                                        <span class="badge badge-secondary">
+                                            {{ $booking->visitor_type_label }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        {{ $booking->total_participants }} participants
+                                        <small class="text-muted d-block">
+                                            {{ $booking->adult_count }} adults,
+                                            {{ $booking->child_count }} children
+                                            @if($booking->infant_count > 0)
+                                                , {{ $booking->infant_count }} infants
+                                            @endif
+                                        </small>
+                                    </td>
                                     <td>
                                         @foreach($booking->bookingSessions as $session)
-                                            <span class="badge badge-info">{{ $session->tour->name ?? 'Tour' }}:
-                                                {{ $session->label }}</span>
+                                            <span class="badge badge-info">
+                                                {{ $session->tour->name ?? 'Tour' }}: {{ $session->label }}
+                                            </span>
                                         @endforeach
                                         @if($booking->bookingSessions->isEmpty())
-                                            <span class="text-muted">No sessions</span>
+                                            <span class="text-muted">No sessions available</span>
                                         @endif
                                     </td>
                                     <td class="font-weight-bold text-success">{{ $booking->formatted_total_price }}</td>
@@ -195,7 +212,7 @@
             @else
                 <div class="text-center py-4">
                     <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
-                    <p class="text-muted">No bookings today yet</p>
+                    <p class="text-muted">No bookings available for today</p>
                     <a href="{{ route('kasir.booking.create') }}" class="btn btn-primary">
                         <i class="fas fa-plus"></i> Create First Booking
                     </a>
@@ -211,10 +228,10 @@
                 <div class="col-md-12">
                     <small class="text-muted d-flex align-items-center flex-wrap">
                         <span class="mr-3"><span class="badge badge-success">●</span> Available</span>
-                        <span class="mr-3"><span class="badge" style="background: #E67E22; color: white;">●</span> Almost
-                            full (≤3)</span>
+                        <span class="mr-3"><span class="badge" style="background: #E67E22; color: white;">●</span> Nearly
+                            Full (≤3)</span>
                         <span class="mr-3"><span class="badge badge-danger">●</span> Full</span>
-                        <span class="mr-3"><span class="badge badge-primary">●</span> In progress</span>
+                        <span class="mr-3"><span class="badge badge-primary">●</span> In Progress</span>
                     </small>
                 </div>
             </div>
@@ -225,7 +242,6 @@
 
 @push('scripts')
     <script>
-        // Auto refresh every 30 seconds for real-time updates
         setInterval(function () {
             location.reload();
         }, 30000);

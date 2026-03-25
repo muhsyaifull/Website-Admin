@@ -49,7 +49,9 @@ class LoginController extends Controller
                 ]);
             }
 
-            Auth::user()->update(['last_login' => now()]);
+            $user = Auth::user();
+            $user->last_login = now();
+            $user->save();
 
             return redirect()->intended(route('dashboard'));
         }

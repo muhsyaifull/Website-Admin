@@ -33,10 +33,14 @@
 
             <!-- Sidebar - Brand -->
             <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{{ route('dashboard') }}">
-                <div class="sidebar-brand-icon rotate-n-15">
-                    <i class="fas fa-seedling"></i>
+                <div class="sidebar-brand-icon">
+                    <img src="{{ asset('Images/Login-Logo2.svg') }}" alt="Rumah Atsiri Indonesia"
+                        style="width: 36px; height: 36px; object-fit: contain; filter: brightness(0) invert(1);">
                 </div>
-                <div class="sidebar-brand-text mx-3">Rumah Atsiri</div>
+                <div class="sidebar-brand-text mx-3"
+                    style="color: #fff; font-size: 14px; font-weight: 700; line-height: 1.3;">
+                    Rumah Atsiri<br>Indonesia
+                </div>
             </a>
 
             <!-- Divider -->
@@ -55,20 +59,13 @@
             @if(auth()->user()->isCashier())
                 <!-- Cashier Menu -->
                 <div class="sidebar-heading">
-                    Museum cashier
+                    Cashier Menu
                 </div>
 
                 <li class="nav-item {{ request()->routeIs('kasir.booking.*') ? 'active' : '' }}">
                     <a class="nav-link" href="{{ route('kasir.booking.create') }}">
                         <i class="fas fa-fw fa-plus-circle"></i>
                         <span>Create Booking</span>
-                    </a>
-                </li>
-
-                <li class="nav-item {{ request()->routeIs('kasir.sessions') ? 'active' : '' }}">
-                    <a class="nav-link" href="{{ route('kasir.sessions') }}">
-                        <i class="fas fa-fw fa-calendar-alt"></i>
-                        <span>List Sessions Tour</span>
                     </a>
                 </li>
 
@@ -246,7 +243,7 @@
             <footer class="sticky-footer bg-white">
                 <div class="container my-auto">
                     <div class="copyright text-center my-auto">
-                        <span>Copyright &copy; Laravel SB Admin 2 {{ date('Y') }}</span>
+                        <span>Copyright &copy; Rumah Atsiri Indonesia {{ date('Y') }}</span>
                     </div>
                 </div>
             </footer>

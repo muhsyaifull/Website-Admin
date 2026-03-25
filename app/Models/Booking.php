@@ -10,6 +10,13 @@ class Booking extends Model
 {
     use HasFactory;
 
+    const VISITOR_TYPES = [
+        'WI' => 'Walk In',
+        'GLAMPING' => 'Reservasi Glamping',
+        'SALES' => 'Reservasi Sales',
+        'TRAVELOKA' => 'Reservasi Traveloka',
+    ];
+
     protected $fillable = [
         'booking_code',
         'package_id',
@@ -19,11 +26,13 @@ class Booking extends Model
         'representative_phone',
         'adult_count',
         'child_count',
+        'infant_count',
         'total_participants',
         'unit_price',
         'total_price',
         'visit_date',
         'status',
+        'visitor_type',
     ];
 
     protected $casts = [
@@ -131,21 +140,29 @@ class Booking extends Model
         return $colors[$this->status] ?? '#7F8C8D';
     }
 
+    public function getVisitorTypeLabelAttribute()
+    {
+        return self::VISITOR_TYPES[$this->visitor_type] ?? $this->visitor_type;
+    }
+
+    /**
+     * Total participants (adult + child, infant free)
+     */
+    public function getTotalPaidParticipantsAttribute()
+    {
+        return $this->adult_count + $this->child_count;
+    }
+
     /**
      * Static methods
      */
     public static function generateBookingCode()
     {
         $date = Carbon::now()->format('ymd');
-        $sequence = static::whereDate('created_at', Carbon::today())->count() + 1;
-        return 'RAI' . $date . str_pad($sequence, 3, '0', STR_PAD_LEFT);
-    }
 
-    /**
-     * Calculate total participants for adults only (for pricing)
-     */
-    public function getTotalPaidParticipantsAttribute()
-    {
-        return $this->adult_count; // Only adults are counted for payment
+        return cache()->lock('booking_code_lock', 5)->block(3, function () use ($date) {
+            $sequence = static::whereDate('created_at', Carbon::today())->count() + 1;
+            return 'RAI' . $date . str_pad($sequence, 3, '0', STR_PAD_LEFT);
+        });
     }
 }
