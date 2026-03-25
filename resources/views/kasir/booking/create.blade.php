@@ -24,7 +24,6 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-
         }
 
         .bk-header-brand {
@@ -119,7 +118,6 @@
             padding: 28px;
             border: 1px solid #E8D8CF;
             border-top: none;
-
         }
 
         .bk-section-title {
@@ -320,6 +318,14 @@
             text-align: center;
         }
 
+        .price-summary small {
+            display: block;
+            font-size: 11px;
+            font-weight: 400;
+            color: #9E8078;
+            margin-top: 4px;
+        }
+
         /* ── Form ── */
         .form-row-2 {
             display: flex;
@@ -369,6 +375,16 @@
         textarea.form-control {
             resize: vertical;
             min-height: 72px;
+        }
+
+        select.form-control {
+            appearance: none;
+            -webkit-appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%237B3F2A' d='M6 8L0 0h12z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            padding-right: 32px;
+            cursor: pointer;
         }
 
         /* ── Sessions ── */
@@ -473,6 +489,17 @@
             margin-left: 6px;
             letter-spacing: .4px;
             vertical-align: middle;
+        }
+
+        /* ── Alert error ── */
+        .bk-alert-error {
+            background: #FFF0F0;
+            border: 1.5px solid #F5C6C6;
+            border-radius: 7px;
+            padding: 10px 14px;
+            font-size: 13px;
+            color: #C0392B;
+            margin-bottom: 16px;
         }
 
         /* ── Navigation ── */
@@ -585,7 +612,7 @@
             </div>
             <div class="bk-step" id="stepTab3">
                 <div class="bk-step-num">3</div>
-                <div class="bk-step-label">Representative</div>
+                <div class="bk-step-label">Guest</div>
             </div>
             <div class="bk-step" id="stepTab4">
                 <div class="bk-step-num">4</div>
@@ -594,6 +621,19 @@
         </div>
 
         <div class="bk-body">
+
+            {{-- Error dari server (session gap, capacity, dll) --}}
+            @if($errors->any())
+                <div class="bk-alert-error">
+                    <strong>Terjadi kesalahan:</strong>
+                    <ul style="margin: 6px 0 0 0; padding-left: 18px;">
+                        @foreach($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
             <form id="bookingForm" action="{{ route('kasir.booking.store') }}" method="POST">
                 @csrf
 
@@ -640,9 +680,7 @@
                             </div>
                         </div>
                         <div class="qty-block">
-                            <div class="qty-block-label">Children <span
-                                    style="color:#28A745; font-size:10px; text-transform:none; font-weight:500;">(Free)</span>
-                            </div>
+                            <div class="qty-block-label">Children</div>
                             <div class="qty-control">
                                 <button type="button" class="qty-btn" id="childMinus">&minus;</button>
                                 <div>
@@ -652,43 +690,70 @@
                                 <button type="button" class="qty-btn" id="childPlus">+</button>
                             </div>
                         </div>
+                        <div class="qty-block">
+                            <div class="qty-block-label">
+                                Infants
+                                <span style="color:#28A745; font-size:10px; text-transform:none; font-weight:500;">(Free)</span>
+                            </div>
+                            <div class="qty-control">
+                                <button type="button" class="qty-btn" id="infantMinus">&minus;</button>
+                                <div>
+                                    <div class="qty-val" id="infantDisplay">0</div>
+                                    <div class="qty-sub">infants</div>
+                                </div>
+                                <button type="button" class="qty-btn" id="infantPlus">+</button>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="price-summary" id="priceCalculation">
-                        Total: 1 &times; Rp 75.000 = Rp 75.000
+                        Total: 1 &times; Rp 0 = <strong>Rp 0</strong>
+                        <small>Price is calculated based on Adults and Children. Infants are free.</small>
                     </div>
 
                     <input type="hidden" name="adult_count" id="adultCount" value="1">
                     <input type="hidden" name="child_count" id="childCount" value="0">
+                    <input type="hidden" name="infant_count" id="infantCount" value="0">
                 </div>
 
                 <!-- Step 3: Representative -->
                 <div class="booking-step" id="step3" style="display:none;">
-                    <div class="bk-section-title">Representative Information</div>
+                    <div class="bk-section-title">Guest Information</div>
+
+                    <div class="form-group">
+                        <label>Guest Type  <span class="req">*</span></label>
+                        <select class="form-control" name="visitor_type" id="visitorType" required>
+                            @foreach($visitorTypes as $key => $label)
+                                <option value="{{ $key }}" {{ $key === 'WI' ? 'selected' : '' }}>
+                                    {{ $label }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
 
                     <div class="form-group">
                         <label>Full Name <span class="req">*</span></label>
                         <input type="text" class="form-control" name="representative_name"
-                            placeholder="Visitor representative name" required>
+                            placeholder="Nama perwakilan pengunjung" value="{{ old('representative_name') }}" required>
                     </div>
 
                     <div class="form-row-2">
                         <div class="form-group">
                             <label>Phone Number <span class="req">*</span></label>
-                            <input type="text" class="form-control" name="representative_phone" placeholder="08xx-xxxx-xxxx"
-                                required>
+                            <input type="text" class="form-control" name="representative_phone"
+                                placeholder="08xx-xxxx-xxxx" value="{{ old('representative_phone') }}" required>
                         </div>
                         <div class="form-group">
                             <label>Visit Date <span class="req">*</span></label>
-                            <input type="date" class="form-control" name="visit_date" min="{{ date('Y-m-d') }}"
-                                value="{{ date('Y-m-d') }}" required>
+                            <input type="date" class="form-control" name="visit_date"
+                                min="{{ date('Y-m-d') }}" value="{{ date('Y-m-d') }}" required readonly>
                         </div>
                     </div>
 
                     <div class="form-group">
                         <label>Full Address <span class="req">*</span></label>
-                        <textarea class="form-control" name="representative_address" placeholder="Street, City, Province"
-                            required></textarea>
+                        <textarea class="form-control" name="representative_address"
+                            placeholder="Jalan, Kota, Provinsi" required>{{ old('representative_address') }}</textarea>
                     </div>
                 </div>
 
@@ -708,12 +773,16 @@
                                 </div>
                                 <div class="tour-sessions-container" data-tour-id="{{ $tour->id }}">
                                     @foreach($sessions as $session)
-                                        <div class="session-item" data-session="{{ $session->id }}" data-tour-id="{{ $tour->id }}"
-                                            data-capacity="{{ $session->capacity }}" data-booked="{{ $session->booked }}">
+                                        <div class="session-item"
+                                            data-session="{{ $session->id }}"
+                                            data-tour-id="{{ $tour->id }}"
+                                            data-capacity="{{ $session->capacity }}"
+                                            data-booked="{{ $session->booked }}"
+                                            data-start-time="{{ $session->start_time }}"
+                                            data-end-time="{{ $session->end_time }}">
                                             <div class="session-item-top">
                                                 <span class="session-item-name">{{ $session->label }}</span>
-                                                <span
-                                                    class="session-item-guide">{{ $session->educator ? $session->educator->name : '-' }}</span>
+                                                <span class="session-item-guide">{{ $session->educator ? $session->educator->name : '-' }}</span>
                                             </div>
                                             <div class="session-progress">
                                                 <div class="session-progress-bar"
@@ -721,8 +790,7 @@
                                                 </div>
                                             </div>
                                             <div class="session-item-bottom">
-                                                <span
-                                                    class="session-item-count">{{ $session->booked }}/{{ $session->capacity }}</span>
+                                                <span class="session-item-count">{{ $session->booked }}/{{ $session->capacity }}</span>
                                                 <span class="session-badge"
                                                     style="background:{{ $session->status_background }}; color:{{ $session->status_color }};">{{ $session->status }}</span>
                                             </div>
@@ -738,12 +806,9 @@
 
                 <!-- Navigation -->
                 <div class="bk-nav">
-                    <button type="button" class="btn-nav btn-back" id="prevBtn" onclick="changeStep(-1)"
-                        disabled>Back</button>
-                    <button type="button" class="btn-nav btn-next" id="nextBtn" onclick="changeStep(1)"
-                        disabled>Next</button>
-                    <button type="submit" class="btn-nav btn-submit" id="submitBtn" style="display:none;">Confirm
-                        Booking</button>
+                    <button type="button" class="btn-nav btn-back" id="prevBtn" onclick="changeStep(-1)" disabled>Back</button>
+                    <button type="button" class="btn-nav btn-next" id="nextBtn" onclick="changeStep(1)" disabled>Next</button>
+                    <button type="submit" class="btn-nav btn-submit" id="submitBtn" style="display:none;">Confirm Booking</button>
                 </div>
             </form>
         </div>
@@ -757,39 +822,37 @@
         let selectedPackage = null;
         let adultCount = 1;
         let childCount = 0;
+        let infantCount = 0;
         const packages = @json($packages);
         const packageTourIds = @json($packageTourIds);
         const tours = @json($tours);
+
+        let selectedSessions = {};
 
         function normalizeTourIds(ids) {
             if (Array.isArray(ids)) {
                 return ids.map(id => Number(id)).filter(id => Number.isFinite(id));
             }
-
             if (ids && typeof ids === 'object') {
-                return Object.values(ids)
-                    .map(id => Number(id))
-                    .filter(id => Number.isFinite(id));
+                return Object.values(ids).map(id => Number(id)).filter(id => Number.isFinite(id));
             }
-
             return [];
         }
 
         function getPackageTourIds() {
             if (!selectedPackage) return [];
-
             const key = String(selectedPackage);
             return normalizeTourIds(packageTourIds[key] ?? packageTourIds[selectedPackage] ?? []);
         }
 
         function allTourSessionsSelected() {
-            const requiredTourIds = getPackageTourIds();
-            for (const tourId of requiredTourIds) {
-                const input = $(`.tour-session-input[data-tour-id="${tourId}"]`);
-                if (!input.val()) return false;
-            }
-            return true;
+        const requiredTourIds = getPackageTourIds();
+        for (const tourId of requiredTourIds) {
+            const input = $(`.tour-session-input[data-tour-id="${tourId}"]`);
+            if (!input.val()) return false;
         }
+        return true;
+    }
 
         function updateVisibleTourGroups() {
             const requiredTourIds = getPackageTourIds();
@@ -802,8 +865,88 @@
                     $(this).find('.tour-session-input').val('');
                     $(this).find('.session-item').removeClass('selected');
                     $(this).find('.selected-tour-info').hide();
+                    delete selectedSessions[tourId];
                 }
             });
+        }
+
+        function parseToMinutes(isoString) {
+            if (!isoString) return null;
+            const date = new Date(isoString);
+            return date.getUTCHours() * 60 + date.getUTCMinutes();
+        }
+
+        function updateSessionAvailability() {
+            const requiredTourIds = getPackageTourIds();
+
+            requiredTourIds.forEach(function (tourId) {
+                const otherSelections = Object.entries(selectedSessions)
+                    .filter(([tid]) => Number(tid) !== tourId)
+                    .map(([, data]) => data);
+
+                if (otherSelections.length === 0) {
+                    $(`.tour-session-group[data-tour-id="${tourId}"] .session-item`).each(function () {
+                        enableSession($(this));
+                    });
+                    return;
+                }
+
+                $(`.tour-session-group[data-tour-id="${tourId}"] .session-item`).each(function () {
+                    const $item = $(this);
+                    const itemStart = parseToMinutes($item.data('start-time'));
+                    const itemEnd   = parseToMinutes($item.data('end-time'));
+
+                    if (itemStart === null || itemEnd === null) return;
+
+                    let isBlocked = false;
+
+                    otherSelections.forEach(function (other) {
+                        const otherStart = parseToMinutes(other.startTime);
+                        const otherEnd   = parseToMinutes(other.endTime);
+
+                        if (otherStart === null || otherEnd === null) return;
+
+                        const gapAfter  = itemStart - otherEnd;
+                        const gapBefore = otherStart - itemEnd;
+
+                        const validAfter  = gapAfter >= 60;
+                        const validBefore = gapBefore >= 60;
+
+                        if (!validAfter && !validBefore) {
+                            isBlocked = true;
+                        }
+                    });
+
+                    if (isBlocked) {
+                        disableSession($item);
+                    } else {
+                        enableSession($item);
+                    }
+                });
+            });
+        }
+
+        function disableSession($item) {
+            $item.addClass('session-disabled');
+            $item.css({
+                'opacity': '0.4',
+                'cursor': 'not-allowed',
+                'background': '#F0F0F0',
+                'border-color': '#CCCCCC',
+            });
+            $item.attr('data-disabled', '1');
+        }
+
+        function enableSession($item) {
+            if ($item.hasClass('selected')) return;
+            $item.removeClass('session-disabled');
+            $item.css({
+                'opacity': '',
+                'cursor': 'pointer',
+                'background': '',
+                'border-color': '',
+            });
+            $item.attr('data-disabled', '0');
         }
 
         $(document).on('click', '.pkg-card', function () {
@@ -811,21 +954,31 @@
             $(this).addClass('selected');
             selectedPackage = $(this).data('package');
             $('#selectedPackage').val(selectedPackage);
+            selectedSessions = {};
             updateVisibleTourGroups();
             $('#nextBtn').prop('disabled', false);
         });
 
         $(document).on('click', '.session-item', function () {
-            const tourId = $(this).data('tour-id');
+            if ($(this).attr('data-disabled') === '1') return;
+
+            const tourId    = $(this).data('tour-id');
             const sessionId = $(this).data('session');
-            const capacity = $(this).data('capacity');
-            const booked = $(this).data('booked');
+            const capacity  = $(this).data('capacity');
+            const booked    = $(this).data('booked');
             const available = capacity - booked;
-            const totalParticipants = adultCount + childCount;
+            const startTime = $(this).data('start-time');
+            const endTime   = $(this).data('end-time');
+            const totalParticipants = adultCount + childCount + infantCount;
 
             if (available < totalParticipants) {
-                alert('Session capacity is insufficient for the selected number of participants!');
+                alert('Capacity for this session is insufficient for the number of participants. Please choose another session or reduce the number of participants.');
                 return;
+            }
+
+            if (selectedSessions[tourId]) {
+                const prevSessionId = selectedSessions[tourId].sessionId;
+                $(`.session-item[data-session="${prevSessionId}"]`).removeClass('selected');
             }
 
             $(`.session-item[data-tour-id="${tourId}"]`).removeClass('selected');
@@ -833,25 +986,38 @@
             $(`.tour-session-input[data-tour-id="${tourId}"]`).val(sessionId);
             $(`.selected-tour-info[data-tour="${tourId}"]`).text($(this).find('.session-item-name').text()).show();
 
+            selectedSessions[tourId] = { sessionId, startTime, endTime };
+
+            updateSessionAvailability();
+
             if (allTourSessionsSelected()) {
                 $('#submitBtn').prop('disabled', false);
             }
         });
 
-        $('#adultPlus').click(function () { if (adultCount < 20) { adultCount++; updateQuantityDisplay(); } });
-        $('#adultMinus').click(function () { if (adultCount > 1) { adultCount--; updateQuantityDisplay(); } });
-        $('#childPlus').click(function () { if (childCount < 10) { childCount++; updateQuantityDisplay(); } });
-        $('#childMinus').click(function () { if (childCount > 0) { childCount--; updateQuantityDisplay(); } });
+        $('#adultPlus').click(function ()  { if (adultCount < 20)  { adultCount++;  updateQuantityDisplay(); } });
+        $('#adultMinus').click(function () { if (adultCount > 1)   { adultCount--;  updateQuantityDisplay(); } });
+        $('#childPlus').click(function ()  { if (childCount < 20)  { childCount++;  updateQuantityDisplay(); } });
+        $('#childMinus').click(function () { if (childCount > 0)   { childCount--;  updateQuantityDisplay(); } });
+        $('#infantPlus').click(function () { if (infantCount < 10) { infantCount++; updateQuantityDisplay(); } });
+        $('#infantMinus').click(function () { if (infantCount > 0) { infantCount--; updateQuantityDisplay(); } });
 
         function updateQuantityDisplay() {
             $('#adultDisplay').text(adultCount);
             $('#childDisplay').text(childCount);
+            $('#infantDisplay').text(infantCount);
             $('#adultCount').val(adultCount);
             $('#childCount').val(childCount);
+            $('#infantCount').val(infantCount);
+
             if (selectedPackage) {
                 const pkg = packages.find(p => p.id == selectedPackage);
-                const total = pkg.price * adultCount;
-                $('#priceCalculation').html(`Total: ${adultCount} &times; Rp ${pkg.price.toLocaleString('id-ID')} = <strong>Rp ${total.toLocaleString('id-ID')}</strong>`);
+                const paidCount = adultCount + childCount;
+                const total = pkg.price * paidCount;
+                $('#priceCalculation').html(
+                    `Total: ${paidCount} &times; Rp ${pkg.price.toLocaleString('id-ID')} = <strong>Rp ${total.toLocaleString('id-ID')}</strong>` +
+                    `<small>Price is calculated based on Adults and Children. Infants are free.</small>`
+                );
             }
         }
 
@@ -875,16 +1041,17 @@
         function changeStep(direction) {
             if (direction === 1) {
                 if (currentStep === 1 && !selectedPackage) {
-                    alert('Please select a bundling package first');
+                    alert('Please select a package first');
                     return;
                 }
                 if (currentStep === 3) {
-                    const name = $('[name="representative_name"]').val();
-                    const address = $('[name="representative_address"]').val();
-                    const phone = $('[name="representative_phone"]').val();
+                    const name      = $('[name="representative_name"]').val();
+                    const address   = $('[name="representative_address"]').val();
+                    const phone     = $('[name="representative_phone"]').val();
                     const visitDate = $('[name="visit_date"]').val();
-                    if (!name || !address || !phone || !visitDate) {
-                        alert('Please complete all representative information');
+                    const visType   = $('[name="visitor_type"]').val();
+                    if (!name || !address || !phone || !visitDate || !visType) {
+                        alert('Please complete all Guest information');
                         return;
                     }
                 }
@@ -904,9 +1071,22 @@
 
             if (currentStep === 4 && direction === 1) {
                 const pkg = packages.find(p => p.id == selectedPackage);
-                $('#participantInfo').html(`<div class="ctx-pill"><div class="ctx-pill-dot"></div>${adultCount + childCount} participants &nbsp;•&nbsp; ${pkg ? pkg.name : ''}</div>`);
+                const totalCount = adultCount + childCount + infantCount;
+                $('#participantInfo').html(
+                    `<div class="ctx-pill"><div class="ctx-pill-dot"></div>` +
+                    `${totalCount} peserta (${adultCount} dewasa, ${childCount} anak, ${infantCount} balita) &nbsp;•&nbsp; ${pkg ? pkg.name : ''}</div>`
+                );
                 updateVisibleTourGroups();
+
+                selectedSessions = {};
+                $('.tour-session-input').val('');
+                $('.session-item').removeClass('selected');
+                $('.selected-tour-info').hide();
+                $('.session-item').each(function () { enableSession($(this)); });
+
                 $('#nextBtn').prop('disabled', true);
+
+                hideExpiredSessions();
             }
 
             $('#prevBtn').prop('disabled', currentStep === 1);
@@ -925,11 +1105,36 @@
             }
         }
 
+        function hideExpiredSessions() {
+        const now = new Date();
+
+        $('.session-item').each(function () {
+            const startTimeStr = $(this).data('start-time');
+            if (!startTimeStr) return;
+
+            const startTime = new Date(startTimeStr);
+
+            if (startTime < now) {
+                $(this).hide();
+            } else {
+                $(this).show();
+            }
+            });
+        }
+
         $('#bookingForm').submit(function (e) {
             if (!allTourSessionsSelected()) {
                 e.preventDefault();
-                alert('Please select schedules for all required tours');
+                alert('Chosen sessions do not meet the required time gap. Please adjust your selections.');
             }
+        });
+
+        $(document).ready(function () {
+            setInterval(function () {
+                if (currentStep === 4) {
+                    hideExpiredSessions();
+                }
+            }, 60000);
         });
     </script>
 @endpush

@@ -12,9 +12,10 @@
         </a>
     </div>
 
-    <!-- Booking Information -->
     <div class="row">
         <div class="col-lg-8">
+
+            <!-- Booking Information -->
             <div class="card shadow mb-4">
                 <div class="card-header py-3">
                     <h6 class="m-0 font-weight-bold text-primary">Booking Information</h6>
@@ -25,7 +26,11 @@
                             <table class="table table-borderless">
                                 <tr>
                                     <td class="font-weight-bold">Booking Code:</td>
-                                    <td>{{ $booking->booking_code }}</td>
+                                    <td>
+                                        <span style="font-family: monospace; font-size: 15px; font-weight: 700;">
+                                            {{ $booking->booking_code }}
+                                        </span>
+                                    </td>
                                 </tr>
                                 <tr>
                                     <td class="font-weight-bold">Package:</td>
@@ -34,8 +39,7 @@
                                             {{ $booking->package->label }}
                                         </span>
                                         {{ $booking->package->name }}
-                                        <br><small class="text-muted">{{ $booking->formatted_unit_price }} per
-                                            person</small>
+                                        <br><small class="text-muted">{{ $booking->formatted_unit_price }} / person</small>
                                     </td>
                                 </tr>
                                 <tr>
@@ -43,17 +47,10 @@
                                     <td>{{ $booking->formatted_visit_date }}</td>
                                 </tr>
                                 <tr>
-                                    <td class="font-weight-bold">Participants:</td>
+                                    <td class="font-weight-bold">Visitor Type:</td>
                                     <td>
-                                        <span class="badge badge-info">{{ $booking->total_participants }} total</span>
-                                        <br>
-                                        <small>{{ $booking->adult_count }} adults, {{ $booking->child_count }}
-                                            children</small>
+                                        <span class="badge badge-secondary">{{ $booking->visitor_type_label }}</span>
                                     </td>
-                                </tr>
-                                <tr>
-                                    <td class="font-weight-bold">Total Price:</td>
-                                    <td class="h5 text-success">{{ $booking->formatted_total_price }}</td>
                                 </tr>
                             </table>
                         </div>
@@ -88,6 +85,66 @@
                 </div>
             </div>
 
+            <!-- Participants & Pricing -->
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-warning">Participants & Pricing</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center mb-3">
+                        <div class="col-4">
+                            <div class="border rounded p-3" style="background: #F7F0EC;">
+                                <div style="font-size: 28px; font-weight: 700; color: #3A1A0E; font-family: monospace;">
+                                    {{ $booking->adult_count }}
+                                </div>
+                                <div class="text-muted"
+                                    style="font-size: 11px; text-transform: uppercase; letter-spacing: .5px;">Adults</div>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="border rounded p-3" style="background: #F7F0EC;">
+                                <div style="font-size: 28px; font-weight: 700; color: #3A1A0E; font-family: monospace;">
+                                    {{ $booking->child_count }}
+                                </div>
+                                <div class="text-muted"
+                                    style="font-size: 11px; text-transform: uppercase; letter-spacing: .5px;">Children</div>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="border rounded p-3" style="background: #F7F0EC;">
+                                <div style="font-size: 28px; font-weight: 700; color: #3A1A0E; font-family: monospace;">
+                                    {{ $booking->infant_count }}
+                                </div>
+                                <div class="text-muted"
+                                    style="font-size: 11px; text-transform: uppercase; letter-spacing: .5px;">Infants</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <table class="table table-borderless mb-0">
+                        <tr>
+                            <td class="text-muted">Total Participants (capacity)</td>
+                            <td class="font-weight-bold">{{ $booking->total_participants }} people</td>
+                        </tr>
+                        <tr>
+                            <td class="text-muted">Paid Participants</td>
+                            <td>
+                                {{ $booking->adult_count + $booking->child_count }} people
+                                <small class="text-muted">(adults + children, infants free)</small>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-muted">Unit Price</td>
+                            <td>{{ $booking->formatted_unit_price }}</td>
+                        </tr>
+                        <tr style="border-top: 2px solid #E0CEC6;">
+                            <td class="font-weight-bold">Total Payment</td>
+                            <td class="h5 text-success font-weight-bold mb-0">{{ $booking->formatted_total_price }}</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
             <!-- Tour Schedule -->
             <div class="card shadow mb-4">
                 <div class="card-header py-3">
@@ -104,13 +161,11 @@
                                     <div class="card border-primary">
                                         <div class="card-body">
                                             <h6 class="font-weight-bold">{{ $session->label }}</h6>
-                                            <p class="text-muted mb-1">Guide:
-                                                {{ $session->educator ? $session->educator->name : '-' }}
+                                            <p class="text-muted mb-1">
+                                                Guide: {{ $session->educator ? $session->educator->name : '-' }}
                                             </p>
                                             <small class="text-muted">
-                                                Capacity:
-                                                {{ $session->booked }}/{{ $session->capacity }}
-                                                participants
+                                                Capacity: {{ $session->booked }}/{{ $session->capacity }} participants
                                             </small>
                                         </div>
                                     </div>
@@ -124,13 +179,15 @@
                     </div>
                 </div>
             </div>
+
         </div>
 
         <div class="col-lg-4">
+
             <!-- Representative Information -->
             <div class="card shadow mb-4">
                 <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-info">Representative Information</h6>
+                    <h6 class="m-0 font-weight-bold text-info">Guest Information</h6>
                 </div>
                 <div class="card-body">
                     <h6 class="font-weight-bold">{{ $booking->representative_name }}</h6>
@@ -160,6 +217,7 @@
                     </ul>
                 </div>
             </div>
+
         </div>
     </div>
 

@@ -35,14 +35,27 @@ class DashboardController extends Controller
 
     private function adminDashboard()
     {
-        SessionTemplate::ensureSessionsForDate(Carbon::today());
+        $this->ensureSessionsOnce();
 
-        $totalUsers = User::count();
-        $activeUsers = User::where('is_active', true)->count();
-        $totalBookings = Booking::count();
-        $todaysBookings = Booking::today()->count();
-        $totalRevenue = Booking::sum('total_price');
-        $todaysRevenue = Booking::today()->sum('total_price');
+        $stats = cache()->remember('admin_dashboard_stats', 300, function () {
+            return [
+                'totalUsers' => User::count(),
+                'activeUsers' => User::where('is_active', true)->count(),
+                'totalBookings' => Booking::count(),
+                'totalRevenue' => Booking::sum('total_price'),
+            ];
+        });
+
+        $todayStats = cache()->remember(
+            'admin_dashboard_today_' . Carbon::today()->toDateString(),
+            60,
+            function () {
+                return [
+                    'todaysBookings' => Booking::today()->count(),
+                    'todaysRevenue' => Booking::today()->sum('total_price'),
+                ];
+            }
+        );
 
         $recentBookings = Booking::with(['package', 'user'])
             ->orderBy('created_at', 'desc')
@@ -53,15 +66,10 @@ class DashboardController extends Controller
             ->take(5)
             ->get();
 
-        return view('admin.index', compact(
-            'totalUsers',
-            'activeUsers',
-            'totalBookings',
-            'todaysBookings',
-            'totalRevenue',
-            'todaysRevenue',
-            'recentBookings',
-            'recentUsers'
+        return view('admin.index', array_merge(
+            $stats,
+            $todayStats,
+            compact('recentBookings', 'recentUsers')
         ));
     }
 
@@ -70,7 +78,7 @@ class DashboardController extends Controller
         $today = Carbon::today();
         $now = Carbon::now();
 
-        SessionTemplate::ensureSessionsForDate($today);
+        $this->ensureSessionsOnce();
 
         $tours = Tour::active()->ordered()->get();
         $tourSessions = [];
@@ -110,37 +118,58 @@ class DashboardController extends Controller
      */
     public function search(Request $request)
     {
-        $q = $request->input('q', '');
+        $request->validate([
+            'q' => 'nullable|string|min:3|max:100',
+        ]);
+
+        $q = trim($request->input('q', ''));
         $results = [];
 
-        if (strlen($q) < 2) {
+        if (strlen($q) < 3) {
             return view('search', compact('q', 'results'));
         }
 
         $user = auth()->user();
+        $cacheKey = "search:{$user->role}:" . md5($q);
 
-        $results['packages'] = Package::where('name', 'like', "%{$q}%")
-            ->orWhere('label', 'like', "%{$q}%")
-            ->orWhere('description', 'like', "%{$q}%")
-            ->limit(10)->get();
+        $results = cache()->remember($cacheKey, 60, function () use ($q, $user) {
+            $data = [];
 
-        $results['educators'] = Educator::with('tours')
-            ->where('name', 'like', "%{$q}%")
-            ->orWhere('phone', 'like', "%{$q}%")
-            ->limit(10)->get();
-
-        $results['bookings'] = Booking::where('booking_code', 'like', "%{$q}%")
-            ->orWhere('representative_name', 'like', "%{$q}%")
-            ->orWhere('representative_phone', 'like', "%{$q}%")
-            ->limit(10)->get();
-
-        if ($user->role === 'admin') {
-            $results['users'] = User::where('name', 'like', "%{$q}%")
-                ->orWhere('username', 'like', "%{$q}%")
-                ->orWhere('email', 'like', "%{$q}%")
+            $data['packages'] = Package::where('name', 'like', "%{$q}%")
+                ->orWhere('label', 'like', "%{$q}%")
+                ->orWhere('description', 'like', "%{$q}%")
                 ->limit(10)->get();
-        }
+
+            $data['educators'] = Educator::with('tours')
+                ->where('name', 'like', "%{$q}%")
+                ->orWhere('phone', 'like', "%{$q}%")
+                ->limit(10)->get();
+
+            $data['bookings'] = Booking::where('booking_code', 'like', "%{$q}%")
+                ->orWhere('representative_name', 'like', "%{$q}%")
+                ->orWhere('representative_phone', 'like', "%{$q}%")
+                ->limit(10)->get();
+
+            if ($user->role === 'admin') {
+                $data['users'] = User::where('name', 'like', "%{$q}%")
+                    ->orWhere('username', 'like', "%{$q}%")
+                    ->orWhere('email', 'like', "%{$q}%")
+                    ->limit(10)->get();
+            }
+
+            return $data;
+        });
 
         return view('search', compact('q', 'results'));
+    }
+
+    private function ensureSessionsOnce(): void
+    {
+        $cacheKey = 'sessions_ensured_' . Carbon::today()->toDateString();
+
+        if (!cache()->has($cacheKey)) {
+            SessionTemplate::ensureSessionsForDate(Carbon::today());
+            cache()->put($cacheKey, true, Carbon::tomorrow());
+        }
     }
 }

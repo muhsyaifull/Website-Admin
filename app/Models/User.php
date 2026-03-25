@@ -22,9 +22,13 @@ class User extends Authenticatable
         'username',
         'email',
         'phone',
+        'last_login',
+    ];
+
+    protected $guarded = [
         'role',
         'is_active',
-        'last_login',
+        'password',
     ];
 
     /**

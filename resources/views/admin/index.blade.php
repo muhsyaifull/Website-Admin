@@ -60,7 +60,7 @@
                             <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
                                 Total Bookings</div>
                             <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $totalBookings }}</div>
-                            <div class="text-xs text-muted mt-1">Hari ini: {{ $todaysBookings }}</div>
+                            <div class="text-xs text-muted mt-1">Today: {{ $todaysBookings }}</div>
                         </div>
                         <div class="col-auto">
                             <i class="fas fa-calendar-check fa-2x text-info"></i>
@@ -81,7 +81,7 @@
                             <div class="h5 mb-0 font-weight-bold text-gray-800">Rp
                                 {{ number_format($totalRevenue, 0, ',', '.') }}
                             </div>
-                            <div class="text-xs text-muted mt-1">Hari ini: Rp
+                            <div class="text-xs text-muted mt-1">Today: Rp
                                 {{ number_format($todaysRevenue, 0, ',', '.') }}
                             </div>
                         </div>
@@ -279,14 +279,11 @@
 
 @push('scripts')
     <script>
-        // Auto refresh every 5 minutes for real-time data
         setInterval(function () {
             location.reload();
         }, 300000);
 
-        // Dashboard specific JavaScript can go here
         $(document).ready(function () {
-            // Add any interactive features if needed
         });
     </script>
 @endpush

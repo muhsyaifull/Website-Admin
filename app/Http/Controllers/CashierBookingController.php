@@ -59,9 +59,14 @@ class CashierBookingController extends Controller
         $packages = Package::with('tours')->active()->get();
         $packageTourIds = $packages
             ->mapWithKeys(function ($package) {
-                return [$package->id => $package->tours->pluck('id')->values()];
-            })
-            ->toArray();
+                return [
+                    $package->id => $package->tours
+                        ->where('is_active', true)
+                        ->pluck('id')
+                        ->values()
+                        ->toArray()
+                ];
+            });
 
         $tours = Tour::active()->ordered()->get();
         $tourSessions = [];
@@ -75,7 +80,15 @@ class CashierBookingController extends Controller
                 ->get();
         }
 
-        return view('kasir.booking.create', compact('packages', 'packageTourIds', 'tours', 'tourSessions'));
+        $visitorTypes = Booking::VISITOR_TYPES;
+
+        return view('kasir.booking.create', compact(
+            'packages',
+            'packageTourIds',
+            'tours',
+            'tourSessions',
+            'visitorTypes'
+        ));
     }
 
     public function store(Request $request)
@@ -85,34 +98,38 @@ class CashierBookingController extends Controller
             'representative_name' => 'required|string|max:100',
             'representative_address' => 'required|string',
             'representative_phone' => 'required|string|max:20',
+            'visitor_type' => 'required|in:' . implode(',', array_keys(Booking::VISITOR_TYPES)),
             'adult_count' => 'required|integer|min:1',
             'child_count' => 'integer|min:0',
+            'infant_count' => 'integer|min:0',
             'visit_date' => 'required|date|after_or_equal:today',
         ];
 
         $package = Package::with('tours')->findOrFail($request->package_id);
+        $activeTours = $package->tours->where('is_active', true);
 
-        foreach ($package->tours as $tour) {
+        foreach ($activeTours as $tour) {
             $rules['tour_session_' . $tour->id] = 'required|exists:tour_sessions,id';
         }
 
         $request->validate($rules);
 
-        $adultCount = $request->adult_count;
-        $childCount = $request->child_count ?? 0;
-        $totalParticipants = $adultCount + $childCount;
+        $adultCount = (int) $request->adult_count;
+        $childCount = (int) ($request->child_count ?? 0);
+        $infantCount = (int) ($request->infant_count ?? 0);
+        $totalParticipants = $adultCount + $childCount + $infantCount;
+        $totalPrice = ($adultCount + $childCount) * $package->price;
 
         $selectedSessionIds = [];
-        foreach ($package->tours as $tour) {
+        foreach ($activeTours as $tour) {
             $selectedSessionIds[$tour->id] = (int) $request->input('tour_session_' . $tour->id);
         }
 
-        $allowedTourIds = $package->tours->pluck('id')->map(fn($id) => (int) $id)->all();
+        $allowedTourIds = $activeTours->pluck('id')->map(fn($id) => (int) $id)->all();
         foreach ($request->all() as $key => $value) {
             if (!str_starts_with($key, 'tour_session_') || blank($value)) {
                 continue;
             }
-
             $tourId = (int) str_replace('tour_session_', '', $key);
             if (!in_array($tourId, $allowedTourIds, true)) {
                 throw ValidationException::withMessages([
@@ -121,8 +138,7 @@ class CashierBookingController extends Controller
             }
         }
 
-        $unitPrice = $package->price;
-        $totalPrice = $unitPrice * $adultCount;
+        $this->validateSessionGap($selectedSessionIds);
 
         $bookingData = [
             'package_id' => $package->id,
@@ -130,20 +146,22 @@ class CashierBookingController extends Controller
             'representative_name' => $request->representative_name,
             'representative_address' => $request->representative_address,
             'representative_phone' => $request->representative_phone,
+            'visitor_type' => $request->visitor_type,
             'adult_count' => $adultCount,
             'child_count' => $childCount,
+            'infant_count' => $infantCount,
             'total_participants' => $totalParticipants,
-            'unit_price' => $unitPrice,
+            'unit_price' => $package->price,
             'total_price' => $totalPrice,
             'visit_date' => $request->visit_date,
             'status' => 'confirmed',
         ];
 
         $booking = null;
-        DB::transaction(function () use ($bookingData, $selectedSessionIds, $package, $request, $totalParticipants, &$booking) {
+        DB::transaction(function () use ($bookingData, $selectedSessionIds, $activeTours, $request, $totalParticipants, &$booking) {
             $booking = Booking::create($bookingData);
 
-            foreach ($package->tours as $tour) {
+            foreach ($activeTours as $tour) {
                 $sessionId = $selectedSessionIds[$tour->id];
 
                 $updatedRows = TourSession::query()
@@ -167,7 +185,7 @@ class CashierBookingController extends Controller
         });
 
         return redirect()->route('kasir.booking.show', $booking)
-            ->with('success', 'Booking created successfully!');
+            ->with('success', 'Booking berhasil dibuat!');
     }
 
     public function show(Booking $booking)
@@ -207,5 +225,37 @@ class CashierBookingController extends Controller
             });
 
         return response()->json($sessions);
+    }
+
+    private function validateSessionGap(array $selectedSessionIds): void
+    {
+        if (count($selectedSessionIds) < 2) {
+            return;
+        }
+
+        $sessions = TourSession::whereIn('id', array_values($selectedSessionIds))
+            ->get(['id', 'start_time', 'end_time'])
+            ->keyBy('id');
+
+        $sorted = collect(array_values($selectedSessionIds))
+            ->map(fn($id) => $sessions[$id] ?? null)
+            ->filter()
+            ->sortBy(fn($s) => $s->start_time)
+            ->values();
+
+        for ($i = 0; $i < $sorted->count() - 1; $i++) {
+            $current = $sorted[$i];
+            $next = $sorted[$i + 1];
+            $endTime = Carbon::parse($current->end_time);
+            $startTime = Carbon::parse($next->start_time);
+
+            $gapMinutes = $endTime->diffInMinutes($startTime, false);
+
+            if ($gapMinutes < 60) {
+                throw ValidationException::withMessages([
+                    'session_gap' => 'Jeda antar sesi tour minimal 60 menit. Harap pilih sesi dengan selisih waktu yang cukup.',
+                ]);
+            }
+        }
     }
 }

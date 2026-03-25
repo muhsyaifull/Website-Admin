@@ -26,7 +26,7 @@ Route::get('/', function () {
 // Authentication Routes
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login'])->middleware('throttle:5,1');
-Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+Route::post('/logout', [LoginController::class, 'logout'])->name('logout')->middleware('throttle:10,1');
 
 // Protected Routes
 Route::middleware(['auth', 'active'])->group(function () {
@@ -36,7 +36,7 @@ Route::middleware(['auth', 'active'])->group(function () {
         return view('profile');
     })->name('profile');
 
-    Route::get('/search', [DashboardController::class, 'search'])->name('search');
+    Route::get('/search', [DashboardController::class, 'search'])->name('search')->middleware('throttle:20,1');
 
     // Cashier Routes 
     Route::middleware(['role:cashier'])->prefix('kasir')->name('kasir.')->group(function () {
@@ -45,11 +45,11 @@ Route::middleware(['auth', 'active'])->group(function () {
 
         Route::prefix('booking')->name('booking.')->group(function () {
             Route::get('/create', [CashierBookingController::class, 'create'])->name('create');
-            Route::post('/store', [CashierBookingController::class, 'store'])->name('store');
+            Route::post('/', [CashierBookingController::class, 'store'])->name('store');
             Route::get('/{booking}', [CashierBookingController::class, 'show'])->name('show');
         });
 
-        Route::get('/api/sessions/{tourId}', [CashierBookingController::class, 'getSessionData'])->name('api.sessions');
+        Route::get('/api/sessions/{tourId}', [CashierBookingController::class, 'getSessionData'])->name('api.sessions')->middleware('throttle:30,1');
     });
 
     // Admin & Educator Routes 
