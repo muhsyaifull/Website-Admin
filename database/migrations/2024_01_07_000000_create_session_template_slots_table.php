@@ -10,18 +10,15 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('tour_sessions', function (Blueprint $table) {
+        Schema::create('session_template_slots', function (Blueprint $table) {
             $table->id();
-            $table->enum('type', ['taman', 'museum']);
-            $table->date('date');
+            $table->foreignId('session_template_id')->constrained('session_templates')->cascadeOnDelete();
             $table->time('start_time');
             $table->time('end_time');
-            $table->string('label', 50);
             $table->integer('capacity')->default(20);
-            $table->integer('booked')->default(0);
-            $table->foreignId('educator_id')->constrained('educators');
-            $table->boolean('is_active')->default(true);
+            $table->foreignId('educator_id')->nullable()->constrained('educators')->nullOnDelete();
             $table->integer('sort_order')->default(0);
+            $table->boolean('is_active')->default(true);
             $table->timestamps();
         });
     }
@@ -31,6 +28,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('tour_sessions');
+        Schema::dropIfExists('session_template_slots');
     }
 };

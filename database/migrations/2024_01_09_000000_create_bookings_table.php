@@ -15,27 +15,18 @@ return new class extends Migration {
             $table->string('booking_code', 20)->unique();
             $table->foreignId('package_id')->constrained('packages');
             $table->foreignId('user_id')->constrained('users');
-
-            // Data perwakilan
             $table->string('representative_name', 100);
             $table->text('representative_address');
             $table->string('representative_phone', 20);
-
-            // Jumlah peserta
             $table->integer('adult_count');
             $table->integer('child_count')->default(0);
+            $table->integer('infant_count')->default(0);
             $table->integer('total_participants');
-
-            // Tour sessions
-            $table->foreignId('taman_session_id')->nullable()->constrained('tour_sessions');
-            $table->foreignId('museum_session_id')->nullable()->constrained('tour_sessions');
-
-            // Payment calculation
             $table->decimal('unit_price', 10, 0);
             $table->decimal('total_price', 10, 0);
-
             $table->date('visit_date');
             $table->enum('status', ['pending', 'confirmed', 'completed', 'cancelled'])->default('confirmed');
+            $table->string('visitor_type', 20)->default('WI');
             $table->timestamps();
         });
     }

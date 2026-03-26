@@ -13,7 +13,6 @@ class UserController extends Controller
     {
         $users = User::withCount([
             'bookings as bookings_count' => function ($query) {
-                // Only count bookings for cashier users
             }
         ])->orderBy('created_at', 'desc')->get();
 

@@ -17,11 +17,6 @@ return new class extends Migration {
             $table->text('description')->nullable();
             $table->decimal('price', 10, 0);
             $table->json('includes');
-            $table->string('color', 7)->default('#7B3F2A');
-            $table->string('bg_color', 7)->default('#F5EDE8');
-            $table->boolean('has_saldo')->default(false);
-            $table->decimal('saldo_amount', 10, 0)->nullable();
-            $table->boolean('has_resto')->default(false);
             $table->boolean('is_active')->default(true);
             $table->timestamps();
         });
