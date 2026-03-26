@@ -10,13 +10,14 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('educators', function (Blueprint $table) {
+        Schema::create('booking_sessions', function (Blueprint $table) {
             $table->id();
-            $table->string('name', 100);
-            $table->string('phone', 20)->nullable();
-            $table->string('specialization', 50)->nullable();
-            $table->boolean('is_active')->default(true);
+            $table->foreignId('booking_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('tour_session_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('tour_id')->constrained()->cascadeOnDelete();
             $table->timestamps();
+
+            $table->unique(['booking_id', 'tour_id']);
         });
     }
 
@@ -25,6 +26,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('educators');
+        Schema::dropIfExists('booking_sessions');
     }
 };
