@@ -96,7 +96,7 @@ class EducatorController extends Controller
         $educator->update([
             'name' => $request->name,
             'phone' => $request->phone,
-            'is_active' => $request->has('is_active'),
+            'is_active' => $request->input('is_active'),
             'specialization' => $this->deriveSpecialization($request->tour_ids),
         ]);
         $educator->tours()->sync($request->tour_ids);

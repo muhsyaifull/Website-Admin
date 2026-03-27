@@ -5,7 +5,7 @@
 @section('content')
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
         <h1 class="h3 mb-0 text-gray-800">
-            <i class="fas fa-list text-primary"></i> All Bookings
+            <i class="fas fa-list text-primary"></i> All Reservations
         </h1>
     </div>
 
@@ -13,7 +13,7 @@
     <div class="card shadow mb-4">
         <div class="card-header py-3 d-flex flex-column flex-md-row justify-content-between align-items-md-center">
             <h6 class="m-0 font-weight-bold text-primary mb-3 mb-md-0">
-                Booking List - {{ $selectedDate->translatedFormat('d M Y') }}
+                Reservation List - {{ $selectedDate->translatedFormat('d M Y') }}
             </h6>
             <form method="GET" action="{{ route('panel.bookings.index') }}" class="d-flex align-items-center">
                 <label for="date" class="mb-0 mr-2 text-muted">Date</label>
@@ -26,7 +26,7 @@
                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                     <thead>
                         <tr>
-                            <th>Booking Code</th>
+                            <th>Reservation Code</th>
                             <th>Package</th>
                             <th>Representative</th>
                             <th>Participants</th>
@@ -85,7 +85,7 @@
                             <tr>
                                 <td colspan="9" class="text-center text-muted">
                                     <i class="fas fa-inbox fa-2x mb-2"></i><br>
-                                    No bookings on {{ $selectedDate->translatedFormat('d M Y') }}
+                                    No reservations on {{ $selectedDate->translatedFormat('d M Y') }}
                                 </td>
                             </tr>
                         @endforelse
@@ -114,9 +114,9 @@
                 "lengthChange": true,
                 "pageLength": 25,
                 "responsive": true,
-                "order": [[0, "desc"]], // Sort by booking code desc
+                "order": [[0, "desc"]],
                 "columnDefs": [
-                    { "orderable": false, "targets": [8] } // Disable sorting on Actions column
+                    { "orderable": false, "targets": [8] }
                 ]
             });
         });

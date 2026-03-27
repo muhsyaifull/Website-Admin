@@ -2,597 +2,19 @@
 
 @section('title', 'Create Tour Booking')
 
+@push('styles')
+    <link href="{{ asset('css/kasir-booking-create.css') }}" rel="stylesheet">
+@endpush
+
 @section('content')
 
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
-
-        .booking-wrap * {
-            box-sizing: border-box;
-        }
-
-        .booking-wrap {
-            font-family: 'DM Sans', sans-serif;
-            width: 100%;
-        }
-
-        /* ── Header ── */
-        .bk-header {
-            background: #3A1A0E;
-            color: #fff;
-            padding: 16px 28px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .bk-header-brand {
-            font-size: 11px;
-            color: #B08878;
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
-            margin-bottom: 2px;
-        }
-
-        .bk-header-title {
-            font-size: 16px;
-            font-weight: 700;
-            color: #fff;
-        }
-
-        .bk-header-meta {
-            text-align: right;
-            font-size: 12px;
-            color: #B08878;
-            line-height: 1.6;
-        }
-
-        /* ── Steps ── */
-        .bk-steps {
-            background: #F7F0EC;
-            padding: 0;
-            border-bottom: 1px solid #E8D8CF;
-            display: flex;
-        }
-
-        .bk-step {
-            flex: 1;
-            padding: 12px 16px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            border-right: 1px solid #E8D8CF;
-            position: relative;
-            transition: background .2s;
-        }
-
-        .bk-step:last-child {
-            border-right: none;
-        }
-
-        .bk-step-num {
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            background: #D5C2BA;
-            color: #9E8078;
-            font-size: 11px;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-            transition: all .2s;
-            font-family: 'DM Mono', monospace;
-        }
-
-        .bk-step-label {
-            font-size: 12px;
-            color: #9E8078;
-            font-weight: 500;
-            white-space: nowrap;
-        }
-
-        .bk-step.active .bk-step-num {
-            background: #7B3F2A;
-            color: #fff;
-        }
-
-        .bk-step.active .bk-step-label {
-            color: #3A1A0E;
-            font-weight: 600;
-        }
-
-        .bk-step.done .bk-step-num {
-            background: #7B3F2A;
-            color: #fff;
-        }
-
-        .bk-step.done .bk-step-label {
-            color: #7B3F2A;
-        }
-
-        /* ── Body ── */
-        .bk-body {
-            background: #fff;
-            padding: 28px;
-            border: 1px solid #E8D8CF;
-            border-top: none;
-        }
-
-        .bk-section-title {
-            font-size: 13px;
-            font-weight: 700;
-            color: #7B3F2A;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 18px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #F0E4DC;
-        }
-
-        /* ── Package Cards ── */
-        .pkg-grid {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .pkg-card {
-            border: 1.5px solid #E0CEC6;
-            border-radius: 8px;
-            padding: 14px 18px;
-            cursor: pointer;
-            background: #FDFAF8;
-            transition: all .15s ease;
-            display: flex;
-            align-items: center;
-            gap: 16px;
-        }
-
-        .pkg-card:hover {
-            border-color: #A0604A;
-            background: #FDF6F3;
-        }
-
-        .pkg-card.selected {
-            border-color: #7B3F2A;
-            border-width: 2px;
-            background: #FDF0EA;
-        }
-
-        .pkg-card-radio {
-            width: 18px;
-            height: 18px;
-            border-radius: 50%;
-            border: 2px solid #C0A898;
-            flex-shrink: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all .15s;
-        }
-
-        .pkg-card.selected .pkg-card-radio {
-            border-color: #7B3F2A;
-            background: #7B3F2A;
-        }
-
-        .pkg-card.selected .pkg-card-radio::after {
-            content: '';
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            background: #fff;
-        }
-
-        .pkg-card-info {
-            flex: 1;
-        }
-
-        .pkg-card-name {
-            font-size: 14px;
-            font-weight: 600;
-            color: #3A1A0E;
-            margin-bottom: 4px;
-        }
-
-        .pkg-card-label {
-            display: inline-block;
-            font-size: 10px;
-            font-weight: 700;
-            background: #EAF0FF;
-            color: #3B5BDB;
-            border-radius: 4px;
-            padding: 1px 7px;
-            margin-right: 6px;
-            letter-spacing: .5px;
-            text-transform: uppercase;
-        }
-
-        .pkg-card-includes {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 4px;
-            margin-top: 6px;
-        }
-
-        .pkg-tag {
-            font-size: 11px;
-            color: #5A6A8A;
-            background: #F0F4FF;
-            border: 1px solid #D0DAFF;
-            border-radius: 4px;
-            padding: 1px 8px;
-        }
-
-        .pkg-card-price {
-            font-size: 15px;
-            font-weight: 700;
-            color: #3B5BDB;
-            white-space: nowrap;
-        }
-
-        /* ── Qty Controls ── */
-        .qty-row {
-            display: flex;
-            gap: 16px;
-            margin-bottom: 16px;
-        }
-
-        .qty-block {
-            flex: 1;
-            border: 1.5px solid #E0CEC6;
-            border-radius: 8px;
-            padding: 14px 16px;
-            background: #FDFAF8;
-        }
-
-        .qty-block-label {
-            font-size: 11px;
-            font-weight: 700;
-            color: #9E8078;
-            text-transform: uppercase;
-            letter-spacing: .8px;
-            margin-bottom: 12px;
-        }
-
-        .qty-control {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .qty-btn {
-            width: 36px;
-            height: 36px;
-            border-radius: 8px;
-            border: 1.5px solid #C0A898;
-            background: #fff;
-            color: #7B3F2A;
-            font-size: 18px;
-            font-weight: 700;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            line-height: 1;
-            transition: all .15s;
-            font-family: 'DM Mono', monospace;
-            padding: 0;
-        }
-
-        .qty-btn:hover {
-            background: #F5EDE8;
-            border-color: #7B3F2A;
-        }
-
-        .qty-btn:active {
-            transform: scale(.94);
-        }
-
-        .qty-val {
-            font-size: 28px;
-            font-weight: 700;
-            color: #3A1A0E;
-            font-family: 'DM Mono', monospace;
-            min-width: 40px;
-            text-align: center;
-        }
-
-        .qty-sub {
-            font-size: 11px;
-            color: #B09888;
-            text-align: center;
-            margin-top: 2px;
-        }
-
-        .price-summary {
-            background: #F7F0EC;
-            border: 1.5px solid #E0CEC6;
-            border-radius: 8px;
-            padding: 12px 18px;
-            font-size: 14px;
-            font-weight: 600;
-            color: #5A2A18;
-            text-align: center;
-        }
-
-        .price-summary small {
-            display: block;
-            font-size: 11px;
-            font-weight: 400;
-            color: #9E8078;
-            margin-top: 4px;
-        }
-
-        /* ── Form ── */
-        .form-row-2 {
-            display: flex;
-            gap: 16px;
-        }
-
-        .form-row-2 .form-group {
-            flex: 1;
-        }
-
-        .form-group {
-            margin-bottom: 14px;
-        }
-
-        .form-group label {
-            font-size: 12px;
-            font-weight: 700;
-            color: #6A4030;
-            text-transform: uppercase;
-            letter-spacing: .6px;
-            display: block;
-            margin-bottom: 5px;
-        }
-
-        .form-group label .req {
-            color: #E03030;
-        }
-
-        .form-control {
-            width: 100%;
-            border: 1.5px solid #E0CEC6;
-            border-radius: 7px;
-            padding: 9px 12px;
-            font-size: 14px;
-            font-family: 'DM Sans', sans-serif;
-            color: #3A1A0E;
-            background: #FDFAF8;
-            transition: border-color .15s;
-            outline: none;
-        }
-
-        .form-control:focus {
-            border-color: #7B3F2A;
-            background: #fff;
-        }
-
-        textarea.form-control {
-            resize: vertical;
-            min-height: 72px;
-        }
-
-        select.form-control {
-            appearance: none;
-            -webkit-appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%237B3F2A' d='M6 8L0 0h12z'/%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 12px center;
-            padding-right: 32px;
-            cursor: pointer;
-        }
-
-        /* ── Sessions ── */
-        .session-cols {
-            display: flex;
-            gap: 20px;
-        }
-
-        .session-col {
-            flex: 1;
-        }
-
-        .session-col-title {
-            font-size: 12px;
-            font-weight: 700;
-            color: #3B5BDB;
-            text-transform: uppercase;
-            letter-spacing: .8px;
-            margin-bottom: 10px;
-        }
-
-        .session-item {
-            border: 1.5px solid #E0CEC6;
-            border-radius: 7px;
-            padding: 10px 12px;
-            cursor: pointer;
-            background: #FDFAF8;
-            margin-bottom: 7px;
-            transition: all .15s;
-        }
-
-        .session-item:hover {
-            border-color: #A0604A;
-            background: #FDF6F3;
-        }
-
-        .session-item.selected {
-            border-color: #7B3F2A;
-            border-width: 2px;
-            background: #FDF0EA;
-        }
-
-        .session-item-top {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 6px;
-        }
-
-        .session-item-name {
-            font-size: 13px;
-            font-weight: 600;
-            color: #3A1A0E;
-        }
-
-        .session-item-guide {
-            font-size: 11px;
-            color: #9E8078;
-        }
-
-        .session-progress {
-            height: 4px;
-            border-radius: 2px;
-            background: #EDD8CC;
-            margin-bottom: 5px;
-            overflow: hidden;
-        }
-
-        .session-progress-bar {
-            height: 100%;
-            border-radius: 2px;
-        }
-
-        .session-item-bottom {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .session-item-count {
-            font-size: 11px;
-            color: #9E8078;
-            font-family: 'DM Mono', monospace;
-        }
-
-        .session-badge {
-            font-size: 10px;
-            font-weight: 700;
-            padding: 1px 8px;
-            border-radius: 4px;
-            letter-spacing: .4px;
-        }
-
-        .selected-badge {
-            display: inline-block;
-            font-size: 10px;
-            font-weight: 700;
-            background: #7B3F2A;
-            color: #fff;
-            border-radius: 4px;
-            padding: 1px 8px;
-            margin-left: 6px;
-            letter-spacing: .4px;
-            vertical-align: middle;
-        }
-
-        /* ── Alert error ── */
-        .bk-alert-error {
-            background: #FFF0F0;
-            border: 1.5px solid #F5C6C6;
-            border-radius: 7px;
-            padding: 10px 14px;
-            font-size: 13px;
-            color: #C0392B;
-            margin-bottom: 16px;
-        }
-
-        /* ── Navigation ── */
-        .bk-nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 24px;
-            padding-top: 18px;
-            border-top: 1.5px solid #F0E4DC;
-        }
-
-        .btn-nav {
-            padding: 9px 22px;
-            border-radius: 7px;
-            font-size: 13px;
-            font-weight: 600;
-            font-family: 'DM Sans', sans-serif;
-            cursor: pointer;
-            border: 1.5px solid transparent;
-            transition: all .15s;
-            letter-spacing: .3px;
-        }
-
-        .btn-back {
-            background: #fff;
-            border-color: #D0C0B8;
-            color: #7A5A50;
-        }
-
-        .btn-back:hover {
-            background: #F5EDE8;
-            border-color: #B09888;
-        }
-
-        .btn-back:disabled {
-            opacity: .4;
-            cursor: not-allowed;
-        }
-
-        .btn-next {
-            background: #7B3F2A;
-            border-color: #7B3F2A;
-            color: #fff;
-        }
-
-        .btn-next:hover {
-            background: #6A3020;
-        }
-
-        .btn-next:disabled {
-            opacity: .4;
-            cursor: not-allowed;
-        }
-
-        .btn-submit {
-            background: #1A7A40;
-            border-color: #1A7A40;
-            color: #fff;
-        }
-
-        .btn-submit:hover {
-            background: #156030;
-        }
-
-        /* ── Pkg info pill (step 2+) ── */
-        .ctx-pill {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            background: #F7F0EC;
-            border: 1px solid #E0CEC6;
-            border-radius: 20px;
-            padding: 4px 12px;
-            font-size: 12px;
-            color: #7B3F2A;
-            font-weight: 500;
-            margin-bottom: 18px;
-        }
-
-        .ctx-pill-dot {
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            background: #7B3F2A;
-        }
-    </style>
+    
 
     <div class="booking-wrap">
         <div class="bk-header">
             <div>
                 <div class="bk-header-brand">Rumah Atsiri Indonesia</div>
-                <div class="bk-header-title">Cashier — Tour Booking</div>
+                <div class="bk-header-title">Cashier — Tour Reservation</div>
             </div>
             <div class="bk-header-meta">
                 <div>{{ auth()->user()->name }}</div>
@@ -626,7 +48,7 @@
             @if($errors->any())
                 <div class="bk-alert-error">
                     <strong>Terjadi kesalahan:</strong>
-                    <ul style="margin: 6px 0 0 0; padding-left: 18px;">
+                    <ul class="server-error-list">
                         @foreach($errors->all() as $error)
                             <li>{{ $error }}</li>
                         @endforeach
@@ -649,6 +71,11 @@
                                         <span class="pkg-card-label">{{ $package->label }}</span>
                                         {{ $package->name }}
                                     </div>
+                                    <div class="pkg-card-tours">
+                                        @foreach($package->tours->where('is_active', true) as $tour)
+                                            <span class="pkg-tag2">{{ $tour->name }}</span>
+                                        @endforeach
+                                    </div>
                                     <div class="pkg-card-includes">
                                         @foreach($package->includes as $item)
                                             <span class="pkg-tag">{{ $item }}</span>
@@ -663,13 +90,13 @@
                 </div>
 
                 <!-- Step 2: Participants -->
-                <div class="booking-step" id="step2" style="display:none;">
+                <div class="booking-step step-hidden" id="step2">
                     <div class="bk-section-title">Participants</div>
                     <div id="selectedPackageInfo"></div>
 
                     <div class="qty-row">
                         <div class="qty-block">
-                            <div class="qty-block-label">Adults <span style="color:#E03030">*</span></div>
+                            <div class="qty-block-label">Adults <span class="req">*</span></div>
                             <div class="qty-control">
                                 <button type="button" class="qty-btn" id="adultMinus">&minus;</button>
                                 <div>
@@ -693,7 +120,7 @@
                         <div class="qty-block">
                             <div class="qty-block-label">
                                 Infants
-                                <span style="color:#28A745; font-size:10px; text-transform:none; font-weight:500;">(Free)</span>
+                                <span class="infant-free-note">(Free)</span>
                             </div>
                             <div class="qty-control">
                                 <button type="button" class="qty-btn" id="infantMinus">&minus;</button>
@@ -717,7 +144,7 @@
                 </div>
 
                 <!-- Step 3: Representative -->
-                <div class="booking-step" id="step3" style="display:none;">
+                <div class="booking-step step-hidden" id="step3">
                     <div class="bk-section-title">Guest Information</div>
 
                     <div class="form-group">
@@ -734,7 +161,7 @@
                     <div class="form-group">
                         <label>Full Name <span class="req">*</span></label>
                         <input type="text" class="form-control" name="representative_name"
-                            placeholder="Nama perwakilan pengunjung" value="{{ old('representative_name') }}" required>
+                            placeholder="Representative Name" value="{{ old('representative_name') }}" required>
                     </div>
 
                     <div class="form-row-2">
@@ -753,23 +180,27 @@
                     <div class="form-group">
                         <label>Full Address <span class="req">*</span></label>
                         <textarea class="form-control" name="representative_address"
-                            placeholder="Jalan, Kota, Provinsi" required>{{ old('representative_address') }}</textarea>
+                            placeholder="Full Address/Location" required>{{ old('representative_address') }}</textarea>
                     </div>
                 </div>
 
                 <!-- Step 4: Schedule -->
-                <div class="booking-step" id="step4" style="display:none;">
+                <div class="booking-step step-hidden" id="step4">
                     <div class="bk-section-title">Select Tour Schedule</div>
-                    <div id="participantInfo" style="margin-bottom:14px;"></div>
+                    <div id="participantInfo" class="participant-info"></div>
 
                     <div class="session-cols">
                         @foreach($tours as $tour)
-                            @php $sessions = $tourSessions[$tour->id] ?? collect(); @endphp
+                           @php
+                                $sessions = ($tourSessions[$tour->id] ?? collect())
+                                    ->sortBy('start_time')
+                                    ->values();
+                            @endphp
                             <div class="session-col tour-session-group" data-tour-id="{{ $tour->id }}">
                                 <div class="session-col-title">
                                     {{ $tour->name }}
                                     <span class="selected-badge selected-tour-info" data-tour="{{ $tour->id }}"
-                                        style="display:none;"></span>
+                                        ></span>
                                 </div>
                                 <div class="tour-sessions-container" data-tour-id="{{ $tour->id }}">
                                     @foreach($sessions as $session)
@@ -808,7 +239,7 @@
                 <div class="bk-nav">
                     <button type="button" class="btn-nav btn-back" id="prevBtn" onclick="changeStep(-1)" disabled>Back</button>
                     <button type="button" class="btn-nav btn-next" id="nextBtn" onclick="changeStep(1)" disabled>Next</button>
-                    <button type="submit" class="btn-nav btn-submit" id="submitBtn" style="display:none;">Confirm Booking</button>
+                    <button type="submit" class="btn-nav btn-submit" id="submitBtn">Confirm Booking</button>
                 </div>
             </form>
         </div>
@@ -1074,7 +505,7 @@
                 const totalCount = adultCount + childCount + infantCount;
                 $('#participantInfo').html(
                     `<div class="ctx-pill"><div class="ctx-pill-dot"></div>` +
-                    `${totalCount} peserta (${adultCount} dewasa, ${childCount} anak, ${infantCount} balita) &nbsp;•&nbsp; ${pkg ? pkg.name : ''}</div>`
+                    `${totalCount} guests (${adultCount} adults, ${childCount} children, ${infantCount} infants) &nbsp;•&nbsp; ${pkg ? pkg.name : ''}</div>`
                 );
                 updateVisibleTourGroups();
 

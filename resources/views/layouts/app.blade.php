@@ -20,6 +20,8 @@
 
     <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="{{ asset('css/style.css') }}" rel="stylesheet">
+    @stack('styles')
 
 </head>
 
@@ -35,10 +37,10 @@
             <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{{ route('dashboard') }}">
                 <div class="sidebar-brand-icon">
                     <img src="{{ asset('Images/Login-Logo2.svg') }}" alt="Rumah Atsiri Indonesia"
-                        style="width: 36px; height: 36px; object-fit: contain; filter: brightness(0) invert(1);">
+                        style="width: 42px; height: 42px; object-fit: contain; filter: brightness(0) invert(1);">
                 </div>
                 <div class="sidebar-brand-text mx-3"
-                    style="color: #fff; font-size: 14px; font-weight: 700; line-height: 1.3;">
+                    style="color: #fff; font-size: 11px; font-weight: 700; line-height: 1.3;">
                     Rumah Atsiri<br>Indonesia
                 </div>
             </a>
@@ -65,7 +67,7 @@
                 <li class="nav-item {{ request()->routeIs('kasir.booking.*') ? 'active' : '' }}">
                     <a class="nav-link" href="{{ route('kasir.booking.create') }}">
                         <i class="fas fa-fw fa-plus-circle"></i>
-                        <span>Create Booking</span>
+                        <span>Create Reservation</span>
                     </a>
                 </li>
 
@@ -151,7 +153,7 @@
                 <li class="nav-item {{ request()->routeIs('panel.bookings.*') ? 'active' : '' }}">
                     <a class="nav-link" href="{{ route('panel.bookings.index') }}">
                         <i class="fas fa-fw fa-list"></i>
-                        <span>All Bookings</span>
+                        <span>All Reservations</span>
                     </a>
                 </li>
             @endif
@@ -186,7 +188,7 @@
                         class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
                         <div class="input-group">
                             <input type="text" name="q" class="form-control bg-light border-0 small"
-                                placeholder="Search users, packages, bookings..." aria-label="Search"
+                                placeholder="Search users, packages, reservations..." aria-label="Search"
                                 value="{{ request('q') }}">
                             <div class="input-group-append">
                                 <button class="btn btn-primary" type="submit">
@@ -206,7 +208,7 @@
                                 <span
                                     class="mr-2 d-none d-lg-inline text-gray-600 small">{{ auth()->user()->name }}</span>
                                 <img class="img-profile rounded-circle"
-                                    src="https://ui-avatars.com/api/?name={{ urlencode(auth()->user()->name) }}&background=5a5c69&color=ffffff">
+                                    src="https://ui-avatars.com/api/?name={{ urlencode(auth()->user()->name) }}&background=b23e27&color=ffffff">
                             </a>
                             <!-- Dropdown - User Information -->
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"

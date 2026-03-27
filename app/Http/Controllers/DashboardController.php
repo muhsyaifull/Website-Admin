@@ -90,12 +90,13 @@ class DashboardController extends Controller
                 ->forToday()
                 ->fromActiveTemplate()
                 ->active()
-                ->orderedByTime()
+                ->orderedByTime('start_time', 'asc')
                 ->get();
             $tourSessions[$tour->id] = $sessions;
             $allSessions = $allSessions->merge($sessions);
         }
 
+        $allSessions = $allSessions->sortBy('start_time')->values();
         $upcomingSessions = $allSessions->filter(function ($session) {
             return $session->isUpcoming();
         });

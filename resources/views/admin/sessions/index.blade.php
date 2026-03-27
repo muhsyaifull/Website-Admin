@@ -157,7 +157,7 @@
             <div class="card-header py-3">
                 <h6 class="m-0 font-weight-bold text-primary">
                     {{ $tour->name }} Tour Sessions
-                    <span class="badge ml-2" style="background: #4e73df; color: white;">{{ $tourSessions->count() }} sessions</span>
+                    <span class="badge ml-2" style="background: #af4324; color: white;">{{ $tourSessions->count() }} sessions</span>
                 </h6>
             </div>
             <div class="card-body">

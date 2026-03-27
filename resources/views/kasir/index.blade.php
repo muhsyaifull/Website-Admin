@@ -38,7 +38,7 @@
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
                             <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Total Visitors</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $totalParticipants }} orang</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $totalParticipants }} people</div>
                         </div>
                         <div class="col-auto">
                             <i class="fas fa-users fa-2x text-success"></i>
@@ -73,7 +73,7 @@
                         <div class="col mr-2">
                             <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Quick Action</div>
                             <a href="{{ route('kasir.booking.create') }}" class="btn btn-warning btn-sm">
-                                <i class="fas fa-plus"></i> Create Booking
+                                <i class="fas fa-plus"></i> Create Reservation
                             </a>
                         </div>
                         <div class="col-auto">
@@ -88,7 +88,11 @@
     <!-- Tour Sessions Overview -->
     <div class="row">
         @foreach($tours as $tour)
-            @php $sessions = $tourSessions[$tour->id] ?? collect(); @endphp
+            @php
+                $sessions = ($tourSessions[$tour->id] ?? collect())
+                    ->sortBy('start_time')
+                    ->values();
+            @endphp
             <div class="col-lg-6 mb-4">
                 <div class="card shadow">
                     <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between"
@@ -101,7 +105,7 @@
                     <div class="card-body">
                         @forelse($sessions as $session)
                             <div class="mb-3 p-3 border rounded"
-                                style="background: {{ $session->is_full ? '#F9F3F2' : '#FFFCFA' }}; border-color: {{ $session->is_full ? '#DDCCC8' : '#D0B8AD' }}!important;">
+                                style="background: {{ $session->is_full ? '#464242' : '#FFFCFA' }}; border-color: {{ $session->is_full ? '#DDCCC8' : '#D0B8AD' }}!important;">
                                 <div class="d-flex justify-content-between align-items-center mb-2">
                                     <div class="d-flex align-items-center">
                                         @if($session->isCurrentlyActive())
@@ -145,18 +149,18 @@
         @endforeach
     </div>
 
-    <!-- Recent Bookings -->
+    <!-- Recent Reservations -->
     <div class="card shadow mb-4">
         <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold text-primary">Recent Bookings</h6>
+            <h6 class="m-0 font-weight-bold text-primary">Recent Reservations</h6>
         </div>
         <div class="card-body">
             @if($todaysBookings->count() > 0)
                 <div class="table-responsive">
-                    <table class="table table-bordered" width="100%" cellspacing="0">
+                    <table class="table table-bordered table-sm small" width="100%" cellspacing="0">
                         <thead>
-                            <tr>
-                                <th>Booking Code</th>
+                            <tr class="justify-content-center text-center">
+                                <th>Reservation Code</th>
                                 <th>Representative</th>
                                 <th>Package</th>
                                 <th>Type</th>
@@ -164,6 +168,7 @@
                                 <th>Sessions</th>
                                 <th>Total</th>
                                 <th>Time</th>
+                                <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -204,6 +209,27 @@
                                     </td>
                                     <td class="font-weight-bold text-success">{{ $booking->formatted_total_price }}</td>
                                     <td>{{ $booking->created_at->format('H:i') }}</td>
+                                    <td class="text-center align-middle">
+
+                                        @php
+                                            $earliest = $booking->bookingSessions->sortBy('start_time')->first();
+                                            $canReschedule = $earliest && \Carbon\Carbon::now()->lt(
+                                                \Carbon\Carbon::parse($earliest->start_time)->subHour()
+                                            );
+                                        @endphp
+
+                                        @if($canReschedule)
+                                            <a href="{{ route('kasir.booking.reschedule', $booking) }}"
+                                                class="btn btn-sm btn-warning mb-1">
+                                                <i class="fas fa-clock"></i>
+                                            </a>
+                                        @else
+                                            <button class="btn btn-sm btn-secondary mb-1" disabled
+                                                title="Reschedule not allowed within 1 hour of session start or no sessions available">
+                                                <i class="fas fa-clock"></i>
+                                            </button>
+                                        @endif
+                                    </td>
                                 </tr>
                             @endforeach
                         </tbody>
@@ -212,9 +238,9 @@
             @else
                 <div class="text-center py-4">
                     <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
-                    <p class="text-muted">No bookings available for today</p>
+                    <p class="text-muted"> No reservations available for today</p>
                     <a href="{{ route('kasir.booking.create') }}" class="btn btn-primary">
-                        <i class="fas fa-plus"></i> Create First Booking
+                        <i class="fas fa-plus"></i> Create First Reservation
                     </a>
                 </div>
             @endif
