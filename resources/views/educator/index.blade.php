@@ -97,6 +97,22 @@
                         <a class="nav-link {{ $index === 0 ? 'active' : '' }}" id="tour-{{ $tour->id }}-tab" data-toggle="tab"
                             href="#tour-{{ $tour->id }}" role="tab">
                             {{ $tour->name }}
+                            <style>
+                                .nav-tabs .nav-link {
+                                    color: #6c757d;
+                                    /* normal */
+                                }
+
+                                .nav-tabs .nav-link.active {
+                                    color: #af4324 !important;
+                                    font-weight: 600;
+                                    border-color: #dee2e6 #dee2e6 #fff;
+                                }
+
+                                .nav-tabs .nav-link:hover {
+                                    color: #af4324;
+                                }
+                            </style>
                         </a>
                     </li>
                 @endforeach
@@ -105,14 +121,18 @@
         <div class="card-body">
             <div class="tab-content" id="sessionTabsContent">
                 @foreach($tours as $index => $tour)
-                    @php $sessions = $tourSessions[$tour->id] ?? collect(); @endphp
+                    @php
+                        $sessions = ($tourSessions[$tour->id] ?? collect())
+                            ->sortBy('start_time')
+                            ->values();
+                    @endphp
                     <div class="tab-pane fade {{ $index === 0 ? 'show active' : '' }}" id="tour-{{ $tour->id }}"
                         role="tabpanel">
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <h6 class="font-weight-bold mb-0 text-primary">Today's Schedule —
                                 {{ $tour->name }}
                             </h6>
-                            <a href="{{ route('panel.sessions.create') }}" class="btn btn-success btn-sm">
+                            <a href="{{ route('panel.sessions.create') }}" class="btn btn-sm btn-primary">
                                 <i class="fas fa-plus"></i> Add Session
                             </a>
                         </div>
@@ -123,7 +143,7 @@
                                     <div class="d-flex justify-content-between align-items-center mb-3">
                                         <div class="d-flex align-items-center">
                                             @if($session->isCurrentlyActive())
-                                                <span class="badge mr-2" style="background: #4e73df; color: white;">IN
+                                                <span class="badge mr-2" style="background: #4f8a63; color: white;">IN
                                                     PROGRESS</span>
                                             @endif
                                             <h6 class="font-weight-bold mb-0 text-primary">
@@ -205,18 +225,14 @@
 
 @push('scripts')
     <script>
-        // Auto refresh every 60 seconds for real-time updates
         setInterval(function () {
             location.reload();
         }, 60000);
 
-        // Check for alerts every 30 seconds
         setInterval(function () {
-            // Alert for sessions starting in 15 minutes
             const now = new Date();
             const currentTime = now.getHours() * 60 + now.getMinutes();
 
-            // This could be enhanced with AJAX call to check upcoming sessions
         }, 30000);
     </script>
 @endpush

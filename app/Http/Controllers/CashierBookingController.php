@@ -28,7 +28,7 @@ class CashierBookingController extends Controller
                 ->forToday()
                 ->fromActiveTemplate()
                 ->active()
-                ->orderedByTime()
+                ->orderedByTime('start_time', 'asc')
                 ->get();
         }
 
@@ -76,7 +76,7 @@ class CashierBookingController extends Controller
                 ->forToday()
                 ->fromActiveTemplate()
                 ->active()
-                ->orderedByTime()
+                ->orderedByTime('start_time', 'asc')
                 ->get();
         }
 
@@ -209,7 +209,7 @@ class CashierBookingController extends Controller
             ->forToday()
             ->fromActiveTemplate()
             ->active()
-            ->orderedByTime()
+            ->orderedByTime('start_time', 'asc')
             ->get()
             ->map(function ($session) {
                 return [
@@ -256,6 +256,107 @@ class CashierBookingController extends Controller
                     'session_gap' => 'Jeda antar sesi tour minimal 60 menit. Harap pilih sesi dengan selisih waktu yang cukup.',
                 ]);
             }
+        }
+    }
+
+    public function rescheduleForm(Booking $booking)
+    {
+        $this->authorizeReschedule($booking);
+
+        $booking->load(['package.tours', 'bookingSessions.tour']);
+        $activeTours = $booking->package->tours->where('is_active', true);
+
+        $tourSessions = [];
+        foreach ($activeTours as $tour) {
+            $tourSessions[$tour->id] = TourSession::with('educator')
+                ->where('tour_id', $tour->id)
+                ->forToday()
+                ->fromActiveTemplate()
+                ->active()
+                ->orderedByTime('start_time', 'asc')
+                ->get();
+        }
+
+        $currentSessionIds = [];
+        foreach ($booking->bookingSessions as $session) {
+            $currentSessionIds[$session->pivot->tour_id] = $session->id;
+        }
+
+        return view('kasir.booking.reschedule', compact('booking', 'tourSessions', 'activeTours', 'currentSessionIds'));
+    }
+
+    public function rescheduleStore(Request $request, Booking $booking)
+    {
+        $this->authorizeReschedule($booking);
+
+        $booking->load(['package.tours', 'bookingSessions']);
+        $activeTours = $booking->package->tours->where('is_active', true);
+
+        $rules = [];
+        foreach ($activeTours as $tour) {
+            $rules['tour_session_' . $tour->id] = 'required|exists:tour_sessions,id';
+        }
+        $request->validate($rules);
+
+        $newSessionIds = [];
+        foreach ($activeTours as $tour) {
+            $newSessionIds[$tour->id] = (int) $request->input('tour_session_' . $tour->id);
+        }
+
+        $this->validateSessionGap($newSessionIds);
+
+        DB::transaction(function () use ($booking, $activeTours, $newSessionIds) {
+            $totalParticipants = $booking->total_participants;
+
+            foreach ($activeTours as $tour) {
+                $oldSession = $booking->bookingSessions
+                    ->first(fn($s) => $s->pivot->tour_id == $tour->id);
+
+                $newSessionId = $newSessionIds[$tour->id];
+
+                if ($oldSession && $oldSession->id === $newSessionId)
+                    continue;
+
+                if ($oldSession) {
+                    TourSession::where('id', $oldSession->id)
+                        ->update(['booked' => DB::raw('booked - ' . $totalParticipants)]);
+                }
+
+                $updatedRows = TourSession::where('id', $newSessionId)
+                    ->where('tour_id', $tour->id)
+                    ->where('is_active', true)
+                    ->whereRaw('booked + ? <= capacity', [$totalParticipants])
+                    ->update(['booked' => DB::raw('booked + ' . $totalParticipants)]);
+
+                if ($updatedRows === 0) {
+                    throw ValidationException::withMessages([
+                        'tour_session_' . $tour->id => 'Sesi ' . $tour->name . ' full or not available.',
+                    ]);
+                }
+
+                $booking->bookingSessions()->detach($oldSession->id);
+                $booking->bookingSessions()->attach($newSessionId, ['tour_id' => $tour->id]);
+            }
+        });
+
+        return redirect()->route('kasir.index')
+            ->with('success', 'Session successfully rescheduled!');
+    }
+
+    private function authorizeReschedule(Booking $booking): void
+    {
+        $booking->loadMissing('bookingSessions');
+
+        $earliest = $booking->bookingSessions->sortBy('start_time')->first();
+
+        if (!$earliest) {
+            abort(403, 'Does not session can be rescheduled.');
+        }
+
+        $cutoff = Carbon::parse($earliest->start_time)->subHour();
+
+        if (Carbon::now()->gte($cutoff)) {
+            abort(403, 'Reschedule only allowed at least 1 hour before the earliest session start time.');
         }
     }
 }

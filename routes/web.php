@@ -47,6 +47,8 @@ Route::middleware(['auth', 'active'])->group(function () {
             Route::get('/create', [CashierBookingController::class, 'create'])->name('create');
             Route::post('/', [CashierBookingController::class, 'store'])->name('store');
             Route::get('/{booking}', [CashierBookingController::class, 'show'])->name('show');
+            Route::get('/{booking}/reschedule', [CashierBookingController::class, 'rescheduleForm'])->name('reschedule');
+            Route::post('/{booking}/reschedule', [CashierBookingController::class, 'rescheduleStore'])->name('reschedule.store');
         });
 
         Route::get('/api/sessions/{tourId}', [CashierBookingController::class, 'getSessionData'])->name('api.sessions')->middleware('throttle:30,1');
