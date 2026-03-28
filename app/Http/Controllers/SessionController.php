@@ -13,8 +13,7 @@ use Carbon\Carbon;
 
 class SessionController extends Controller
 {
-    // ─── Tour Sessions ─────────────────────────────────────────────────
-
+    // Tour Sessions 
     public function index()
     {
         $today = Carbon::today();
@@ -179,7 +178,7 @@ class SessionController extends Controller
             ->with('success', 'Session deleted successfully!');
     }
 
-    // ─── Session Templates ─────────────────────────────────────────────
+    // Session Templates 
 
     public function templates()
     {

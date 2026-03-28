@@ -124,7 +124,7 @@
                 <div class="card shadow mb-4">
                     <div class="card-header py-3">
                         <h6 class="m-0 font-weight-bold text-info">
-                            <i class="fas fa-ticket-alt"></i> Bookings
+                            <i class="fas fa-ticket-alt"></i> Reservations
                             <span class="badge badge-info ml-2">{{ $results['bookings']->count() }}</span>
                         </h6>
                     </div>
@@ -133,7 +133,7 @@
                             <table class="table table-hover mb-0">
                                 <thead class="thead-light">
                                     <tr>
-                                        <th>Booking Code</th>
+                                        <th>Reservation Code</th>
                                         <th>Name</th>
                                         <th>Phone</th>
                                         <th>Participants</th>
