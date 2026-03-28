@@ -7,7 +7,7 @@
     <div class="d-flex flex-wrap align-items-center justify-content-between mb-4 gap-2">
         <h1 class="h3 mb-0 text-gray-800 d-flex align-items-center gap-2">
             <i class="fas fa-clock text-warning"></i>
-            <span>Reschedule Booking</span>
+            <span>Reschedule Reservation</span>
         </h1>
 
         <a href="{{ route('kasir.index') }}" class="btn btn-secondary btn-sm d-flex align-items-center">
@@ -15,10 +15,10 @@
         </a>
     </div>
 
-    {{-- Booking Info --}}
+    {{-- Reservation Info --}}
     <div class="card shadow mb-4">
         <div class="card-header py-2">
-            <h6 class="m-0 font-weight-bold text-primary">Booking Information</h6>
+            <h6 class="m-0 font-weight-bold text-primary">Reservation Information</h6>
         </div>
 
         <div class="card-body">
@@ -192,7 +192,7 @@
                 <div>
                     <i class="fas fa-info-circle text-info mr-1"></i>
                     <small class="text-muted">
-                        Please select the new sessions for the booking. Sessions that are full or starting within 1 hour are not selectable.
+                        Please select the new sessions for the reservation. Sessions that are full or starting within 1 hour are not selectable.
                     </small>
                 </div>
 

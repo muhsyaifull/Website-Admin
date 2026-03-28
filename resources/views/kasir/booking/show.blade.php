@@ -17,7 +17,7 @@
         <!-- Header -->
         <div class="card-header text-white text-center" style="background: #3A1A0E; padding: 24px;">
             <div style="font-size: 13px; font-weight: 700; color: #1A7A40; letter-spacing: .5px; margin-bottom: 4px;">
-                BOOKING CONFIRMED
+                RESERVATION CONFIRMED
             </div>
             <div style="font-size: 12px; color: #B08878;">
                 Transaction has been recorded successfully
@@ -46,7 +46,7 @@
                     <!-- Booking Code Banner -->
                     <div style="background: #F7F0EC; padding: 10px 24px; border-bottom: 1px solid #E0CEC6; display: flex; justify-content: space-between; align-items: center;">
                         <div style="font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: #9E8078;">
-                            Booking Code
+                            Reservation Code
                         </div>
                         <div style="font-size: 15px; font-weight: 700; color: #3A1A0E; font-family: 'DM Mono', monospace; letter-spacing: 1px;">
                             {{ $booking->booking_code }}
@@ -144,7 +144,7 @@
             </div>
             {{-- END PRINTABLE TICKET --}}
 
-            <!-- Transaction Detail — tidak ikut tercetak -->
+            <!-- Transaction Detail -->
             <div class="mx-auto mb-4" style="max-width: 420px; background: #F8F9FA; border: 1px solid #E8D8CF; border-radius: 10px; padding: 18px 24px; text-align: left;">
                 <div style="font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: #9E8078; margin-bottom: 12px;">
                     Transaction Detail
