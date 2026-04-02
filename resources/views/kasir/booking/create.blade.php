@@ -8,8 +8,6 @@
 
 @section('content')
 
-    
-
     <div class="booking-wrap">
         <div class="bk-header">
             <div>
@@ -44,7 +42,6 @@
 
         <div class="bk-body">
 
-            {{-- Error dari server (session gap, capacity, dll) --}}
             @if($errors->any())
                 <div class="bk-alert-error">
                     <strong>Terjadi kesalahan:</strong>
@@ -71,15 +68,23 @@
                                         <span class="pkg-card-label">{{ $package->label }}</span>
                                         {{ $package->name }}
                                     </div>
-                                    <div class="pkg-card-tours">
-                                        @foreach($package->tours->where('is_active', true) as $tour)
-                                            <span class="pkg-tag2">{{ $tour->name }}</span>
-                                        @endforeach
+
+                                    <div class="pkg-sub">
+                                        <div class="pkg-sub-title">Tours:</div>
+                                        <div class="pkg-card-tours">
+                                            @foreach($package->tours->where('is_active', true) as $tour)
+                                                <span class="pkg-tag2">{{ $tour->name }}</span>
+                                            @endforeach
+                                        </div>
                                     </div>
-                                    <div class="pkg-card-includes">
-                                        @foreach($package->includes as $item)
-                                            <span class="pkg-tag">{{ $item }}</span>
-                                        @endforeach
+
+                                    <div class="pkg-sub">
+                                        <div class="pkg-sub-title">Includes:</div>
+                                        <div class="pkg-card-includes">
+                                            @foreach($package->includes as $item)
+                                                <span class="pkg-tag">{{ $item }}</span>
+                                            @endforeach
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="pkg-card-price">{{ $package->formatted_price }}</div>

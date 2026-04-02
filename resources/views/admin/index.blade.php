@@ -147,8 +147,14 @@
         <div class="col-lg-6 mb-4">
             <div class="card shadow">
                 <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                    <h6 class="m-0 font-weight-bold text-primary">Recent Bookings</h6>
-                    <a href="{{ route('panel.bookings.index') }}" class="btn btn-sm btn-primary">View All</a>
+                    <h6 class="m-0 font-weight-bold text-primary">Recent Reservations</h6>
+                    <div class="d-flex gap-2">
+                        <button type="button" class="btn btn-sm btn-success mr-2" data-toggle="modal"
+                            data-target="#exportBookingModal">
+                            <i class="fas fa-file-excel mr-1"></i> Export Excel
+                        </button>
+                        <a href="{{ route('panel.bookings.index') }}" class="btn btn-sm btn-primary">View All</a>
+                    </div>
                 </div>
                 <div class="card-body">
                     @if($recentBookings->count() > 0)
@@ -175,7 +181,7 @@
                     @else
                         <div class="text-center text-muted py-4">
                             <i class="fas fa-inbox fa-2x mb-2"></i>
-                            <div>No bookings today</div>
+                            <div>No Reservation today</div>
                         </div>
                     @endif
                 </div>
@@ -271,6 +277,66 @@
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="exportBookingModal" tabindex="-1" role="dialog" aria-labelledby="exportBookingModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title" id="exportBookingModalLabel">
+                        <i class="fas fa-file-excel mr-2"></i> Export Reservation Data
+                    </h5>
+                    <button type="button" class="close text-white" data-dismiss="modal">
+                        <span>&times;</span>
+                    </button>
+                </div>
+                <form action="{{ route('panel.bookings.export') }}" method="GET">
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label class="font-weight-bold mb-1">
+                                <i class="fas fa-calendar-alt mr-1"></i> Period of Visit
+                            </label>
+                            <div class="row">
+                                <div class="col-6">
+                                    <label class="small text-muted">Start</label>
+                                    <input type="date" name="start_date" class="form-control form-control-sm"
+                                        value="{{ now()->startOfMonth()->format('Y-m-d') }}">
+                                </div>
+                                <div class="col-6">
+                                    <label class="small text-muted">End</label>
+                                    <input type="date" name="end_date" class="form-control form-control-sm"
+                                        value="{{ now()->format('Y-m-d') }}">
+                                </div>
+                            </div>
+                            <small class="text-muted">Empty both to export all periods.</small>
+                        </div>
+
+                        {{-- Filter Tour --}}
+                        <div class="form-group">
+                            <label class="font-weight-bold mb-1">
+                                <i class="fas fa-map-marked-alt mr-1"></i> Tour
+                            </label>
+                            <select name="tour_id" class="form-control form-control-sm">
+                                <option value="">All Tour</option>
+                                @foreach($tours as $tour)
+                                    <option value="{{ $tour->id }}">{{ $tour->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">
+                            <i class="fas fa-times mr-1"></i> Cancel
+                        </button>
+                        <button type="submit" class="btn btn-success btn-sm">
+                            <i class="fas fa-download mr-1"></i> Download Excel
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>

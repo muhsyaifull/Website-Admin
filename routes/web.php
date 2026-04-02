@@ -11,6 +11,7 @@ use App\Http\Controllers\SessionController;
 use App\Http\Controllers\EducatorController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\CashierBookingController;
+use App\Http\Controllers\BookingExportController;
 
 /*
 |--------------------------------------------------------------------------
@@ -114,6 +115,7 @@ Route::middleware(['auth', 'active'])->group(function () {
 
         // Booking overview
         Route::prefix('bookings')->name('bookings.')->group(function () {
+            Route::get('/export', [BookingExportController::class, 'export'])->name('export');
             Route::get('/', [BookingController::class, 'index'])->name('index');
             Route::get('/{booking}', [BookingController::class, 'show'])->name('show');
         });
