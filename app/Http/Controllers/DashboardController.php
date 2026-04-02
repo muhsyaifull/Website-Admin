@@ -65,11 +65,13 @@ class DashboardController extends Controller
         $recentUsers = User::orderBy('created_at', 'desc')
             ->take(5)
             ->get();
+ 
+        $tours = Tour::orderBy('name')->get();
 
         return view('admin.index', array_merge(
             $stats,
             $todayStats,
-            compact('recentBookings', 'recentUsers')
+            compact('recentBookings', 'recentUsers', 'tours')
         ));
     }
 

@@ -171,7 +171,7 @@
                 </table>
             </div>
 
-            <!-- Action Buttons — tidak ikut tercetak -->
+            <!-- Action Buttons -->
             <div class="mt-3">
                 <button onclick="window.print()"
                     style="display: inline-block; padding: 9px 20px; border-radius: 7px; font-size: 13px; font-weight: 600; font-family: 'DM Sans', sans-serif; cursor: pointer; border: 1.5px solid #3B5BDB; background: #3B5BDB; color: #fff; margin: 4px; text-decoration: none;">

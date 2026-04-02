@@ -616,3 +616,27 @@ select.form-control {
         flex-direction: column;
     }
 }
+
+.pkg-sub {
+    margin-top: 6px;
+}
+
+.pkg-sub-title {
+    font-size: 11px;
+    font-weight: 700;
+    color: #9e8078;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    margin-bottom: 4px;
+}
+
+.pkg-card-tours,
+.pkg-card-includes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+}
+
+.pkg-card-name + .pkg-sub {
+    margin-top: 8px;
+}
