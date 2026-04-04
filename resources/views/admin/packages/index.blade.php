@@ -72,7 +72,7 @@
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
                             <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
-                                Total Bookings</div>
+                                Total Reservations</div>
                             <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $packages->sum('bookings_count') }}</div>
                         </div>
                         <div class="col-auto">
@@ -89,7 +89,7 @@
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
                             <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                Total Revenue</div>
+                                Monthly Revenue</div>
                             <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $totalRevenue }}</div>
                         </div>
                         <div class="col-auto">
@@ -115,7 +115,7 @@
                             <th>Type</th>
                             <th>Price</th>
                             <th>Status</th>
-                            <th>Bookings</th>
+                            <th>Reservations</th>
                             <th>Last Modified</th>
                             <th>Actions</th>
                         </tr>
@@ -154,7 +154,7 @@
                                         <span class="badge badge-warning">Inactive</span>
                                     @endif
                                 </td>
-                                <td>
+                                <td class="text-center">
                                     <div>{{ $package->bookings_count }}</div>
                                     @if($package->bookings_count > 0)
                                         <small class="text-success">{{ $package->formatted_revenue }} revenue</small>

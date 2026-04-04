@@ -5,16 +5,21 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Package;
 use App\Models\Tour;
+use Carbon\Carbon;
 
 class PackageController extends Controller
 {
     public function index()
     {
+        $monthStart = Carbon::now()->startOfMonth();
+        $monthEnd = Carbon::now()->endOfMonth();
+
         $packages = Package::withCount('bookings')
             ->with([
                 'tours',
-                'bookings' => function ($query) {
+                'bookings' => function ($query) use ($monthStart, $monthEnd) {
                     $query->select('package_id', 'total_price');
+                    $query->whereBetween('visit_date', [$monthStart, $monthEnd]);
                 }
             ])
             ->orderBy('created_at', 'desc')

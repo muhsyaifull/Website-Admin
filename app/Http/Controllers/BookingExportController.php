@@ -31,7 +31,7 @@ class BookingExportController extends Controller
         $filename = $this->buildFilename($startDate, $endDate, $tourName);
 
         return Excel::download(
-            new BookingExport($startDate, $endDate, $tourId),
+            new BookingExport($startDate, $endDate, $request->input('status'), $tourId),
             $filename
         );
     }

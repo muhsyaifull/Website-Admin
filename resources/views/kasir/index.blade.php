@@ -161,22 +161,22 @@
                         <thead>
                             <tr class="justify-content-center text-center">
                                 <th>Reservation Code</th>
-                                <th>Representative</th>
+                                <th>Guest</th>
                                 <th>Package</th>
                                 <th>Type</th>
                                 <th>Participants</th>
                                 <th>Sessions</th>
-                                <th>Total</th>
+                                <th>Total Payment</th>
                                 <th>Time</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach($todaysBookings->take(10) as $booking)
-                                <tr>
+                                <tr class="justify-content-center text-center">
                                     <td>
                                         <a href="{{ route('kasir.booking.show', $booking) }}"
-                                            class="text-decoration-none font-weight-bold">
+                                            class="text-decoration-none font-weight-bold" style="color: #af4324;">
                                             {{ $booking->booking_code }}
                                         </a>
                                     </td>

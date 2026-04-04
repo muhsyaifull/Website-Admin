@@ -201,14 +201,14 @@
                                     ->sortBy('start_time')
                                     ->values();
                             @endphp
-                            <div class="session-col tour-session-group" data-tour-id="{{ $tour->id }}">
+                            <div class="session-col tour-session-group" data-tour-id="{{ $tour->id }}" data-tour-name="{{ $tour->name }}">
                                 <div class="session-col-title">
                                     {{ $tour->name }}
                                     <span class="selected-badge selected-tour-info" data-tour="{{ $tour->id }}"
                                         ></span>
                                 </div>
                                 <div class="tour-sessions-container" data-tour-id="{{ $tour->id }}">
-                                    @foreach($sessions as $session)
+                                    @forelse($sessions as $session)
                                         <div class="session-item"
                                             data-session="{{ $session->id }}"
                                             data-tour-id="{{ $tour->id }}"
@@ -231,7 +231,11 @@
                                                     style="background:{{ $session->status_background }}; color:{{ $session->status_color }};">{{ $session->status }}</span>
                                             </div>
                                         </div>
-                                    @endforeach
+                                    @empty
+                                        <div class="text-muted small py-2 no-session-message">
+                                            No available sessions for this tour.
+                                        </div>
+                                    @endforelse
                                 </div>
                                 <input type="hidden" name="tour_session_{{ $tour->id }}" class="tour-session-input"
                                     data-tour-id="{{ $tour->id }}">
@@ -282,13 +286,41 @@
         }
 
         function allTourSessionsSelected() {
-        const requiredTourIds = getPackageTourIds();
-        for (const tourId of requiredTourIds) {
-            const input = $(`.tour-session-input[data-tour-id="${tourId}"]`);
-            if (!input.val()) return false;
+            const requiredTourIds = getPackageTourIds();
+            for (const tourId of requiredTourIds) {
+                const input = $(`.tour-session-input[data-tour-id="${tourId}"]`);
+                if (!input.val()) return false;
+            }
+            return true;
         }
-        return true;
-    }
+
+        function getMissingSelectedTourNames() {
+            const requiredTourIds = getPackageTourIds();
+
+            return requiredTourIds
+                .filter(function (tourId) {
+                    const input = $(`.tour-session-input[data-tour-id="${tourId}"]`);
+                    return !input.val();
+                })
+                .map(function (tourId) {
+                    const group = $(`.tour-session-group[data-tour-id="${tourId}"]`);
+                    return group.data('tour-name') || `Tour ${tourId}`;
+                });
+        }
+
+        function getToursWithoutVisibleSessions() {
+            const requiredTourIds = getPackageTourIds();
+
+            return requiredTourIds
+                .filter(function (tourId) {
+                    const visibleSessions = $(`.tour-session-group[data-tour-id="${tourId}"] .session-item:visible`).length;
+                    return visibleSessions === 0;
+                })
+                .map(function (tourId) {
+                    const group = $(`.tour-session-group[data-tour-id="${tourId}"]`);
+                    return group.data('tour-name') || `Tour ${tourId}`;
+                });
+        }
 
         function updateVisibleTourGroups() {
             const requiredTourIds = getPackageTourIds();
@@ -523,13 +555,18 @@
                 $('#nextBtn').prop('disabled', true);
 
                 hideExpiredSessions();
+
+                const toursWithoutSessions = getToursWithoutVisibleSessions();
+                if (toursWithoutSessions.length > 0) {
+                    alert('No sessions are available for: ' + toursWithoutSessions.join(', ') + '. Please choose another package or tour/date.');
+                }
             }
 
             $('#prevBtn').prop('disabled', currentStep === 1);
 
             if (currentStep === 4) {
                 $('#nextBtn').hide();
-                $('#submitBtn').show().prop('disabled', !allTourSessionsSelected());
+                $('#submitBtn').show().prop('disabled', false);
             } else {
                 $('#nextBtn').show();
                 $('#submitBtn').hide();
@@ -559,9 +596,10 @@
         }
 
         $('#bookingForm').submit(function (e) {
-            if (!allTourSessionsSelected()) {
+            const missingTours = getMissingSelectedTourNames();
+            if (missingTours.length > 0) {
                 e.preventDefault();
-                alert('Chosen sessions do not meet the required time gap. Please adjust your selections.');
+                alert('Please choose a session first for: ' + missingTours.join(', '));
             }
         });
 
