@@ -120,8 +120,8 @@
                             <tr>
                                 <td>
                                     <div class="d-flex align-items-center">
-                                        <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center mr-3"
-                                            style="width: 40px; height: 40px; font-size: 14px;">
+                                        <div class="rounded-circle text-white d-flex align-items-center justify-content-center mr-3"
+                                            style="width: 40px; height: 40px; font-size: 14px; background-color: #af4324;">
                                             {{ strtoupper(substr($educator->name, 0, 2)) }}
                                         </div>
                                         <div class="font-weight-bold">{{ $educator->name }}</div>
@@ -193,7 +193,7 @@
                 <div class="table-responsive">
                     <table class="table table-sm table-bordered mb-0">
                         <thead class="thead-light">
-                            <tr>
+                            <tr class="text-center">
                                 <th>Educator</th>
                                 <th>Time</th>
                                 <th>Type</th>
@@ -202,7 +202,7 @@
                         </thead>
                         <tbody>
                             @foreach($todayAssignments as $assignment)
-                                <tr>
+                                <tr class="text-center">
                                     <td class="font-weight-bold">{{ $assignment->educator->name ?? '-' }}</td>
                                     <td><span class="badge badge-dark">{{ $assignment->label }}</span></td>
                                     <td>

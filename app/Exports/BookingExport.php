@@ -4,19 +4,23 @@ namespace App\Exports;
 
 use App\Models\Booking;
 use App\Models\TourSession;
+use Maatwebsite\Excel\Concerns\WithCustomValueBinder;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithTitle;
 use Maatwebsite\Excel\Concerns\WithStyles;
 use Maatwebsite\Excel\Concerns\WithColumnWidths;
 use Maatwebsite\Excel\Concerns\WithEvents;
+use Maatwebsite\Excel\DefaultValueBinder;
 use Maatwebsite\Excel\Events\AfterSheet;
+use PhpOffice\PhpSpreadsheet\Cell\Cell;
+use PhpOffice\PhpSpreadsheet\Cell\DataType;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Border;
 use Carbon\Carbon;
 
-class BookingExport implements FromCollection, WithHeadings, WithTitle, WithStyles, WithColumnWidths, WithEvents
+class BookingExport extends DefaultValueBinder implements FromCollection, WithHeadings, WithTitle, WithStyles, WithColumnWidths, WithEvents, WithCustomValueBinder
 {
     protected $startDate;
     protected $endDate;
@@ -99,11 +103,16 @@ class BookingExport implements FromCollection, WithHeadings, WithTitle, WithStyl
                     $year = $visitDate ? (int) $visitDate->format('Y') : '';
 
                     $totalPaxRevenue = $booking->adult_count + $booking->child_count;
-                    $visitorType = $booking->visitor_type ?? '';
+                    $visitorType = '';
+                    if ($booking->visitor_type === 'WI') {
+                        $visitorType = $booking->visitor_type ?? '';
+                    } else {
+                        $visitorType = 'Reservation' . ' ' . ($booking->visitor_type ?? '');
+                    }
 
                     $rawPhone = trim((string) ($booking->representative_phone ?? ''));
                     $phone = $rawPhone !== ''
-                        ? "'" . preg_replace('/\D/', '', $rawPhone)
+                        ? preg_replace('/\D/', '', $rawPhone)
                         : '-';
 
                     $rows->push([
@@ -168,6 +177,17 @@ class BookingExport implements FromCollection, WithHeadings, WithTitle, WithStyl
         return 'Sheet1';
     }
 
+    public function bindValue(Cell $cell, $value)
+    {
+        if ($cell->getColumn() === 'L' && is_string($value) && $value !== '-') {
+            $cell->setValueExplicit($value, DataType::TYPE_STRING);
+
+            return true;
+        }
+
+        return parent::bindValue($cell, $value);
+    }
+
     public function columnWidths(): array
     {
         return array_fill_keys(
@@ -221,13 +241,17 @@ class BookingExport implements FromCollection, WithHeadings, WithTitle, WithStyl
                     ],
                 ]);
 
-                foreach (['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'L', 'M', 'N', 'O', 'P', 'Q', 'R'] as $col) {
+                foreach (['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R'] as $col) {
                     $sheet->getStyle("{$col}2:{$col}{$lastRow}")
                         ->getAlignment()
                         ->setHorizontal(Alignment::HORIZONTAL_CENTER);
                 }
 
                 $sheet->getStyle("M2:M{$lastRow}")
+                    ->getNumberFormat()
+                    ->setFormatCode('@');
+
+                $sheet->getStyle("L2:L{$lastRow}")
                     ->getNumberFormat()
                     ->setFormatCode('@');
 

@@ -115,7 +115,7 @@
         </div>
     @endforeach
 
-    <div class="alert alert-info">
+    <div class="alert alert-info" style="font-size: 14px;">
         <i class="fas fa-info-circle"></i>
         <strong>Info:</strong> Tour sessions will be automatically created from active templates every day.
         Templates with specific days (e.g. Weekend) will be used on those days.

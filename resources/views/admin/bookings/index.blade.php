@@ -15,20 +15,35 @@
             <h6 class="m-0 font-weight-bold text-primary mb-3 mb-md-0">
                 Reservation List - {{ $selectedDate->translatedFormat('d M Y') }}
             </h6>
-            <form method="GET" action="{{ route('panel.bookings.index') }}" class="d-flex align-items-center">
-                <label for="date" class="mb-0 mr-2 text-muted">Date</label>
-                <input type="date" id="date" name="date" class="form-control form-control-sm"
-                    value="{{ $selectedDate->format('Y-m-d') }}" onchange="this.form.submit()">
+            <form method="GET" action="{{ route('panel.bookings.index') }}"
+                class="d-flex flex-column flex-md-row align-items-md-center">
+                <div class="d-flex align-items-center mb-2 mb-md-0 mr-md-3">
+                    <label for="date" class="mb-0 mr-2 text-muted">Date</label>
+                    <input type="date" id="date" name="date" class="form-control form-control-sm"
+                        value="{{ request('date', $selectedDate->format('Y-m-d')) }}" onchange="this.form.submit()">
+                </div>
+                <div class="d-flex align-items-center">
+                    <label for="package_id" class="mb-0 mr-2 text-muted">Package</label>
+                    <select id="package_id" name="package_id" class=" form-control form-control-sm" style="width: 200px"
+                        onchange="this.form.submit()">
+                        <option value="">All Packages</option>
+                        @foreach($packages as $package)
+                            <option value="{{ $package->id }}" {{ request('package_id') == $package->id ? 'selected' : '' }}>
+                                {{ $package->label }} - {{ $package->name }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
             </form>
         </div>
-        <div class="card-body">
+        <div class="card-body" style="overflow-x: auto; font-size: 15px;">
             <div class="table-responsive">
                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                     <thead>
-                        <tr>
+                        <tr class="text-center">
                             <th>Reservation Code</th>
                             <th>Package</th>
-                            <th>Representative</th>
+                            <th>Guest</th>
                             <th>Participants</th>
                             <th>Visit Date</th>
                             <th>Total Price</th>
@@ -39,9 +54,9 @@
                     </thead>
                     <tbody>
                         @forelse($bookings as $booking)
-                            <tr>
+                            <tr class="text-center">
                                 <td>
-                                    <a href="{{ route('panel.bookings.show', $booking) }}"
+                                    <a href=" {{ route('panel.bookings.show', $booking) }}"
                                         class="font-weight-bold text-primary">
                                         {{ $booking->booking_code }}
                                     </a>
@@ -74,7 +89,7 @@
                                     </span>
                                 </td>
                                 <td>{{ $booking->user->name }}</td>
-                                <td>
+                                <td class="text-center">
                                     <a href="{{ route('panel.bookings.show', $booking) }}" class="btn btn-info btn-sm"
                                         title="View Details">
                                         <i class="fas fa-eye"></i>

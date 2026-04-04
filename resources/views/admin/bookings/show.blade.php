@@ -71,7 +71,7 @@
                                 </tr>
                                 <tr>
                                     <td class="font-weight-bold">Booking Time:</td>
-                                    <td>{{ $booking->created_at->format('d M Y, H:i') }}</td>
+                                    <td>{{ $booking->created_at->format('H:i, d M Y') }}</td>
                                 </tr>
                                 @if($booking->created_at != $booking->updated_at)
                                     <tr>
@@ -130,7 +130,7 @@
                             <td class="text-muted">Paid Participants</td>
                             <td>
                                 {{ $booking->adult_count + $booking->child_count }} people
-                                <small class="text-muted">(adults + children, infants free)</small>
+                                <small class="text-muted">(adults + children, infants (free))</small>
                             </td>
                         </tr>
                         <tr>
@@ -206,15 +206,16 @@
                     <h6 class="m-0 font-weight-bold text-primary">Package Details</h6>
                 </div>
                 <div class="card-body">
-                    <h6>{{ $booking->package->name }}</h6>
-                    <p class="text-muted">{{ $booking->package->description }}</p>
+                    <h6>Tour:</h6>
+                    <h6">- {{ $booking->package->name }}</h6>
+                        <p class="text-muted">{{ $booking->package->description }}</p>
 
-                    <h6 class="mt-3">Included:</h6>
-                    <ul class="list-unstyled">
-                        @foreach($booking->package->includes as $include)
-                            <li><i class="fas fa-check text-success"></i> {{ $include }}</li>
-                        @endforeach
-                    </ul>
+                        <h6 class="mt-3">Included:</h6>
+                        <ul class="list-unstyled">
+                            @foreach($booking->package->includes as $include)
+                                <li><i class="fas fa-check text-success"></i> {{ $include }}</li>
+                            @endforeach
+                        </ul>
                 </div>
             </div>
 
