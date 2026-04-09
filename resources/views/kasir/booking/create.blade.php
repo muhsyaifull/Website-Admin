@@ -586,8 +586,9 @@
             if (!startTimeStr) return;
 
             const startTime = new Date(startTimeStr);
+            const graceTime = new Date(startTime.getTime() + 10 * 60* 1000);
 
-            if (startTime < now) {
+            if (graceTime < now) {
                 $(this).hide();
             } else {
                 $(this).show();
