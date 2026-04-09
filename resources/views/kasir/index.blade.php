@@ -268,8 +268,12 @@
 
 @push('scripts')
     <script>
+        const CASHIER_DASHBOARD_REFRESH_MS = 10000;
+
         setInterval(function () {
-            location.reload();
-        }, 30000);
+            if (!document.hidden) {
+                location.reload();
+            }
+        }, CASHIER_DASHBOARD_REFRESH_MS);
     </script>
 @endpush

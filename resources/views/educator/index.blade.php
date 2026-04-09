@@ -290,13 +290,12 @@
 
 @push('scripts')
     <script>
-        setInterval(function () {
-            location.reload();
-        }, 60000);
+        const EDUCATOR_DASHBOARD_REFRESH_MS = 15000;
 
         setInterval(function () {
-            const now = new Date();
-            const currentTime = now.getHours() * 60 + now.getMinutes();
-        }, 30000);
+            if (!document.hidden) {
+                location.reload();
+            }
+        }, EDUCATOR_DASHBOARD_REFRESH_MS);
     </script>
 @endpush
