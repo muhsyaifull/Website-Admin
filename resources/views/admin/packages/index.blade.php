@@ -154,10 +154,14 @@
                                         <span class="badge badge-warning">Inactive</span>
                                     @endif
                                 </td>
-                                <td class="text-center">
-                                    <div>{{ $package->bookings_count }}</div>
-                                    @if($package->bookings_count > 0)
-                                        <small class="text-success">{{ $package->formatted_revenue }} revenue</small>
+                                <td>
+                                    <div class="text-center">{{ $package->bookings_count }}</div>
+                                    @php
+                                        $monthlyRevenue = $package->bookings->sum('total_price');
+                                    @endphp
+                                    @if($monthlyRevenue > 0)
+                                        <small class="text-success">Rp {{ number_format($monthlyRevenue, 0, ',', '.') }} monthly
+                                            revenue</small>
                                     @endif
                                 </td>
                                 <td>
