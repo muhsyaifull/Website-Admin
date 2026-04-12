@@ -166,7 +166,7 @@
                     <div class="form-group">
                         <label>Full Name <span class="req">*</span></label>
                         <input type="text" class="form-control" name="representative_name"
-                            placeholder="Representative Name" value="{{ old('representative_name') }}" required>
+                            placeholder="Guest Name" value="{{ old('representative_name') }}" required>
                     </div>
 
                     <div class="form-row-2">
