@@ -5,7 +5,7 @@
 @section('content')
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
         <h1 class="h3 mb-0 text-gray-800">
-            <i class="fas fa-cogs text-primary"></i> Dashboard Admin IT
+            Dashboard Admin IT
         </h1>
         <div class="text-right">
             <small class="text-muted">{{ Carbon\Carbon::now()->translatedFormat('l, d M Y') }}</small>
@@ -200,7 +200,7 @@
                         @foreach($recentUsers as $user)
                             <div class="d-flex align-items-center py-2 {{ !$loop->last ? 'border-bottom' : '' }}">
                                 <div class="mr-3">
-                                    <div class="rounded-circle bg-{{ $user->isAdmin() ? 'danger' : ($user->isEducator() ? 'warning' : 'info') }} d-flex align-items-center justify-content-center"
+                                    <div class="rounded-circle bg-{{ $user->isAdmin() ? 'danger' : ($user->isEducator() ? 'warning' : ($user->isMonitor() ? 'primary' : 'info')) }} d-flex align-items-center justify-content-center"
                                         style="width: 35px; height: 35px;">
                                         <i class="fas fa-user text-white"></i>
                                     </div>
@@ -212,7 +212,7 @@
                                 </div>
                                 <div class="text-right">
                                     <span
-                                        class="badge badge-{{ $user->isAdmin() ? 'danger' : ($user->isEducator() ? 'warning' : 'info') }}">
+                                        class="badge badge-{{ $user->isAdmin() ? 'danger' : ($user->isEducator() ? 'warning' : ($user->isMonitor() ? 'primary' : 'info')) }}">
                                         {{ ucfirst($user->role) }}
                                     </span>
                                     <div class="mt-1">
@@ -247,7 +247,7 @@
                             <div class="border rounded p-3">
                                 <i class="fas fa-users fa-2x text-primary mb-2"></i>
                                 <h5 class="font-weight-bold">
-                                    {{ \App\Models\User::whereIn('role', ['cashier', 'educator', 'admin'])->count() }}
+                                    {{ \App\Models\User::whereIn('role', ['cashier', 'educator', 'admin', 'monitor'])->count() }}
                                 </h5>
                                 <p class="text-muted mb-0">System Users</p>
                             </div>
@@ -263,7 +263,7 @@
                             <div class="border rounded p-3">
                                 <i class="fas fa-clock fa-2x text-warning mb-2"></i>
                                 <h5 class="font-weight-bold">
-                                    {{ \App\Models\TourSession::whereDate('date', Carbon\Carbon::today())->fromActiveTemplate()->count() }}
+                                    {{ \App\Models\TourSession::forToday()->fromActiveTemplate()->count() }}
                                 </h5>
                                 <p class="text-muted mb-0">Today's Sessions</p>
                             </div>

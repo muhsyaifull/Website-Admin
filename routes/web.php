@@ -11,6 +11,7 @@ use App\Http\Controllers\SessionController;
 use App\Http\Controllers\EducatorController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\CashierBookingController;
+use App\Http\Controllers\MonitorSessionController;
 use App\Http\Controllers\BookingExportController;
 
 /*
@@ -53,6 +54,11 @@ Route::middleware(['auth', 'active'])->group(function () {
         });
 
         Route::get('/api/sessions/{tourId}', [CashierBookingController::class, 'getSessionData'])->name('api.sessions')->middleware('throttle:30,1');
+    });
+
+    // Monitor Routes
+    Route::middleware(['role:monitor'])->prefix('monitor')->name('monitor.')->group(function () {
+        Route::get('/', [MonitorSessionController::class, 'index'])->name('index');
     });
 
     // Admin & Educator Routes 

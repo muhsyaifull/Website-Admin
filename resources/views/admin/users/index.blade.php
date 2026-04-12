@@ -5,7 +5,7 @@
 @section('content')
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
         <h1 class="h3 mb-0 text-gray-800">
-            <i class="fas fa-users text-primary"></i> User Management
+            User Management
         </h1>
         <a href="{{ route('panel.users.create') }}" class="btn btn-primary btn-icon-split">
             <span class="icon text-white-50">
@@ -54,7 +54,7 @@
                             <tr>
                                 <td>
                                     <div class="d-flex align-items-center">
-                                        <div class="rounded-circle bg-{{ $user->isAdmin() ? 'danger' : ($user->isEducator() ? 'warning' : 'info') }} d-flex align-items-center justify-content-center mr-2"
+                                        <div class="rounded-circle bg-{{ $user->isAdmin() ? 'danger' : ($user->isEducator() ? 'warning' : ($user->isMonitor() ? 'primary' : 'info')) }} d-flex align-items-center justify-content-center mr-2"
                                             style="width: 30px; height: 30px;">
                                             <i class="fas fa-user text-white text-xs"></i>
                                         </div>
@@ -67,7 +67,7 @@
                                 <td>{{ $user->email ?? '-' }}</td>
                                 <td>
                                     <span
-                                        class="badge badge-{{ $user->isAdmin() ? 'danger' : ($user->isEducator() ? 'warning' : 'info') }}">
+                                        class="badge badge-{{ $user->isAdmin() ? 'danger' : ($user->isEducator() ? 'warning' : ($user->isMonitor() ? 'primary' : 'info')) }}">
                                         {{ ucfirst($user->role) }}
                                     </span>
                                 </td>

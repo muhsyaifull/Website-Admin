@@ -5,7 +5,7 @@
 @section('content')
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
         <h1 class="h3 mb-0 text-gray-800">
-            <i class="fas fa-map-marked-alt text-primary"></i> Manage Tours
+            Manage Tours
         </h1>
         <a href="{{ route('panel.tours.create') }}" class="btn btn-primary">
             <i class="fas fa-plus"></i> Add Tour

@@ -24,6 +24,8 @@ class DashboardController extends Controller
         switch ($user->role) {
             case 'cashier':
                 return redirect()->route('kasir.index');
+            case 'monitor':
+                return redirect()->route('monitor.index');
             case 'educator':
                 return $this->educatorDashboard();
             case 'admin':

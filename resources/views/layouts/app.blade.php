@@ -71,6 +71,19 @@
                     </a>
                 </li>
 
+            @elseif(auth()->user()->isMonitor())
+                <!-- Monitor Menu -->
+                <div class="sidebar-heading">
+                    Monitor Display
+                </div>
+
+                <li class="nav-item {{ request()->routeIs('monitor.*') ? 'active' : '' }}">
+                    <a class="nav-link" href="{{ route('monitor.index') }}">
+                        <i class="fas fa-fw fa-tv"></i>
+                        <span>Session Monitor</span>
+                    </a>
+                </li>
+
             @else
                 <!-- Admin & Educator Shared Menu -->
                 <div class="sidebar-heading">

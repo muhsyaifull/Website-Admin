@@ -79,6 +79,11 @@ class User extends Authenticatable
         return $this->role === 'cashier';
     }
 
+    public function isMonitor()
+    {
+        return $this->role === 'monitor';
+    }
+
     /**
      * Check if user is active
      */
@@ -97,6 +102,8 @@ class User extends Authenticatable
                 return 'bg-warning';
             case 'cashier':
                 return 'bg-info';
+            case 'monitor':
+                return 'bg-primary';
             default:
                 return 'bg-secondary';
         }
@@ -111,6 +118,8 @@ class User extends Authenticatable
                 return 'badge-warning';
             case 'cashier':
                 return 'badge-info';
+            case 'monitor':
+                return 'badge-primary';
             default:
                 return 'badge-secondary';
         }
@@ -125,6 +134,8 @@ class User extends Authenticatable
                 return 'fas fa-chalkboard-teacher';
             case 'cashier':
                 return 'fas fa-cash-register';
+            case 'monitor':
+                return 'fas fa-tv';
             default:
                 return 'fas fa-user';
         }

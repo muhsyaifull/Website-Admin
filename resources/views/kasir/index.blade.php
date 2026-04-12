@@ -5,7 +5,7 @@
 @section('content')
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
         <h1 class="h3 mb-0 text-gray-800">
-            <i class="fas fa-store text-primary"></i> Dashboard Cashier
+            Dashboard Cashier
         </h1>
         <div class="text-right">
             <small class="text-muted">Cashier: {{ auth()->user()->name }}</small><br>

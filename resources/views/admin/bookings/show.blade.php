@@ -5,7 +5,7 @@
 @section('content')
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
         <h1 class="h3 mb-0 text-gray-800">
-            <i class="fas fa-eye text-primary"></i> Reservation Details
+            Reservation Details
         </h1>
         <a href="{{ route('panel.bookings.index') }}" class="btn btn-outline-primary">
             <i class="fas fa-arrow-left"></i> Back to List

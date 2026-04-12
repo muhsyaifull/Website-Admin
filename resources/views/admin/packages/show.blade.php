@@ -5,7 +5,7 @@
 @section('content')
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
         <h1 class="h3 mb-0 text-gray-800">
-            <i class="fas fa-box text-primary"></i> Package Details
+            Package Details
         </h1>
         <div>
             <a href="{{ route('panel.packages.index') }}" class="btn btn-outline-primary mr-2">

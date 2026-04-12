@@ -5,7 +5,7 @@
 @section('content')
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
         <h1 class="h3 mb-0 text-gray-800">
-            <i class="fas fa-user-plus text-primary"></i> Add New User
+            Add New User
         </h1>
         <a href="{{ route('panel.users.index') }}" class="btn btn-outline-primary">
             <i class="fas fa-arrow-left"></i> Back to Users
@@ -99,6 +99,9 @@
                                         <option value="admin" {{ old('role') == 'admin' ? 'selected' : '' }}>
                                             Admin IT
                                         </option>
+                                        <option value="monitor" {{ old('role') == 'monitor' ? 'selected' : '' }}>
+                                            Monitor
+                                        </option>
                                     </select>
                                     @error('role')
                                         <div class="invalid-feedback">{{ $message }}</div>
@@ -162,7 +165,7 @@
                                     <div class="card-body py-3">
                                         <h6 class="text-info">Role Descriptions:</h6>
                                         <div class="row">
-                                            <div class="col-md-4">
+                                            <div class="col-md-3">
                                                 <div class="text-center">
                                                     <i class="fas fa-cash-register fa-2x text-info mb-2"></i>
                                                     <h6 class="text-info">Cashier</h6>
@@ -172,7 +175,7 @@
                                                     </small>
                                                 </div>
                                             </div>
-                                            <div class="col-md-4">
+                                            <div class="col-md-3">
                                                 <div class="text-center">
                                                     <i class="fas fa-chalkboard-teacher fa-2x text-warning mb-2"></i>
                                                     <h6 class="text-warning">Educator</h6>
@@ -182,13 +185,22 @@
                                                     </small>
                                                 </div>
                                             </div>
-                                            <div class="col-md-4">
+                                            <div class="col-md-3">
                                                 <div class="text-center">
                                                     <i class="fas fa-user-shield fa-2x text-danger mb-2"></i>
                                                     <h6 class="text-danger">Admin IT</h6>
                                                     <small class="text-muted">
                                                         Full system access, user management, package configuration, and
                                                         system oversight
+                                                    </small>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="text-center">
+                                                    <i class="fas fa-tv fa-2x text-primary mb-2"></i>
+                                                    <h6 class="text-primary">Monitor</h6>
+                                                    <small class="text-muted">
+                                                        Display-only session monitor for visitors. No CRUD access.
                                                     </small>
                                                 </div>
                                             </div>

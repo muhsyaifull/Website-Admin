@@ -61,5 +61,14 @@ class UserSeeder extends Seeder
             'role' => 'educator',
             'is_active' => false,
         ]);
+
+        User::create([
+            'name' => 'Monitor Display',
+            'username' => 'monitor1',
+            'email' => 'monitor@rumahatsiri.com',
+            'password' => Hash::make('password'),
+            'role' => 'monitor',
+            'is_active' => true,
+        ]);
     }
 }
