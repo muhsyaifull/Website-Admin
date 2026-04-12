@@ -5,7 +5,7 @@
 @section('content')
     <div class="d-sm-flex align-items-center justify-content-between mb-4 ">
         <h1 class="h3 mb-0 text-gray-800">
-            <i class="fas fa-user text-primary"></i> {{ $user->name }}
+            {{ $user->name }}
         </h1>
         <div>
             <a href="{{ route('panel.users.edit', $user) }}" class="btn btn-warning">
@@ -45,7 +45,7 @@
                             <th class="text-muted">Role</th>
                             <td>
                                 <span
-                                    class="badge badge-{{ $user->isAdmin() ? 'danger' : ($user->isEducator() ? 'warning' : 'info') }}">
+                                    class="badge badge-{{ $user->isAdmin() ? 'danger' : ($user->isEducator() ? 'warning' : ($user->isMonitor() ? 'primary' : 'info')) }}">
                                     {{ ucfirst($user->role) }}
                                 </span>
                             </td>

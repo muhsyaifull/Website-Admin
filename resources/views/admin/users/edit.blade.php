@@ -5,7 +5,7 @@
 @section('content')
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
         <h1 class="h3 mb-0 text-gray-800">
-            <i class="fas fa-user-edit text-primary"></i> Edit User
+            Edit User
         </h1>
         <a href="{{ route('panel.users.index') }}" class="btn btn-outline-primary">
             <i class="fas fa-arrow-left"></i> Back to Users
@@ -99,6 +99,9 @@
                                         </option>
                                         <option value="admin" {{ old('role', $user->role) == 'admin' ? 'selected' : '' }}>
                                             Admin IT
+                                        </option>
+                                        <option value="monitor" {{ old('role', $user->role) == 'monitor' ? 'selected' : '' }}>
+                                            Monitor
                                         </option>
                                     </select>
                                     @error('role')
