@@ -26,6 +26,29 @@ class BookingController extends Controller
             ->orderBy('name')
             ->get();
 
+        $monthStart = $selectedDate->copy()->startOfMonth();
+        $monthEnd = $selectedDate->copy()->endOfMonth();
+
+        $monthlyReservationCountByPackage = Booking::query()
+            ->selectRaw('package_id, COUNT(*) as total_reservations')
+            ->whereBetween('visit_date', [$monthStart->toDateString(), $monthEnd->toDateString()])
+            ->groupBy('package_id')
+            ->pluck('total_reservations', 'package_id');
+
+        $monthlyPackageSummary = $packages
+            ->map(function ($package) use ($monthlyReservationCountByPackage) {
+                return [
+                    'id' => $package->id,
+                    'label' => $package->label,
+                    'name' => $package->name,
+                    'total_reservations' => (int) ($monthlyReservationCountByPackage[$package->id] ?? 0),
+                ];
+            })
+            ->filter(fn($item) => $item['total_reservations'] > 0)
+            ->values();
+
+        $monthlyReservationTotal = $monthlyPackageSummary->sum('total_reservations');
+
         $bookings = Booking::with(['package', 'user', 'bookingSessions.tour', 'bookingSessions.educator'])
             ->whereDate('visit_date', $selectedDate)
             ->when($selectedPackageId, function ($query) use ($selectedPackageId) {
@@ -35,7 +58,15 @@ class BookingController extends Controller
             ->paginate(20)
             ->appends($request->query());
 
-        return view('admin.bookings.index', compact('bookings', 'selectedDate', 'packages'));
+        return view('admin.bookings.index', compact(
+            'bookings',
+            'selectedDate',
+            'packages',
+            'monthStart',
+            'monthEnd',
+            'monthlyPackageSummary',
+            'monthlyReservationTotal'
+        ));
     }
 
     public function show(Booking $booking)
