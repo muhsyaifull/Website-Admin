@@ -116,6 +116,57 @@
         </div>
     </div>
 
+    <div class="card shadow mb-4">
+        <div class="card-header py-3 d-flex flex-column flex-md-row justify-content-between align-items-md-center">
+            <h6 class="m-0 font-weight-bold text-primary mb-2 mb-md-0">
+                Monthly Reservation Summary per Package
+            </h6>
+            <small class="text-muted">
+                {{ $monthStart->translatedFormat('d M Y') }} - {{ $monthEnd->translatedFormat('d M Y') }}
+            </small>
+        </div>
+        <div class="card-body" style="overflow-x: auto; font-size: 15px;">
+            @if($monthlyPackageSummary->isEmpty())
+                <div class="text-center text-muted py-3">
+                    No reservation data found in this month.
+                </div>
+            @else
+                <div class="table-responsive">
+                    <table class="table table-bordered" width="100%" cellspacing="0">
+                        <thead>
+                            <tr class="text-center">
+                                <th style="width: 60px;">No</th>
+                                <th>Package</th>
+                                <th style="width: 240px;">Total Reservations</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($monthlyPackageSummary as $index => $summary)
+                                <tr>
+                                    <td class="text-center">{{ $index + 1 }}</td>
+                                    <td>
+                                        <span class="badge badge-primary" style="color: white;">
+                                            {{ $summary['label'] }}
+                                        </span>
+                                        <br>
+                                        <small class="text-muted">{{ $summary['name'] }}</small>
+                                    </td>
+                                    <td class="text-center font-weight-bold">{{ number_format($summary['total_reservations']) }}</td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <th colspan="2" class="text-right">Grand Total</th>
+                                <th class="text-center text-success">{{ number_format($monthlyReservationTotal) }}</th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            @endif
+        </div>
+    </div>
+
 @endsection
 
 @push('scripts')
