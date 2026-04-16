@@ -236,14 +236,189 @@ hr {
     margin: 1.25rem 0 0;
 }
 
-/* RESPONSIVE */
-@media (max-width: 600px) {
-    .card {
-        grid-template-columns: 1fr;
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+
+/* Tablet landscape */
+@media (max-width: 860px) {
+    body {
+        padding: 1.5rem;
+    }
+
+    .login-logo {
+        width: 200px !important;
+    }
+
+    .logo-area img {
+        height: 140px;
     }
 
     .left {
-        padding: 2rem 1.75rem 2.5rem;
-        min-height: 200px;
+        padding: 2.5rem 2rem;
+    }
+
+    .right {
+        padding: 2.5rem 2rem;
+    }
+
+    .welcome {
+        font-size: 1.6rem;
+    }
+}
+
+/* Tablet portrait — left panel jadi header horizontal */
+@media (max-width: 640px) {
+    body {
+        padding: 1.25rem;
+        align-items: flex-start;
+    }
+
+    .card {
+        grid-template-columns: 1fr;
+        border-radius: 16px;
+    }
+
+    .left {
+        flex-direction: row;
+        align-items: center;
+        padding: 1.5rem 1.75rem;
+        gap: 1rem;
+    }
+
+    .left::before {
+        width: 130px;
+        height: 130px;
+        top: -40px;
+        right: -40px;
+    }
+
+    .left::after {
+        width: 90px;
+        height: 90px;
+        bottom: -25px;
+        left: -25px;
+    }
+
+    .logo-area img,
+    .login-logo {
+        width: 130px !important;
+        height: auto !important;
+    }
+
+    .left-footer {
+        text-align: right;
+    }
+
+    .admin-badge {
+        font-size: 0.6rem;
+        margin-bottom: 0.4rem;
+    }
+
+    .tagline {
+        display: none;
+    }
+
+    .right {
+        padding: 2rem 1.75rem 2.25rem;
+    }
+
+    .welcome {
+        font-size: 1.5rem;
+    }
+
+    .sub-welcome {
+        font-size: 0.88rem;
+        margin-bottom: 1.5rem;
+    }
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+    body {
+        padding: 1rem;
+        align-items: center;
+    }
+
+    .card {
+        border-radius: 16px;
+    }
+
+    .left {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        padding: 1.75rem 1.5rem 1.5rem;
+        gap: 0.75rem;
+    }
+
+    .logo-area img,
+    .login-logo {
+        width: 110px !important;
+        height: auto !important;
+    }
+
+    .left-footer {
+        text-align: center;
+    }
+
+    .admin-badge {
+        font-size: 0.58rem;
+        margin-bottom: 0;
+    }
+
+    .tagline {
+        display: none;
+    }
+
+    .right {
+        padding: 1.75rem 1.5rem 2rem;
+    }
+
+    .welcome {
+        font-size: 1.35rem;
+    }
+
+    .sub-welcome {
+        font-size: 0.83rem;
+        margin-bottom: 1.25rem;
+    }
+
+    .field input[type="text"],
+    .field input[type="password"] {
+        padding: 0.8rem 1rem;
+        font-size: 0.88rem;
+    }
+
+    .btn-login {
+        padding: 0.88rem;
+    }
+
+    .row-check {
+        margin: 0.1rem 0 1.2rem;
+    }
+}
+
+/* Mobile XS */
+@media (max-width: 360px) {
+    body {
+        padding: 0.75rem;
+    }
+
+    .left {
+        padding: 1.5rem 1.25rem;
+    }
+
+    .logo-area img,
+    .login-logo {
+        width: 90px !important;
+    }
+
+    .right {
+        padding: 1.5rem 1.25rem 1.75rem;
+    }
+
+    .welcome {
+        font-size: 1.2rem;
     }
 }
