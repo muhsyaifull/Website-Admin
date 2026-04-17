@@ -43,18 +43,18 @@ class DashboardController extends Controller
         $monthStart = $currentMonth->copy()->startOfMonth();
         $monthEnd = $currentMonth->copy()->endOfMonth();
 
-        $stats = cache()->remember('admin_dashboard_stats_' . $currentMonth->format('Y-m'), 300, function () use ($monthStart, $monthEnd) {
+        $stats = cache()->remember('admin_dashboard_stats_' . $currentMonth->format('Y-m'), 30, function () use ($monthStart, $monthEnd) {
             return [
                 'totalUsers' => User::count(),
                 'activeUsers' => User::where('is_active', true)->count(),
-                'totalBookings' => Booking::count(),
+                'totalBookings' => Booking::whereBetween('visit_date', [$monthStart, $monthEnd])->count(),
                 'totalRevenue' => Booking::whereBetween('visit_date', [$monthStart, $monthEnd])->sum('total_price'),
             ];
         });
 
         $todayStats = cache()->remember(
             'admin_dashboard_today_' . Carbon::today()->toDateString(),
-            60,
+            30,
             function () {
                 return [
                     'todaysBookings' => Booking::today()->count(),
